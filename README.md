@@ -5,40 +5,43 @@
   <a href="https://www.python.org"><img alt="html" src="https://img.shields.io/badge/HTML5-E34F26?style=flat&logo=html5&logoColor=white" /></a>
   <a href="https://www.python.org"><img alt="css" src="https://img.shields.io/badge/-CSS-1572B6?style=flat-square&logo=css&logoColor=white" /></a>
   <a href="https://www.python.org"><img alt="django" src="https://shields.io/badge/JavaScript-F7DF1E?logo=JavaScript&logoColor=white&style=flat" /></a>
-  <a href="https://sqlite.org"><img alt="postgresql" src="https://img.shields.io/badge/postgresql-4169e1?style=flat&logo=postgresql&logoColor=white" /></a>
 </p>
 
-Kelas : PBP F
+<p align="center">
+    <strong>Kelas</strong> PBP F | <strong>Kelompok</strong> 11
+</p>
 
-Kelompok : 11
+### Anggota
 
-Anggota :
-
-- Ervhino Aryo Seto (2506551125)
-- Forza Derian (2506596041)
-- Mohammad Zidane Kurnianto (2506584861)
-- Muhammad Fairus Azfar Arisandi (2506588752)
-- Muhammad Naufal Syarifuddin (2506602896)
+| NPM        | Nama                           |
+| ---------- | ------------------------------ |
+| 2506551125 | Ervhino Aryo Seto              |
+| 2506596041 | Forza Derian                   |
+| 2506584861 | Mohammad Zidane Kurnianto      |
+| 2506588752 | Muhammad Fairus Azfar Arisandi |
+| 2506602896 | Muhammad Naufal Syarifuddin    |
 
 ## Deskripsi
 
-Aplikasi ini adalah **platform komunitas yang menghubungkan petani atau pekebun dengan petani lainnya untuk saling berbagi pengetahuan**. Melalui ruang diskusi interaktif, katalog referensi tanaman yang terverifikasi (dari API Trefle), platform ini merangkum informasi urban farming yang tadinya tersebar menjadi satu platform yang praktis. Aplikasi ini bertujuan memudahkan siapa saja untuk memulai berkebun skala kecil dan berkontribusi pada gaya hidup yang lebih berkelanjutan.
+**Tanampedia** adalah platform edukasi dan sharing berbasis komunitas yang menghubungkan petani/pekebun dengan petani/pekebun lainnya untuk saling berbagi pengetahuan. Platform ini secara khusus menargetkan petani muda, yang cenderung lebih menikmati proses belajar yang interaktif dan gamified dibanding metode belajar konvensional. Melalui ruang diskusi interaktif, katalog referensi tanaman yang terverifikasi, platform ini merangkum informasi urban farming yang tadinya tersebar menjadi satu platform yang praktis. Aplikasi ini bertujuan memudahkan siapa saja untuk memulai berkebun skala kecil dan berkontribusi pada gaya hidup yang lebih berkelanjutan.
 
-## Features (Modules)
+## Fitur (Modules)
 
-1. Authentication: mulai dari proses register, log-in, log-out, dan profil yang menampilkan pengalaman dan pediapoints **(Zika)**
-2. Q&A Forum -> user posting masalah, komunitas menjawab, user lain yang merasa terbantu oleh sebuah jawaban bisa meng-upvote jawaban tersebut. Setiap upvote pada sebuah jawaban, user mendapatkan pediapoint **(Naufal)**
-3. Katalog tanaman -> database referensi, lengkap dengan detail cara menanam dan merawat **(Ervhino)**
-4. Kuis dan Challenge Harian -> modul kecil berisi kuis singkat seputar dasar bertani (multiple choice), user dapat poin kalau jawab benar, menambah pediapoint yang udah ada, dan bikin proses belajar lebih interaktif dibanding cuma baca forum/katalog **(Forza)**
-5. User Journal and Posting -> user bisa post image dan caption ke publik, publik bisa like dan user yang ngepost bisa dapat pediapoint setiap like **(Fairuz)**
+1. **Authentication:** Mengelola proses register, login, dan logout pengguna, serta halaman profil yang menampilkan pengalaman dan PediaPoints (yaitu poin yang dikumpulkan dari keaktifan user dalam beraktivitas di platform). Berencana untuk memakai OAuth (Google) untuk kemudahan login dan disertai fallback login/register manual **_(Mohammad Zidane Kurnianto)_**.
+2. **Q&A Forum:** Ruang diskusi tempat user mengunggah pertanyaan seputar bertani. User yang merasa terbantu oleh suatu jawaban bisa upvote, dan setiap upvote yang diterima memberi PediaPoint ke penjawab **_(Muhammad Naufal Syarifuddin)_**.
+3. **Katalog tanaman:** Database referensi tanaman lengkap dengan detail cara menanam dan merawat (kebutuhan cahaya, air, suhu, dll), diambil dari Trefle API, supaya user punya sumber panduan yang bisa diandalkan **_(Ervhino Aryo Seto)_**.
+4. **Kuis dan Challenge Harian:** Modul kuis singkat (_multiple choice_) seputar dasar-dasar bertani yang diadakan sekali sehari. Setiap jawaban benar memberi PediaPoint, menciptakan suasana belajar yang lebih interaktif dan "pemuda-friendly" **_(Forza Derian)_**.
+5. User Journal and Posting: User bisa mengunggah foto beserta caption ke publik (misal progres kebun, hasil panen, momen bertani) yang bisa dilihat dan di-like user lain. Setiap like yang diterima juga memberi PediaPoint ke pemilik post **_(Muhammad Fairus Azfar Arisandi)_**.
 
 ## API yang akan Digunakan
 
-1. [Trefle](https://trefle.io/), sebagai sumber data referensi perawatan tanaman
-2. [Google OAuth 2.0](https://developers.google.com/identity/protocols/oauth2?hl=id), sebagai sumber data referensi perawatan tanaman
+1. [Trefle](https://trefle.io/), sebagai sumber data referensi perawatan tanaman.
+2. [Google OAuth 2.0](https://developers.google.com/identity/protocols/oauth2?hl=id), memungkinkan user aplikasi Tanampedia masuk menggunakan akun Google.
 
 ## User Persona
 
-1. Petani/Pekebun Pemula: bisa berupa petani muda dan pekebun yang tertarik untuk belajar dan bertanya di forum
-2. Petani/Pekebun Berpengalaman: menjawab dan membangun reputasi
-3. Admin: moderasi konten dan mengelola data tanaman referensi
+1. **Petani/Pekebun Pemula:** Amatir, terutama petani muda dan pekebun, yang tertarik mendalami dunia pertanian lebih lanjut
+2. **Petani/Pekebun Berpengalaman:** Berpengalaman dalam dunia pertanian, menjawab dan membangun koleksi PediaPoint
+3. **Admin:** Moderasi konten dan mengelola data
+
+> **Made with 😹 by PBP-F11**
