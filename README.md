@@ -44,4 +44,11 @@
 2. **Petani/Pekebun Berpengalaman:** Berpengalaman dalam dunia pertanian, menjawab dan membangun koleksi PediaPoint
 3. **Admin:** Moderasi konten dan mengelola data
 
+## Essential Links
+
+| Name       | Link                           |
+| ---------- | ------------------------------ |
+| Figma Design | https://www.figma.com/design/THxw4O2FNxy30dOkLS9P72/TanamPedia--PBP-F-11-?node-id=0-1&t=jWu86prW4uvzR0tt-1              |
+| Deployment | https://muhammad-fairus51-tanampedia.pws.cs.ui.ac.id/ |
+
 > **Made with 😹 by PBP-F11**
