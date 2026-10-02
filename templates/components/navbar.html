@@ -1,9 +1,22 @@
 <header class="navbar">
     <div class="navbar__inner">
+        <a href="{% url 'main:home' %}" class="brand-logo">
+            <img src="{% static 'icon/tanampedia-logo.png' %}" alt="Tanampedia Logo" class="logo-img" />
+            <span class="brand-name">Tanampedia</span>
+        </a>
         <a href="{% url 'main:home' %}" class="navbar__brand">Tanampedia</a>
         <nav class="navbar__links">
             <a href="{% url 'main:home' %}">Beranda</a>
             <a href="{% url 'main:design_system' %}">Design System</a>
+            <a href="#">Forum</a>
+            <a href="#">Katalog</a>
+            <a href="#">Kuis</a>
+            <a href="#">Jurnal</a>
         </nav>
+    </div>
+
+    <div class="auth-capsule">
+      <a href="#">Login</a>
+      <a href="#">Register</a>
     </div>
 </header>
