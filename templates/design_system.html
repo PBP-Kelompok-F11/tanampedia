@@ -1,10 +1,148 @@
 {% extends "base.html" %}
+{% load static %}
 
-{% block title %}Tanampedia{% endblock %}
+{% block title %}Design System - Tanampedia{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/design-system.css' %}">
+{% endblock %}
 
 {% block content %}
-<section class="hero">
+<section class="ds-intro">
     <h1>Design System</h1>
-    <p>Temporary to showcase components.</p>
+    <p>Referensi palet warna dan tipografi Tanampedia. Komponen UI (button, card, form, dll) ditambahkan di bagian "Components" paling bawah &mdash; satu per komponen.</p>
+</section>
+
+<section class="ds-section" id="typography">
+    <h2>Typography</h2>
+    <div class="ds-type-sample">
+        <h1>Heading 1 &mdash; Bricolage Grotesque Bold</h1>
+        <h2>Heading 2 &mdash; Bricolage Grotesque Bold</h2>
+        <h3>Heading 3 &mdash; Plus Jakarta Sans Semibold</h3>
+        <p>Body text &mdash; Plus Jakarta Sans Regular. Platform edukasi dan sharing berbasis komunitas yang menghubungkan petani/pekebun dengan petani/pekebun lainnya.</p>
+        <p><strong>Body text bold</strong> &mdash; Plus Jakarta Sans Bold.</p>
+    </div>
+</section>
+
+<section class="ds-section" id="colors">
+    <h2>Colors</h2>
+
+    <div class="ds-palette-group">
+        <h3>Black</h3>
+        <div class="ds-swatch-row">
+            <div class="ds-swatch"><span class="ds-swatch__color" style="background-color: var(--color-black-100)"></span><span class="ds-swatch__label">alfa 100%</span></div>
+            <div class="ds-swatch"><span class="ds-swatch__color" style="background-color: var(--color-black-90)"></span><span class="ds-swatch__label">alfa 90%</span></div>
+            <div class="ds-swatch"><span class="ds-swatch__color" style="background-color: var(--color-black-80)"></span><span class="ds-swatch__label">alfa 80%</span></div>
+            <div class="ds-swatch"><span class="ds-swatch__color" style="background-color: var(--color-black-70)"></span><span class="ds-swatch__label">alfa 70%</span></div>
+            <div class="ds-swatch"><span class="ds-swatch__color" style="background-color: var(--color-black-60)"></span><span class="ds-swatch__label">alfa 60%</span></div>
+            <div class="ds-swatch"><span class="ds-swatch__color" style="background-color: var(--color-black-50)"></span><span class="ds-swatch__label">alfa 50%</span></div>
+            <div class="ds-swatch"><span class="ds-swatch__color" style="background-color: var(--color-black-40)"></span><span class="ds-swatch__label">alfa 40%</span></div>
+            <div class="ds-swatch"><span class="ds-swatch__color" style="background-color: var(--color-black-30)"></span><span class="ds-swatch__label">alfa 30%</span></div>
+            <div class="ds-swatch"><span class="ds-swatch__color" style="background-color: var(--color-black-20)"></span><span class="ds-swatch__label">alfa 20%</span></div>
+            <div class="ds-swatch"><span class="ds-swatch__color" style="background-color: var(--color-black-10)"></span><span class="ds-swatch__label">alfa 10%</span></div>
+        </div>
+    </div>
+
+    <div class="ds-palette-group">
+        <h3>White</h3>
+        <div class="ds-swatch-row ds-swatch-row--dark">
+            <div class="ds-swatch"><span class="ds-swatch__color" style="background-color: var(--color-white-100)"></span><span class="ds-swatch__label">alfa 100%</span></div>
+            <div class="ds-swatch"><span class="ds-swatch__color" style="background-color: var(--color-white-90)"></span><span class="ds-swatch__label">alfa 90%</span></div>
+            <div class="ds-swatch"><span class="ds-swatch__color" style="background-color: var(--color-white-80)"></span><span class="ds-swatch__label">alfa 80%</span></div>
+            <div class="ds-swatch"><span class="ds-swatch__color" style="background-color: var(--color-white-70)"></span><span class="ds-swatch__label">alfa 70%</span></div>
+            <div class="ds-swatch"><span class="ds-swatch__color" style="background-color: var(--color-white-60)"></span><span class="ds-swatch__label">alfa 60%</span></div>
+            <div class="ds-swatch"><span class="ds-swatch__color" style="background-color: var(--color-white-50)"></span><span class="ds-swatch__label">alfa 50%</span></div>
+            <div class="ds-swatch"><span class="ds-swatch__color" style="background-color: var(--color-white-40)"></span><span class="ds-swatch__label">alfa 40%</span></div>
+            <div class="ds-swatch"><span class="ds-swatch__color" style="background-color: var(--color-white-30)"></span><span class="ds-swatch__label">alfa 30%</span></div>
+            <div class="ds-swatch"><span class="ds-swatch__color" style="background-color: var(--color-white-20)"></span><span class="ds-swatch__label">alfa 20%</span></div>
+            <div class="ds-swatch"><span class="ds-swatch__color" style="background-color: var(--color-white-10)"></span><span class="ds-swatch__label">alfa 10%</span></div>
+        </div>
+    </div>
+
+    <div class="ds-palette-group">
+        <h3>Primary (Green)</h3>
+        <div class="ds-swatch-row">
+            <div class="ds-swatch"><span class="ds-swatch__color" style="background-color: var(--color-primary-900)"></span><span class="ds-swatch__label">900</span></div>
+            <div class="ds-swatch"><span class="ds-swatch__color" style="background-color: var(--color-primary-800)"></span><span class="ds-swatch__label">800</span></div>
+            <div class="ds-swatch"><span class="ds-swatch__color" style="background-color: var(--color-primary-700)"></span><span class="ds-swatch__label">700</span></div>
+            <div class="ds-swatch"><span class="ds-swatch__color" style="background-color: var(--color-primary-600)"></span><span class="ds-swatch__label">600</span></div>
+            <div class="ds-swatch"><span class="ds-swatch__color" style="background-color: var(--color-primary-500)"></span><span class="ds-swatch__label">500</span></div>
+            <div class="ds-swatch"><span class="ds-swatch__color" style="background-color: var(--color-primary-400)"></span><span class="ds-swatch__label">400</span></div>
+            <div class="ds-swatch"><span class="ds-swatch__color" style="background-color: var(--color-primary-300)"></span><span class="ds-swatch__label">300</span></div>
+            <div class="ds-swatch"><span class="ds-swatch__color" style="background-color: var(--color-primary-200)"></span><span class="ds-swatch__label">200</span></div>
+            <div class="ds-swatch"><span class="ds-swatch__color" style="background-color: var(--color-primary-100)"></span><span class="ds-swatch__label">100</span></div>
+            <div class="ds-swatch"><span class="ds-swatch__color" style="background-color: var(--color-primary-50)"></span><span class="ds-swatch__label">50</span></div>
+        </div>
+    </div>
+
+    <div class="ds-palette-group">
+        <h3>Grey</h3>
+        <div class="ds-swatch-row">
+            <div class="ds-swatch"><span class="ds-swatch__color" style="background-color: var(--color-grey-900)"></span><span class="ds-swatch__label">900</span></div>
+            <div class="ds-swatch"><span class="ds-swatch__color" style="background-color: var(--color-grey-800)"></span><span class="ds-swatch__label">800</span></div>
+            <div class="ds-swatch"><span class="ds-swatch__color" style="background-color: var(--color-grey-700)"></span><span class="ds-swatch__label">700</span></div>
+            <div class="ds-swatch"><span class="ds-swatch__color" style="background-color: var(--color-grey-600)"></span><span class="ds-swatch__label">600</span></div>
+            <div class="ds-swatch"><span class="ds-swatch__color" style="background-color: var(--color-grey-500)"></span><span class="ds-swatch__label">500</span></div>
+            <div class="ds-swatch"><span class="ds-swatch__color" style="background-color: var(--color-grey-400)"></span><span class="ds-swatch__label">400</span></div>
+            <div class="ds-swatch"><span class="ds-swatch__color" style="background-color: var(--color-grey-300)"></span><span class="ds-swatch__label">300</span></div>
+            <div class="ds-swatch"><span class="ds-swatch__color" style="background-color: var(--color-grey-200)"></span><span class="ds-swatch__label">200</span></div>
+            <div class="ds-swatch"><span class="ds-swatch__color" style="background-color: var(--color-grey-100)"></span><span class="ds-swatch__label">100</span></div>
+            <div class="ds-swatch"><span class="ds-swatch__color" style="background-color: var(--color-grey-50)"></span><span class="ds-swatch__label">50</span></div>
+        </div>
+    </div>
+
+    <div class="ds-palette-group">
+        <h3>Surfaces</h3>
+        <div class="ds-swatch-row">
+            <div class="ds-swatch"><span class="ds-swatch__color" style="background-color: var(--color-surface)"></span><span class="ds-swatch__label">Surface</span></div>
+            <div class="ds-swatch"><span class="ds-swatch__color" style="background-color: var(--color-raised)"></span><span class="ds-swatch__label">Raised</span></div>
+            <div class="ds-swatch"><span class="ds-swatch__color" style="background-color: var(--color-sunken)"></span><span class="ds-swatch__label">Sunken</span></div>
+        </div>
+        <p class="ds-note">Varian Dark Mode sudah didefinisikan di <code>tokens.css</code> tapi untuk sementara dinonaktifkan.</p>
+    </div>
+
+    <div class="ds-palette-group">
+        <h3>Red / Danger</h3>
+        <div class="ds-swatch-row">
+            <div class="ds-swatch"><span class="ds-swatch__color" style="background-color: var(--color-red-900)"></span><span class="ds-swatch__label">900</span></div>
+            <div class="ds-swatch"><span class="ds-swatch__color" style="background-color: var(--color-red-800)"></span><span class="ds-swatch__label">800</span></div>
+            <div class="ds-swatch"><span class="ds-swatch__color" style="background-color: var(--color-red-700)"></span><span class="ds-swatch__label">700</span></div>
+            <div class="ds-swatch"><span class="ds-swatch__color" style="background-color: var(--color-red-600)"></span><span class="ds-swatch__label">600</span></div>
+            <div class="ds-swatch"><span class="ds-swatch__color" style="background-color: var(--color-red-500)"></span><span class="ds-swatch__label">500</span></div>
+            <div class="ds-swatch"><span class="ds-swatch__color" style="background-color: var(--color-red-400)"></span><span class="ds-swatch__label">400</span></div>
+            <div class="ds-swatch"><span class="ds-swatch__color" style="background-color: var(--color-red-300)"></span><span class="ds-swatch__label">300</span></div>
+            <div class="ds-swatch"><span class="ds-swatch__color" style="background-color: var(--color-red-200)"></span><span class="ds-swatch__label">200</span></div>
+            <div class="ds-swatch"><span class="ds-swatch__color" style="background-color: var(--color-red-100)"></span><span class="ds-swatch__label">100</span></div>
+            <div class="ds-swatch"><span class="ds-swatch__color" style="background-color: var(--color-red-50)"></span><span class="ds-swatch__label">50</span></div>
+        </div>
+    </div>
+
+    <div class="ds-palette-group">
+        <h3>Blue / Info</h3>
+        <div class="ds-swatch-row">
+            <div class="ds-swatch"><span class="ds-swatch__color" style="background-color: var(--color-blue-900)"></span><span class="ds-swatch__label">900</span></div>
+            <div class="ds-swatch"><span class="ds-swatch__color" style="background-color: var(--color-blue-800)"></span><span class="ds-swatch__label">800</span></div>
+            <div class="ds-swatch"><span class="ds-swatch__color" style="background-color: var(--color-blue-700)"></span><span class="ds-swatch__label">700</span></div>
+            <div class="ds-swatch"><span class="ds-swatch__color" style="background-color: var(--color-blue-600)"></span><span class="ds-swatch__label">600</span></div>
+            <div class="ds-swatch"><span class="ds-swatch__color" style="background-color: var(--color-blue-500)"></span><span class="ds-swatch__label">500</span></div>
+            <div class="ds-swatch"><span class="ds-swatch__color" style="background-color: var(--color-blue-400)"></span><span class="ds-swatch__label">400</span></div>
+            <div class="ds-swatch"><span class="ds-swatch__color" style="background-color: var(--color-blue-300)"></span><span class="ds-swatch__label">300</span></div>
+            <div class="ds-swatch"><span class="ds-swatch__color" style="background-color: var(--color-blue-200)"></span><span class="ds-swatch__label">200</span></div>
+            <div class="ds-swatch"><span class="ds-swatch__color" style="background-color: var(--color-blue-100)"></span><span class="ds-swatch__label">100</span></div>
+            <div class="ds-swatch"><span class="ds-swatch__color" style="background-color: var(--color-blue-50)"></span><span class="ds-swatch__label">50</span></div>
+        </div>
+    </div>
+</section>
+
+<section class="ds-section" id="components">
+    <h2>Components</h2>
+    <p class="ds-note">Tambahkan komponen kalian masing-masing di bawah ini. Satu <code>&lt;div class="ds-component"&gt;</code> per komponen, dengan <code>&lt;h3&gt;</code> sebagai nama komponennya, contoh:</p>
+    <pre class="ds-example"><code>&lt;div class="ds-component"&gt;
+    &lt;h3&gt;Button&lt;/h3&gt;
+    &lt;!-- markup/preview komponen kalian di sini --&gt;
+&lt;/div&gt;</code></pre>
+
+    <!-- Teammates: tambahkan komponen kalian di bawah baris ini -->
+
 </section>
 {% endblock %}
