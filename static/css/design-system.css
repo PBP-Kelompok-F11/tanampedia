@@ -27,6 +27,7 @@
     display: flex;
     flex-wrap: wrap;
     gap: 0.75rem;
+    margin-bottom: 10px;
 }
 
 .ds-swatch-row--dark {

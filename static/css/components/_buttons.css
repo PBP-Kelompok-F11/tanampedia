@@ -79,3 +79,8 @@
 .btn--outline.btn--neutral:hover:not(:disabled) {
     background-color: var(--color-grey-50);
 }
+
+/* Custom */
+.long-btn {
+    width: 100%;
+}
