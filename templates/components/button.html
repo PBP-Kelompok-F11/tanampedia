@@ -1,0 +1,7 @@
+{% with variant=variant|default:"filled" intent=intent|default:"primary" %}
+<button type="{{ type|default:'button' }}"{% if disabled %} disabled{% endif %}{% if onclick %} onclick="{{ onclick }}"{% endif %} class="btn btn--{{ variant }} btn--{{ intent }}">
+    {% if icon_left %}{% include icon_left %}{% endif %}
+    <span>{{ text }}</span>
+    {% if icon_right %}{% include icon_right %}{% endif %}
+</button>
+{% endwith %}

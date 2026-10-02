@@ -143,5 +143,21 @@
 
     <!-- Teammates: tambahkan komponen kalian di bawah baris ini -->
 
+    <div class="ds-component">
+        <h3>Button</h3>
+        <p class="ds-note">Variant: <code>filled</code> / <code>outline</code>. Intent: <code>primary</code> / <code>danger</code> / <code>neutral</code>. Icon (opsional) di-feed langsung sebagai markup SVG oleh si pemanggil lewat <code>icon_left</code> / <code>icon_right</code>.</p>
+        <div class="ds-swatch-row">
+            {% include 'components/button.html' with text="Button" variant="filled" intent="primary" icon_left="icons/user-icon.svg" onclick="alert('Jangan lupa submit checkpoint yh')" %}
+            {% include 'components/button.html' with text="Button" variant="outline" intent="primary" icon_right="icons/plant-icon.svg" onclick="alert('Aku butuh kopi cik')" %}
+            {% include 'components/button.html' with text="Button" variant="filled" intent="danger" icon_left="icons/danger-icon.svg" onclick="alert('Bahaya woi')" %}
+            {% include 'components/button.html' with text="Button" variant="outline" intent="danger" icon_right="icons/danger-icon.svg" onclick="alert('Hati hati di jalan')" %}
+            {% include 'components/button.html' with text="Button" variant="filled" intent="neutral" %}
+            {% include 'components/button.html' with text="Button" variant="outline" intent="neutral" %}
+            {% include 'components/button.html' with text="Button" variant="filled" intent="primary" disabled=True %}
+        </div>
+        <pre class="ds-example"><code>{% templatetag openblock %} include 'components/button.html' with text="Simpan" variant="filled" intent="primary" {% templatetag closeblock %}
+{% templatetag openblock %} include 'components/button.html' with text="Hapus" variant="outline" intent="danger" icon_left=svg_markup {% templatetag closeblock %}</code></pre>
+    </div>
+
 </section>
 {% endblock %}
