@@ -1,5 +1,86 @@
+{% load static %}
 <footer class="footer">
     <div class="footer__inner">
-        <p>&copy; {% now "Y" %} Tanampedia &mdash; PBP F Kelompok 11</p>
+        <!-- Brand Logo -->
+        <div class="footer__brand">
+            <a href="{% url 'main:show_main' %}"
+               class="footer__logo"
+               aria-label="Tanampedia - Home">
+                <img
+                    src="{% static 'icons/tanampedia-logo.svg' %}"
+                    alt="Tanampedia"
+                    class="footer__logo-image"
+                >
+            </a>
+        </div>
+        <!-- Navigation -->
+        <div class="footer__column">
+            <h2 class="footer__title">Navigation</h2>
+            <nav class="footer__links"
+                 aria-label="Footer navigation">
+                <a href="{% url 'main:show_main' %}">Home</a>
+                <a href="#">Plant Catalog</a>
+                <a href="#">Q&amp;A Forum</a>
+                <a href="#">Quizzes &amp; Challenges</a>
+                <a href="#">About Us</a>
+            </nav>
+        </div>
+        <!-- Support -->
+        <div class="footer__column">
+            <h2 class="footer__title">Support</h2>
+            <nav class="footer__links"
+                 aria-label="Footer support">
+                <a href="#">Help Center</a>
+                <a href="#">Terms &amp; Conditions</a>
+                <a href="#">Privacy Policy</a>
+                <a href="#">User Guide</a>
+            </nav>
+        </div>
+
+        <!-- Contact and Social Media -->
+        <div class="footer__column footer__contact">
+            <h2 class="footer__title">Contact Us</h2>
+            <div class="footer__contact-list">
+                <a
+                    href="mailto:support@tanampedia.id"
+                    class="footer__contact-item"
+                >
+                    <span class="footer__contact-icon"
+                          aria-hidden="true">✉</span>
+                    <span>support@tanampedia.id</span>
+                </a>
+                <div class="footer__contact-item">
+                    <span class="footer__contact-icon"
+                          aria-hidden="true">⌖</span>
+                    <span>Depok, Indonesia</span>
+                </div>
+            </div>
+            <!-- Social Media -->
+            <div class="footer__social-section">
+                <h2 class="footer__title">Follow Us</h2>
+                <div class="footer__socials">
+                    <a href="#"
+                       class="footer__social"
+                       aria-label="Instagram">
+                        <span aria-hidden="true">◎</span>
+                    </a>
+                    <a href="#"
+                       class="footer__social"
+                       aria-label="YouTube">
+                        <span aria-hidden="true">▶</span>
+                    </a>
+                    <a href="#"
+                       class="footer__social"
+                       aria-label="Facebook">
+                        <span aria-hidden="true">f</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Decorative Green Hills -->
+    <div class="footer__landscape" aria-hidden="true">
+        <div class="footer__hill footer__hill--back"></div>
+        <div class="footer__hill footer__hill--front"></div>
     </div>
 </footer>
