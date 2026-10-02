@@ -1,0 +1,100 @@
+{% with current_value=selected_value|default:"" %}
+<div
+    class="dropdown{% if state == 'hover' %} dropdown--hover{% endif %}{% if disabled %} dropdown--disabled{% endif %}"
+    data-dropdown
+>
+    <span id="{{ dropdown_id }}-label" class="dropdown__label">
+        {{ label|default:"Label" }}
+    </span>
+
+    <div class="dropdown__control">
+        <button
+            id="{{ dropdown_id }}-trigger"
+            class="dropdown__trigger"
+            type="button"
+            role="combobox"
+            aria-haspopup="listbox"
+            aria-labelledby="{{ dropdown_id }}-label"
+            aria-controls="{{ dropdown_id }}-menu"
+            aria-expanded="{% if state == 'open' and not disabled %}true{% else %}false{% endif %}"
+            {% if disabled %}disabled{% endif %}
+        >
+            <span
+                class="dropdown__value{% if not selected_label %} dropdown__value--placeholder{% endif %}"
+                data-dropdown-value
+            >
+                {% if selected_label %}
+                    {{ selected_label }}
+                {% elif placeholder %}
+                    {{ placeholder }}
+                {% else %}
+                    Placeholder
+                {% endif %}
+            </span>
+
+            <svg
+                class="dropdown__chevron"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                aria-hidden="true"
+                focusable="false"
+            >
+                <path
+                    d="M6 9L12 15L18 9"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                />
+            </svg>
+        </button>
+
+        <ul
+            id="{{ dropdown_id }}-menu"
+            class="dropdown__menu"
+            role="listbox"
+            aria-labelledby="{{ dropdown_id }}-label"
+            {% if state != 'open' or disabled %}hidden{% endif %}
+        >
+            {% if options %}
+                {% for option in options %}
+                    <li
+                        id="{{ dropdown_id }}-option-{{ forloop.counter }}"
+                        class="dropdown__option"
+                        role="option"
+                        tabindex="-1"
+                        data-value="{{ option.value }}"
+                        aria-selected="{% if option.value == current_value %}true{% else %}false{% endif %}"
+                    >
+                        <span>{{ option.label }}</span>
+                    </li>
+                {% endfor %}
+            {% else %}
+                {% comment %}Opsi contoh untuk showcase tanpa mengubah view.{% endcomment %}
+                {% for value in "123"|make_list %}
+                    <li
+                        id="{{ dropdown_id }}-option-{{ forloop.counter }}"
+                        class="dropdown__option"
+                        role="option"
+                        tabindex="-1"
+                        data-value="{{ value }}"
+                        aria-selected="{% if value == current_value %}true{% else %}false{% endif %}"
+                    >
+                        <span>Placeholder</span>
+                    </li>
+                {% endfor %}
+            {% endif %}
+        </ul>
+
+        <input
+            type="hidden"
+            name="{{ name|default:dropdown_id }}"
+            value="{{ current_value }}"
+            data-dropdown-input
+            {% if disabled %}disabled{% endif %}
+        >
+    </div>
+</div>
+{% endwith %}
