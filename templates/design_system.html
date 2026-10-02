@@ -163,5 +163,33 @@
 {% templatetag openblock %} include 'components/button.html' with text="Hapus" variant="outline" intent="danger" icon_left=svg_markup {% templatetag closeblock %}</code></pre>
     </div>
 
+    <!-- Showcase komponen Dropdown -->
+
+    <div class="ds-component">
+        <h3>Dropdown</h3>
+
+        <div class="dropdown-showcase">
+            <div class="dropdown-showcase__item">
+                <h4>Default</h4>
+                {% include "components/dropdown.html" with dropdown_id="dropdown-default" label="Label" placeholder="Placeholder" only %}
+            </div>
+
+            <div class="dropdown-showcase__item">
+                <h4>Hover</h4>
+                {% include "components/dropdown.html" with dropdown_id="dropdown-hover" label="Label" placeholder="Placeholder" state="hover" only %}
+            </div>
+
+            <div class="dropdown-showcase__item">
+                <h4>Open</h4>
+                {% include "components/dropdown.html" with dropdown_id="dropdown-open" label="Label" state="open" selected_value="1" selected_label="Placeholder" only %}
+            </div>
+
+            <div class="dropdown-showcase__item">
+                <h4>Disabled</h4>
+                {% include "components/dropdown.html" with dropdown_id="dropdown-disabled" label="Label" placeholder="Placeholder" disabled=True only %}
+            </div>
+        </div>
+    </div>
+
 </section>
 {% endblock %}
