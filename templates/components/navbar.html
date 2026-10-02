@@ -1,9 +1,21 @@
+{% load static %}
 <header class="navbar">
     <div class="navbar__inner">
-        <a href="{% url 'main:home' %}" class="navbar__brand">Tanampedia</a>
+        <a href="{% url 'main:home' %}" class="navbar__brand">
+            <img src="{% static 'icons/tanampedia-logo.png' %}" alt="" class="navbar__logo">
+            <span>Tanampedia</span>
+        </a>
         <nav class="navbar__links">
             <a href="{% url 'main:home' %}">Beranda</a>
             <a href="{% url 'main:design_system' %}">Design System</a>
+            <a href="#">Forum</a>
+            <a href="#">Katalog</a>
+            <a href="#">Kuis</a>
+            <a href="#">Jurnal</a>
         </nav>
+        <div class="navbar__auth">
+            <a href="#">Login</a>
+            <a href="#">Register</a>
+        </div>
     </div>
 </header>
