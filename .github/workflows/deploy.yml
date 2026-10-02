@@ -17,8 +17,7 @@ jobs:
       env:
         PWS_URL: ${{ secrets.PWS_URL }}
       run: |
-          push_output=$(git push $PWS_URL HEAD:main 2>&1)
-          if [[ $? -ne 0 ]]; then
+          if ! push_output=$(git push "$PWS_URL" HEAD:main 2>&1); then
             echo "Push failed with output: $push_output"
             echo "Error: Unable to push changes. Please check the error message above and resolve any conflicts manually."
             exit 1
