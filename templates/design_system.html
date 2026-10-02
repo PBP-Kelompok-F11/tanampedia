@@ -142,7 +142,31 @@
     &lt;!-- markup/preview komponen kalian di sini --&gt;
 &lt;/div&gt;</code></pre>
 
-    <!-- Teammates: tambahkan komponen kalian di bawah baris ini -->
+<div class="ds-component">
+    <h3>Button</h3>
+    <!-- markup/preview komponen kalian di sini -->
+     <nav class="navbar-container">
+    <div class="nav-left">
+      <!-- Replace '#' with '{% url "home" %}' if you have named URLs -->
+      <a href="#" class="brand-logo">
+        <span class="brand-name">Tanampedia</span>
+      </a>
+
+      <ul class="nav-links">
+        <li><a href="#">Beranda</a></li>
+        <li><a href="#">Forum</a></li>
+        <li><a href="#">Katalog</a></li>
+        <li><a href="#">Kuis</a></li>
+        <li><a href="#">Jurnal</a></li>
+      </ul>
+    </div>
+
+    <div class="auth-capsule">
+      <a href="#">Login</a>
+      <a href="#">Register</a>
+    </div>
+  </nav>
+</div>
 
 </section>
 {% endblock %}
