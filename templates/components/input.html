@@ -1,0 +1,20 @@
+{% with input_type=type|default:"text" %}
+{% if label and id %}<label for="{{ id }}">{{ label }}</label>{% elif label %}<label>{{ label }}{% endif %}
+<input type="{{ input_type }}" 
+        placeholder="{{ placeholder|default:'' }}" 
+        value="{{ value|default_if_none:'' }}"
+        {% if name %} name="{{ name }}" {% endif %}
+        {% if id %} id="{{ id }}" {% endif %}
+        {% if autocomplete %} autocomplete="{{ autocomplete }}" {% endif %}
+        {% if aria_label %} aria-label="{{ aria_label }}" {% endif %}
+        {% if min != None %} min="{{ min }}" {% endif %}
+        {% if max != None %} max="{{ max }}" {% endif %}
+        {% if step != None %} step="{{ step }}" {% endif %}
+        {% if minlength %} minlength="{{ minlength }}" {% endif %}
+        {% if maxlength %} maxlength="{{ maxlength }}" {% endif %}
+        {% if class_name %} class="{{ class_name }}" {% endif %}
+        {% if required %} required {% endif %}
+        {% if disabled %} disabled {% endif %}
+        {% if readonly %} readonly {% endif %}>
+{% if label and not id %}</label>{% endif %}
+{% endwith %}
