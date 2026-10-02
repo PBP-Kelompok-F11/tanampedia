@@ -32,7 +32,11 @@ SECRET_KEY = 'django-insecure-3c7sd887%m3puo_kjie5f%c**lv1h4hyyq*h9i01-qd-#vf)g1
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    "localhost",
+    "127.0.0.1",
+    ".pws.cs.ui.ac.id",
+]
 
 
 # Application definition
@@ -63,7 +67,7 @@ ROOT_URLCONF = 'tanampedia.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],
+        'DIRS': [BASE_DIR / 'templates', BASE_DIR / 'static'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
