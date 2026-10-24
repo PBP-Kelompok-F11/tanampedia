@@ -1,10 +1,217 @@
 {% extends "base.html" %}
+{% load static %}
 
-{% block title %}Tanampedia - Community-based Gardening Education Platform{% endblock %}
+{% block title %}Tanampedia | Tumbuh Bersama, Hijaukan Halaman{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/pages/_home.css' %}">
+{% endblock %}
 
 {% block content %}
-<section class="hero">
-    <h1>Tanampedia</h1>
-    <p>Platform edukasi dan sharing berbasis komunitas untuk petani dan pekebun muda.</p>
+
+<section class="lp-hero lp-bleed" style="background-image: url('{% static hero_image %}');">
+    <div class="lp-hero__overlay"></div>
+
+    <div class="lp-container lp-hero__inner text-center">
+        <span class="lp-hero__eyebrow">
+            {% include "icons/sparkle-icon.svg" %}
+            Platform edukasi berkebun berbasis komunitas
+        </span>
+
+        <h1>Tumbuh Bersama, Hijaukan Halaman</h1>
+
+        <p>
+            Tanampedia menghubungkan pekebun-pekebun untuk saling sharing ilmu melalui
+            forum diskusi interaktif, katalog tanaman terverifikasi, dan challenge harian yang seru.
+        </p>
+
+        <div class="lp-hero__actions flex items-center justify-center gap-4 flex-wrap">
+            {% include 'components/button.html' with text="Mulai Berkebun" variant="filled" intent="primary" icon_right="icons/arrow-right-icon.svg" %}
+            {% include 'components/button.html' with text="Jelajahi Katalog" variant="outline" intent="neutral" %}
+        </div>
+    </div>
 </section>
+
+<section class="lp-marquee lp-bleed py-6">
+    <div class="lp-marquee__track flex items-center gap-4 w-max">
+        <div class="lp-marquee__list flex items-center gap-4 shrink-0">
+            <span class="lp-marquee__item inline-flex items-center gap-2 px-4 py-2 rounded-full">{% include "icons/forum-icon.svg" %} Ruang Diskusi</span>
+            <span class="lp-marquee__item inline-flex items-center gap-2 px-4 py-2 rounded-full">{% include "icons/plant-icon.svg" %} Katalog Tanaman</span>
+            <span class="lp-marquee__item inline-flex items-center gap-2 px-4 py-2 rounded-full">{% include "icons/quiz-icon.svg" %} Kuis Harian</span>
+            <span class="lp-marquee__item inline-flex items-center gap-2 px-4 py-2 rounded-full">{% include "icons/journal-icon.svg" %} Journal &amp; Posting</span>
+            <span class="lp-marquee__item inline-flex items-center gap-2 px-4 py-2 rounded-full">{% include "icons/points-icon.svg" %} PediaPoints</span>
+            <span class="lp-marquee__item inline-flex items-center gap-2 px-4 py-2 rounded-full">{% include "icons/user-icon.svg" %} Komunitas Petani Muda</span>
+        </div>
+        <div class="lp-marquee__list flex items-center gap-4 shrink-0" aria-hidden="true">
+            <span class="lp-marquee__item inline-flex items-center gap-2 px-4 py-2 rounded-full">{% include "icons/forum-icon.svg" %} Ruang Diskusi</span>
+            <span class="lp-marquee__item inline-flex items-center gap-2 px-4 py-2 rounded-full">{% include "icons/plant-icon.svg" %} Katalog Tanaman</span>
+            <span class="lp-marquee__item inline-flex items-center gap-2 px-4 py-2 rounded-full">{% include "icons/quiz-icon.svg" %} Kuis Harian</span>
+            <span class="lp-marquee__item inline-flex items-center gap-2 px-4 py-2 rounded-full">{% include "icons/journal-icon.svg" %} Journal &amp; Posting</span>
+            <span class="lp-marquee__item inline-flex items-center gap-2 px-4 py-2 rounded-full">{% include "icons/points-icon.svg" %} PediaPoints</span>
+            <span class="lp-marquee__item inline-flex items-center gap-2 px-4 py-2 rounded-full">{% include "icons/user-icon.svg" %} Komunitas Petani Muda</span>
+        </div>
+    </div>
+</section>
+
+<section class="lp-features lp-container mt-16 py-16">
+    <div class="lp-section-heading lp-reveal text-center max-w-[40ch] mx-auto mb-12">
+        <h2>Semua yang Anda Butuhkan untuk <span class="lp-gradient-text">Memulai Berkebun</span></h2>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="lp-feature-card lp-reveal p-7 rounded-2xl">
+            <div class="lp-feature-card__icon inline-flex items-center justify-center w-12 h-12 rounded-xl mb-4">{% include "icons/user-icon.svg" %}</div>
+            <h3 class="mb-2">Profil &amp; PediaPoints</h3>
+            <p>Daftar dan masuk dengan mudah, lalu koleksi PediaPoints dari keaktifanmu di platform.</p>
+        </div>
+
+        <div class="lp-feature-card lp-reveal p-7 rounded-2xl">
+            <div class="lp-feature-card__icon inline-flex items-center justify-center w-12 h-12 rounded-xl mb-4">{% include "icons/forum-icon.svg" %}</div>
+            <h3 class="mb-2">Ruang Diskusi</h3>
+            <p>Tanyakan apa saja soal bertani. Jawaban yang membantu bisa di-upvote dan mendatangkan PediaPoints.</p>
+            <span class="lp-feature-card__points inline-flex items-center gap-[0.3rem] mt-4 px-2.5 py-1 rounded-full text-xs font-bold">{% include "icons/points-icon.svg" %} +PediaPoints</span>
+        </div>
+
+        <div class="lp-feature-card lp-reveal p-7 rounded-2xl">
+            <div class="lp-feature-card__icon inline-flex items-center justify-center w-12 h-12 rounded-xl mb-4">{% include "icons/plant-icon.svg" %}</div>
+            <h3 class="mb-2">Katalog Tanaman</h3>
+            <p>Referensi lengkap cara menanam dan merawat tanaman, mulai kebutuhan cahaya, air, hingga suhu ideal. Didukung oleh database <a href="https://trefle.io/">Trefle</a>.</p>
+        </div>
+
+        <div class="lp-feature-card lp-reveal p-7 rounded-2xl">
+            <div class="lp-feature-card__icon inline-flex items-center justify-center w-12 h-12 rounded-xl mb-4">{% include "icons/quiz-icon.svg" %}</div>
+            <h3 class="mb-2">Kuis &amp; Challenge Harian</h3>
+            <p>Uji pemahamanmu melalui kuis singkat setiap hari. Setiap jawaban benar menambah PediaPoints-mu.</p>
+            <span class="lp-feature-card__points inline-flex items-center gap-[0.3rem] mt-4 px-2.5 py-1 rounded-full text-xs font-bold">{% include "icons/points-icon.svg" %} +PediaPoints</span>
+        </div>
+
+        <div class="lp-feature-card lp-reveal p-7 rounded-2xl">
+            <div class="lp-feature-card__icon inline-flex items-center justify-center w-12 h-12 rounded-xl mb-4">{% include "icons/journal-icon.svg" %}</div>
+            <h3 class="mb-2">Journal &amp; Posting</h3>
+            <p>Bagikan progres kebunmu melalui foto dan cerita. Like yang Anda terima juga mendatangkan PediaPoints.</p>
+            <span class="lp-feature-card__points inline-flex items-center gap-[0.3rem] mt-4 px-2.5 py-1 rounded-full text-xs font-bold">{% include "icons/points-icon.svg" %} +PediaPoints</span>
+        </div>
+
+        <div class="lp-feature-card lp-reveal p-7 rounded-2xl">
+            <div class="lp-feature-card__icon inline-flex items-center justify-center w-12 h-12 rounded-xl mb-4">{% include "icons/game-icon.svg" %}</div>
+            <h3 class="mb-2">Proses Belajar yang Digamifikasi</h3>
+            <p>Didesain untuk petani muda yang lebih menyukai proses belajar yang lebih interaktif!</p>
+        </div>
+    </div>
+</section>
+
+<section class="lp-flow lp-bleed lp-reveal mt-16 py-16">
+    <div class="lp-section-heading text-center max-w-[40ch] mx-auto mb-12">
+        <h2>Apa itu <span class="lp-gradient-text">PediaPoints</span>?</h2>
+        <p>Makin aktif kamu berkontribusi, makin banyak PediaPoints yang kamu kumpulkan.</p>
+    </div>
+
+    <div class="flex flex-col sm:flex-row items-center justify-center gap-4 flex-wrap">
+        <div class="lp-flow__step flex flex-col items-center gap-3 w-[150px] text-center">
+            <div class="lp-flow__step-icon flex items-center justify-center w-16 h-16 rounded-full">{% include "icons/forum-icon.svg" %}</div>
+            <strong>Berkontribusi</strong>
+            <span class="lp-flow__step-note">Jawab, posting, atau ikut kuis</span>
+        </div>
+
+        <span class="lp-flow__arrow shrink-0 rotate-90 sm:rotate-0">{% include "icons/arrow-right-icon.svg" %}</span>
+
+        <div class="lp-flow__step flex flex-col items-center gap-3 w-[150px] text-center">
+            <div class="lp-flow__step-icon flex items-center justify-center w-16 h-16 rounded-full">{% include "icons/points-icon.svg" %}</div>
+            <strong>Dapat Apresiasi</strong>
+            <span class="lp-flow__step-note">Upvote, like, atau jawaban benar</span>
+        </div>
+
+        <span class="lp-flow__arrow shrink-0 rotate-90 sm:rotate-0">{% include "icons/arrow-right-icon.svg" %}</span>
+
+        <div class="lp-flow__step flex flex-col items-center gap-3 w-[150px] text-center">
+            <div class="lp-flow__step-icon flex items-center justify-center w-16 h-16 rounded-full">{% include "icons/plant-icon.svg" %}</div>
+            <strong>Tumbuh Bareng</strong>
+            <span class="lp-flow__step-note">PediaPoints naik, reputasimu ikut tumbuh</span>
+        </div>
+    </div>
+</section>
+
+<section class="lp-posts lp-container mt-16">
+    <div class="lp-section-heading lp-reveal text-center max-w-[40ch] mx-auto mb-12">
+        <h2>Cerita dari Komunitas</h2>
+        <p>Pratinjau tampilan &mdash; postingan sungguhan akan muncul di sini setelah modul Journal aktif.</p>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+        <div class="lp-post-card lp-reveal rounded-2xl overflow-hidden">
+            <div class="lp-post-card__image" style="background-image: url('{% static 'img/hero/landing-1.jpg' %}');"></div>
+            <div class="p-5">
+                <div class="flex items-center gap-2 mb-3">
+                    <span class="lp-post-card__avatar inline-flex items-center justify-center w-8 h-8 rounded-full">{% include "icons/user-icon.svg" %}</span>
+                    <span class="lp-post-card__author">Ervhino A.</span>
+                </div>
+                <p class="lp-post-card__caption">Panen cabai pertama musim ini, seneng banget! 🌶️</p>
+                <span class="lp-post-card__likes inline-flex items-center gap-1 mt-3">{% include "icons/points-icon.svg" %} 24 suka</span>
+            </div>
+        </div>
+
+        <div class="lp-post-card lp-reveal rounded-2xl overflow-hidden">
+            <div class="lp-post-card__image" style="background-image: url('{% static 'img/hero/landing-2.jpg' %}');"></div>
+            <div class="p-5">
+                <div class="flex items-center gap-2 mb-3">
+                    <span class="lp-post-card__avatar inline-flex items-center justify-center w-8 h-8 rounded-full">{% include "icons/user-icon.svg" %}</span>
+                    <span class="lp-post-card__author">Fairuz A.</span>
+                </div>
+                <p class="lp-post-card__caption">Akhirnya selada hidroponik saya siap panen minggu ini.</p>
+                <span class="lp-post-card__likes inline-flex items-center gap-1 mt-3">{% include "icons/points-icon.svg" %} 18 suka</span>
+            </div>
+        </div>
+
+        <div class="lp-post-card lp-reveal rounded-2xl overflow-hidden">
+            <div class="lp-post-card__image" style="background-image: url('{% static 'img/hero/landing-3.jpg' %}');"></div>
+            <div class="p-5">
+                <div class="flex items-center gap-2 mb-3">
+                    <span class="lp-post-card__avatar inline-flex items-center justify-center w-8 h-8 rounded-full">{% include "icons/user-icon.svg" %}</span>
+                    <span class="lp-post-card__author">Naufal</span>
+                </div>
+                <p class="lp-post-card__caption">Tips dari forum beneran ngebantu, sawi saya auto subur!</p>
+                <span class="lp-post-card__likes inline-flex items-center gap-1 mt-3">{% include "icons/points-icon.svg" %} 31 suka</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="lp-cta lp-reveal mt-16 px-8 py-20 rounded-[2rem] text-center" style="background-image: url('{% static 'img/card/landing-bottom.jpg' %}');">
+    <div class="lp-cta__overlay"></div>
+    <div class="lp-cta__glow lp-cta__glow--1"></div>
+    <div class="lp-cta__glow lp-cta__glow--2"></div>
+    <div class="lp-cta__pattern"></div>
+
+    <div class="lp-cta__content">
+        <span class="lp-cta__eyebrow inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-4">
+            {% include "icons/sparkle-icon.svg" %}
+            Gratis &amp; mudah untuk memulai
+        </span>
+
+        <h2 class="mb-3 text-3xl">Siap mulai kebun pertamamu?</h2>
+        <p>Gabung dengan Tanampedia dan jadi bagian dari gaya hidup berkelanjutan, satu tanaman pada satu waktu.</p>
+
+        <div class="mt-8">
+            {% include 'components/button.html' with text="Daftar Sekarang" variant="filled" intent="primary" icon_right="icons/arrow-right-icon.svg" %}
+        </div>
+    </div>
+</section>
+
+<section class="lp-rating lp-reveal mt-16 text-center">
+    <div class="lp-rating__stars flex items-center justify-center gap-1 mb-3">
+        {% include "icons/points-icon.svg" %}
+        {% include "icons/points-icon.svg" %}
+        {% include "icons/points-icon.svg" %}
+        {% include "icons/points-icon.svg" %}
+        {% include "icons/points-icon.svg" %}
+    </div>
+    <div class="lp-rating__score">4.8 <span class="lp-rating__score-of">/ 5</span></div>
+    <p class="lp-rating__note">"Sebelumnya aku berpikir mustahil aku tertarik dengan segala hal berkebun, but Tanampedia proved me wrong!"</p>
+    <p class="lp-rating__note">- Zidane Kurnianto</p>
+</section>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/home.js' %}" defer></script>
 {% endblock %}
