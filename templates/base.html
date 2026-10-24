@@ -1,4 +1,4 @@
-{% load static %}<!DOCTYPE html>
+{% load static tailwind_tags %}<!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
@@ -11,6 +11,7 @@
 
     <link rel="stylesheet" href="{% static 'css/tokens.css' %}">
     <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    {% tailwind_css %}
     {% block extra_css %}{% endblock %}
 </head>
 <body>
