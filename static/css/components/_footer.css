@@ -158,6 +158,11 @@
     font-size: 0.85rem;
 }
 
+.footer__contact-icon .icon {
+    width: 14px;
+    height: 14px;
+}
+
 
 /*Follow Us*/
 
@@ -199,6 +204,46 @@
     background-color: var(--color-primary-400);
     text-decoration: none;
     transform: translateY(-2px);
+}
+
+.footer__social .icon {
+    width: 16px;
+    height: 16px;
+}
+
+
+/*Bottom bar*/
+
+.footer__bottom {
+    /* Lives inside .footer__inner (not a sibling), so its own grid/padding
+       already provides horizontal inset and the responsive bottom padding
+       that keeps content clear of the hill illustration below. */
+    grid-column: 1 / -1;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+
+    border-top: 1px solid var(--color-grey-100);
+}
+
+.footer__copyright,
+.footer__credit {
+    margin: 0;
+
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--color-grey-500);
+}
+
+.footer__credit span {
+    color: var(--color-red-500);
 }
 
 

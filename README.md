@@ -1,10 +1,12 @@
 <h1 align="center">Tanampedia</h1>
+<h6 align="center">Tumbuh Bersama, Hijaukan Halaman</h6>
 
 <p align="center">
   <a href="https://www.djangoproject.com/"><img alt="django" src="https://img.shields.io/badge/Django-092E20?style=flat&logo=django&logoColor=white" /></a>
   <a href="https://www.python.org"><img alt="html" src="https://img.shields.io/badge/HTML5-E34F26?style=flat&logo=html5&logoColor=white" /></a>
   <a href="https://www.python.org"><img alt="css" src="https://img.shields.io/badge/-CSS-1572B6?style=flat-square&logo=css&logoColor=white" /></a>
   <a href="https://www.python.org"><img alt="django" src="https://shields.io/badge/JavaScript-F7DF1E?logo=JavaScript&logoColor=white&style=flat" /></a>
+  <a href="https://tailwindcss.com/"><img alt="tailwindcss" src="https://img.shields.io/badge/Tailwind_CSS-06B6D4?style=flat&logo=tailwindcss&logoColor=white" /></a>
 </p>
 
 <p align="center">

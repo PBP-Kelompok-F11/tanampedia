@@ -42,40 +42,37 @@
             <h2 class="footer__title">Contact Us</h2>
             <div class="footer__contact-list">
                 <a
-                    href="mailto:support@tanampedia.id"
+                    href="mailto:mohammad.zidane51@ui.ac.id"
                     class="footer__contact-item"
                 >
                     <span class="footer__contact-icon"
                           aria-hidden="true">✉</span>
-                    <span>support@tanampedia.id</span>
+                    <span>mohammad.zidane51@ui.ac.id</span>
                 </a>
                 <div class="footer__contact-item">
-                    <span class="footer__contact-icon"
-                          aria-hidden="true">⌖</span>
+                    <span class="footer__contact-icon">{% include "icons/map-pin-icon.svg" %}</span>
                     <span>Depok, Indonesia</span>
                 </div>
             </div>
-            <!-- Social Media -->
+            <!-- Project links -->
             <div class="footer__social-section">
-                <h2 class="footer__title">Follow Us</h2>
+                <h2 class="footer__title">Contribute to Tanampedia!</h2>
                 <div class="footer__socials">
-                    <a href="#"
+                    <a href="https://github.com/PBP-Kelompok-F11/tanampedia"
                        class="footer__social"
-                       aria-label="Instagram">
-                        <span aria-hidden="true">◎</span>
-                    </a>
-                    <a href="#"
-                       class="footer__social"
-                       aria-label="YouTube">
-                        <span aria-hidden="true">▶</span>
-                    </a>
-                    <a href="#"
-                       class="footer__social"
-                       aria-label="Facebook">
-                        <span aria-hidden="true">f</span>
+                       aria-label="GitHub Repository"
+                       target="_blank"
+                       rel="noopener noreferrer">
+                        {% include "icons/github-icon.svg" %}
                     </a>
                 </div>
             </div>
+        </div>
+
+        <!-- Bottom bar -->
+        <div class="footer__bottom mb-5">
+            <p class="footer__copyright">&copy; {% now "Y" %} Tanampedia. All rights reserved.</p>
+            <p class="footer__credit">Made with <span aria-hidden="true">😹</span> by Kelompok PBP F-11</p>
         </div>
     </div>
     <!-- Decorative Green Hills -->

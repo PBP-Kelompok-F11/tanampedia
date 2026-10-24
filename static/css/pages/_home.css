@@ -1,0 +1,500 @@
+/* Landing page — breaks out of <main>'s max-width for full-bleed sections */
+
+.lp-bleed {
+    width: 100vw;
+    position: relative;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+}
+
+.lp-container {
+    max-width: 1100px;
+    /* margin-inline (not the `margin` shorthand) so this doesn't also zero
+       out margin-top and margin-bottom and silently override Tailwind's
+       margin-top utilities — unlayered CSS like this always wins over
+       Tailwind's @layer utilities for the same property, regardless of
+       source order. */
+    margin-inline: auto;
+    padding-inline: 1rem;
+}
+
+
+/* Hero */
+
+.lp-hero {
+    position: relative;
+    overflow: hidden;
+
+    /* Pulls the section up behind the sticky navbar so its background
+       extends to the very top of the page instead of starting below it;
+       padding-top below adds that same amount back so the content itself
+       still clears the navbar visually. Deliberately larger than the
+       navbar's actual rendered height so rounding/font-size drift never
+       leaves a gap. */
+    margin-top: -150px;
+    padding: calc(5rem + 150px) 0 7rem;
+
+    background-size: cover;
+    background-position: center;
+}
+
+.lp-hero__overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+
+    background: linear-gradient(135deg, var(--color-primary-50) 0%, var(--color-primary-100) 50%, var(--color-blue-50) 100%);
+    background-size: 200% 200%;
+    opacity: 0.88;
+    animation: lp-gradient-shift 12s ease-in-out infinite;
+}
+
+@keyframes lp-gradient-shift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+}
+
+.lp-hero__inner {
+    position: relative;
+    z-index: 2;
+}
+
+.lp-hero__eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    padding: 0.4rem 1rem;
+    margin-bottom: 1.5rem;
+
+    background-color: var(--color-raised);
+    border-radius: 999px;
+    box-shadow: 0 4px 16px var(--color-black-10);
+
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 0.8125rem;
+    color: var(--color-primary-700);
+
+    opacity: 0;
+    animation: lp-fade-in-up 0.7s ease-out 0.1s forwards;
+}
+
+.lp-hero__eyebrow .icon {
+    width: 1rem;
+    height: 1rem;
+    color: var(--color-primary-500);
+}
+
+.lp-hero h1 {
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    line-height: 1.05;
+    max-width: 16ch;
+    margin: 0 auto 1.25rem;
+
+    background: linear-gradient(90deg, var(--color-primary-700), var(--color-primary-500) 45%, var(--color-blue-600));
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+
+    opacity: 0;
+    animation: lp-fade-in-up 0.7s ease-out 0.25s forwards;
+}
+
+.lp-hero p {
+    max-width: 48ch;
+    margin: 0 auto 2.25rem;
+
+    font-size: 1.125rem;
+    color: var(--color-text-muted);
+
+    opacity: 0;
+    animation: lp-fade-in-up 0.7s ease-out 0.4s forwards;
+}
+
+.lp-hero__actions {
+    opacity: 0;
+    animation: lp-fade-in-up 0.7s ease-out 0.55s forwards;
+}
+
+@keyframes lp-fade-in-up {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+
+@media (prefers-reduced-motion: reduce) {
+    .lp-hero,
+    .lp-hero__eyebrow,
+    .lp-hero h1,
+    .lp-hero p,
+    .lp-hero__actions,
+    .lp-reveal {
+        animation: none !important;
+        opacity: 1 !important;
+        transform: none !important;
+    }
+}
+
+
+/* Scroll-reveal */
+
+.lp-reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+.lp-reveal.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+
+/* Marquee */
+
+.lp-marquee {
+    overflow: hidden;
+    background-color: var(--color-primary-100);
+
+    mask-image: linear-gradient(90deg, transparent, black 8%, black 92%, transparent);
+    -webkit-mask-image: linear-gradient(90deg, transparent, black 8%, black 92%, transparent);
+}
+
+.lp-marquee__track {
+    animation: lp-marquee-scroll 28s linear infinite;
+}
+
+@keyframes lp-marquee-scroll {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+}
+
+.lp-marquee__item {
+    background-color: var(--color-raised);
+    border: 1px solid var(--color-border);
+    color: var(--color-primary-700);
+    font-size: 0.875rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.lp-marquee__item .icon {
+    width: 1rem;
+    height: 1rem;
+    color: var(--color-primary-500);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .lp-marquee__track {
+        animation: none;
+    }
+}
+
+
+/* Feature cards */
+
+.lp-section-heading h2 {
+    font-size: clamp(1.75rem, 4vw, 2.5rem);
+}
+
+.lp-section-heading p {
+    color: var(--color-text-muted);
+}
+
+.lp-feature-card {
+    position: relative;
+    overflow: hidden;
+
+    background-color: var(--color-raised);
+    border: 1px solid var(--color-border);
+
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.lp-feature-card:hover {
+    transform: translateY(-6px);
+    border-color: var(--color-primary-300);
+    box-shadow: 0 16px 32px var(--color-black-10);
+}
+
+.lp-feature-card__icon {
+    background-color: var(--color-primary-100);
+    color: var(--color-primary-700);
+
+    transition: transform 0.25s ease, background-color 0.25s ease;
+}
+
+.lp-feature-card:hover .lp-feature-card__icon {
+    transform: rotate(-6deg) scale(1.08);
+    background-color: var(--color-primary-200);
+}
+
+.lp-feature-card__icon .icon {
+    width: 1.5rem;
+    height: 1.5rem;
+}
+
+.lp-feature-card p {
+    margin: 0;
+    font-size: 0.9375rem;
+    color: var(--color-text-muted);
+}
+
+.lp-feature-card__points {
+    background-color: var(--color-blue-50);
+    color: var(--color-blue-700);
+}
+
+.lp-feature-card__points .icon {
+    width: 0.875rem;
+    height: 0.875rem;
+}
+
+
+/* PediaPoints flow */
+
+.lp-flow {
+    background-color: var(--color-sunken);
+}
+
+.lp-flow__step-icon {
+    background-color: var(--color-raised);
+    border: 2px solid var(--color-primary-200);
+    color: var(--color-primary-600);
+
+    animation: lp-pulse 3s ease-in-out infinite;
+}
+
+.lp-flow__step:nth-child(3) .lp-flow__step-icon { animation-delay: 0.5s; }
+.lp-flow__step:nth-child(5) .lp-flow__step-icon { animation-delay: 1s; }
+
+.lp-flow__step-icon .icon {
+    width: 1.75rem;
+    height: 1.75rem;
+}
+
+@keyframes lp-pulse {
+    0%, 100% { box-shadow: 0 0 0 0 var(--color-primary-100); }
+    50% { box-shadow: 0 0 0 10px transparent; }
+}
+
+.lp-flow__step strong {
+    font-size: 0.875rem;
+}
+
+.lp-flow__step-note {
+    font-size: 0.8125rem;
+    color: var(--color-text-muted);
+}
+
+.lp-flow__arrow {
+    color: var(--color-primary-300);
+}
+
+.lp-flow__arrow .icon {
+    width: 1.5rem;
+    height: 1.5rem;
+}
+
+
+/* Final CTA */
+
+.lp-cta {
+    position: relative;
+    overflow: hidden;
+
+    background-size: cover;
+    background-position: center;
+}
+
+.lp-cta__overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+
+    background: linear-gradient(135deg, var(--color-primary-600), var(--color-primary-900) 60%, var(--color-blue-900));
+    background-size: 200% 200%;
+    opacity: 0.85;
+    animation: lp-gradient-shift 10s ease-in-out infinite;
+}
+
+.lp-cta__content {
+    position: relative;
+    z-index: 2;
+}
+
+.lp-cta__glow {
+    position: absolute;
+    z-index: 0;
+    border-radius: 999px;
+    filter: blur(60px);
+    opacity: 0.5;
+    animation: lp-cta-float 8s ease-in-out infinite;
+}
+
+.lp-cta__glow--1 {
+    top: -40px;
+    left: -40px;
+    width: 220px;
+    height: 220px;
+    background-color: var(--color-primary-300);
+}
+
+.lp-cta__glow--2 {
+    bottom: -60px;
+    right: -20px;
+    width: 260px;
+    height: 260px;
+    background-color: var(--color-blue-400);
+    animation-delay: 2s;
+}
+
+@keyframes lp-cta-float {
+    0%, 100% { transform: translateY(0) scale(1); }
+    50% { transform: translateY(-20px) scale(1.08); }
+}
+
+.lp-cta__pattern {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    opacity: 0.08;
+    background-image: radial-gradient(var(--color-white-100) 1px, transparent 1px);
+    background-size: 20px 20px;
+}
+
+.lp-cta__eyebrow {
+    background-color: var(--color-white-10);
+    border: 1px solid var(--color-white-20);
+    color: var(--color-white-100);
+    font-size: 0.8125rem;
+    font-weight: 600;
+}
+
+.lp-cta__eyebrow .icon {
+    width: 1rem;
+    height: 1rem;
+}
+
+.lp-cta h2 {
+    color: var(--color-white-100);
+}
+
+.lp-cta p {
+    max-width: 44ch;
+    margin-inline: auto;
+    color: var(--color-white-80);
+}
+
+.lp-cta .btn--filled.btn--primary {
+    background-color: var(--color-white-100);
+    color: var(--color-primary-700);
+    box-shadow: 0 8px 30px var(--color-black-20);
+    transition: background-color 0.15s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.lp-cta .btn--filled.btn--primary:hover {
+    background-color: var(--color-primary-50);
+    transform: translateY(-2px);
+    box-shadow: 0 12px 36px var(--color-black-30);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .lp-cta,
+    .lp-cta__overlay,
+    .lp-cta__glow {
+        animation: none !important;
+        transform: none !important;
+    }
+}
+
+
+/* Community posts preview */
+
+.lp-post-card {
+    background-color: var(--color-raised);
+    border: 1px solid var(--color-border);
+}
+
+.lp-post-card__image {
+    height: 160px;
+    background-size: cover;
+    background-position: center;
+}
+
+.lp-post-card__avatar {
+    background-color: var(--color-primary-100);
+    color: var(--color-primary-700);
+}
+
+.lp-post-card__avatar .icon {
+    width: 1rem;
+    height: 1rem;
+}
+
+.lp-post-card__author {
+    font-weight: 600;
+    font-size: 0.9375rem;
+}
+
+.lp-post-card__caption {
+    margin: 0;
+    font-size: 0.9375rem;
+    color: var(--color-text-muted);
+}
+
+.lp-post-card__likes {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--color-primary-700);
+}
+
+.lp-post-card__likes .icon {
+    width: 0.875rem;
+    height: 0.875rem;
+    color: var(--color-primary-500);
+}
+
+
+/* App rating (placeholder) */
+
+.lp-rating__stars .icon {
+    width: 1.5rem;
+    height: 1.5rem;
+    color: var(--color-primary-500);
+}
+
+.lp-rating__score {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 2rem;
+    color: var(--color-primary-700);
+}
+
+.lp-rating__score-of {
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 1.25rem;
+    color: var(--color-text-muted);
+}
+
+.lp-rating__note {
+    margin-top: 0.25rem;
+    font-size: 0.8125rem;
+    font-style: italic;
+    color: var(--color-text-muted);
+}
+
+.lp-cta .btn--filled.btn--primary:hover {
+    background-color: var(--color-primary-50);
+}
+
+.lp-gradient-text {
+    background: linear-gradient(90deg, var(--color-primary-700), var(--color-primary-500) 45%, var(--color-blue-600));
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+}
