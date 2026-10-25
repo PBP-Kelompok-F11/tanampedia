@@ -1,7 +1,15 @@
 {% with variant=variant|default:"filled" intent=intent|default:"primary" %}
+{% if href %}
+<a href="{{ href }}" class="btn btn--{{ variant }} btn--{{ intent }}{% if class_name %} {{ class_name }}{% endif %}"{% if disabled %} aria-disabled="true" tabindex="-1"{% endif %}>
+    {% if icon_left %}{% include icon_left %}{% endif %}
+    <span>{{ text }}</span>
+    {% if icon_right %}{% include icon_right %}{% endif %}
+</a>
+{% else %}
 <button type="{{ type|default:'button' }}"{% if disabled %} disabled{% endif %}{% if onclick %} onclick="{{ onclick }}"{% endif %} class="btn btn--{{ variant }} btn--{{ intent }}{% if class_name %} {{ class_name }}{% endif %}">
     {% if icon_left %}{% include icon_left %}{% endif %}
     <span>{{ text }}</span>
     {% if icon_right %}{% include icon_right %}{% endif %}
 </button>
+{% endif %}
 {% endwith %}
