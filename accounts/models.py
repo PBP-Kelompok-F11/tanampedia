@@ -21,6 +21,8 @@ class Profile(models.Model):
         on_delete=models.CASCADE,
         related_name='profile',
     )
+    display_name = models.CharField(max_length=100, blank=True)
+    profile_picture_url = models.URLField(blank=True)
     pedia_points = models.PositiveIntegerField(default=0)
     bio = models.TextField(blank=True)
 
@@ -33,3 +35,7 @@ class Profile(models.Model):
             if self.pedia_points >= lvl['threshold']:
                 return lvl
         return self.LEVELS[-1]
+
+    @property
+    def display_name_or_username(self):
+        return self.display_name or self.user.username
