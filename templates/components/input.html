@@ -1,5 +1,5 @@
 {% with input_type=type|default:"text" %}
-{% if label and id %}<label for="{{ id }}">{{ label }}</label>{% elif label %}<label>{{ label }}{% endif %}
+{% if label and id %}<label for="{{ id }}" class="input-label">{{ label }}</label>{% elif label %}<label class="input-label">{{ label }}{% endif %}
 <input type="{{ input_type }}" 
         placeholder="{{ placeholder|default:'' }}" 
         value="{{ value|default_if_none:'' }}"
