@@ -5,6 +5,9 @@ from .models import Profile
 
 @admin.register(Profile)
 class ProfileAdmin(admin.ModelAdmin):
-    list_display = ('user', 'experience_level', 'pedia_points')
-    list_filter = ('experience_level',)
+    list_display = ('user', 'level_title', 'pedia_points')
     search_fields = ('user__username', 'user__email')
+
+    @admin.display(description='Level')
+    def level_title(self, obj):
+        return obj.level['title']
