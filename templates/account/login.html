@@ -19,7 +19,7 @@
         <form method="post" action="{% url 'account_login' %}" class="flex flex-col gap-4 mb-4">
             {% csrf_token %}
 
-            {% include 'components/input.html' with label="Email" id="id_login" name="login" type="email" placeholder="nama@email.com" class_name="input" required=True autocomplete="email" %}
+            {% include 'components/input.html' with label="Email" id="id_login" name="login" type="email" placeholder="nama@email.com" class_name="input" required=True autocomplete="email" value=form.login.value %}
             {% if form.login.errors %}<p class="-mt-2 text-[0.8125rem] text-red-600">{{ form.login.errors.0 }}</p>{% endif %}
 
             {% include 'components/input.html' with label="Kata sandi" id="id_password" name="password" type="password" placeholder="Kata sandi" class_name="input" required=True autocomplete="current-password" %}

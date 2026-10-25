@@ -19,7 +19,10 @@
         <form method="post" action="{% url 'account_signup' %}" class="flex flex-col gap-4 mb-4">
             {% csrf_token %}
 
-            {% include 'components/input.html' with label="Email" id="id_email" name="email" type="email" placeholder="nama@email.com" class_name="input" required=True autocomplete="email" %}
+            {% include 'components/input.html' with label="Nama tampilan" id="id_display_name" name="display_name" type="text" placeholder="Nama yang mau ditampilkan" class_name="input" required=True autocomplete="nickname" value=form.display_name.value %}
+            {% if form.display_name.errors %}<p class="-mt-2 text-[0.8125rem] text-red-600">{{ form.display_name.errors.0 }}</p>{% endif %}
+
+            {% include 'components/input.html' with label="Email" id="id_email" name="email" type="email" placeholder="nama@email.com" class_name="input" required=True autocomplete="email" value=form.email.value %}
             {% if form.email.errors %}<p class="-mt-2 text-[0.8125rem] text-red-600">{{ form.email.errors.0 }}</p>{% endif %}
 
             {% include 'components/input.html' with label="Kata sandi" id="id_password1" name="password1" type="password" placeholder="Kata sandi" class_name="input" required=True autocomplete="new-password" %}
