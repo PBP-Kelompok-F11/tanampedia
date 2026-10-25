@@ -134,7 +134,6 @@
 <section class="lp-posts lp-container mt-16">
     <div class="lp-section-heading lp-reveal text-center max-w-[40ch] mx-auto mb-12">
         <h2>Cerita dari Komunitas</h2>
-        <p>Pratinjau tampilan &mdash; postingan sungguhan akan muncul di sini setelah modul Journal aktif.</p>
     </div>
 
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
@@ -146,7 +145,7 @@
                     <span class="lp-post-card__author">Ervhino A.</span>
                 </div>
                 <p class="lp-post-card__caption">Panen cabai pertama musim ini, seneng banget! 🌶️</p>
-                <span class="lp-post-card__likes inline-flex items-center gap-1 mt-3">{% include "icons/points-icon.svg" %} 24 suka</span>
+                <span class="lp-post-card__likes inline-flex items-center gap-1 mt-3">{% include "icons/points-icon.svg" %} 24 likes</span>
             </div>
         </div>
 
@@ -158,7 +157,7 @@
                     <span class="lp-post-card__author">Fairuz A.</span>
                 </div>
                 <p class="lp-post-card__caption">Akhirnya selada hidroponik saya siap panen minggu ini.</p>
-                <span class="lp-post-card__likes inline-flex items-center gap-1 mt-3">{% include "icons/points-icon.svg" %} 18 suka</span>
+                <span class="lp-post-card__likes inline-flex items-center gap-1 mt-3">{% include "icons/points-icon.svg" %} 18 likes</span>
             </div>
         </div>
 
@@ -170,7 +169,7 @@
                     <span class="lp-post-card__author">Naufal</span>
                 </div>
                 <p class="lp-post-card__caption">Tips dari forum beneran ngebantu, sawi saya auto subur!</p>
-                <span class="lp-post-card__likes inline-flex items-center gap-1 mt-3">{% include "icons/points-icon.svg" %} 31 suka</span>
+                <span class="lp-post-card__likes inline-flex items-center gap-1 mt-3">{% include "icons/points-icon.svg" %} 31 likes</span>
             </div>
         </div>
     </div>
@@ -192,7 +191,8 @@
         <p>Gabung dengan Tanampedia dan jadi bagian dari gaya hidup berkelanjutan, satu tanaman pada satu waktu.</p>
 
         <div class="mt-8">
-            {% include 'components/button.html' with text="Daftar Sekarang" variant="filled" intent="primary" icon_right="icons/arrow-right-icon.svg" %}
+            {% url 'account_signup' as signup_url %}
+            {% include 'components/button.html' with text="Daftar Sekarang" href=signup_url variant="filled" intent="primary" icon_right="icons/arrow-right-icon.svg" %}
         </div>
     </div>
 </section>

@@ -1,4 +1,5 @@
 django~=5.2
+django-allauth
 django-tailwind
 gunicorn
 psycopg2-binary
