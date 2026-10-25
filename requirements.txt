@@ -3,5 +3,6 @@ django-allauth
 django-tailwind
 gunicorn
 psycopg2-binary
+PyJWT[crypto]
 python-dotenv
 whitenoise

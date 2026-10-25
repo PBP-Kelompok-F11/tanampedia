@@ -35,7 +35,7 @@
         {% if google_oauth_enabled %}
         {% load socialaccount %}
         <div class="auth-divider flex items-center gap-3 my-6 text-[0.8125rem] text-[var(--color-text-muted)]"><span>atau</span></div>
-        <a href="{% provider_login_url 'google' %}" class="btn btn--outline btn--neutral w-full">
+        <a href="{% provider_login_url 'google' %}" class="btn btn--outline btn--neutral w-full mb-4">
             <span>Lanjutkan dengan Google</span>
         </a>
         {% endif %}
