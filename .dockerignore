@@ -1,0 +1,12 @@
+.venv/
+.git/
+.github/
+__pycache__/
+*.pyc
+db.sqlite3
+staticfiles/
+.env
+.env.prod
+.secret*
+*.md
+theme/static_src/node_modules/
