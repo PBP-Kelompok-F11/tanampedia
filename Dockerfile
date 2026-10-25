@@ -22,4 +22,9 @@ RUN python manage.py collectstatic --noinput
 
 EXPOSE 8000
 
-CMD ["sh", "-c", "python manage.py migrate --noinput && gunicorn tanampedia.wsgi:application --bind 0.0.0.0:${PORT:-8000}"]
+# Deliberately NOT running `migrate` here — it used to block this CMD before
+# gunicorn could open the port, which may be why PWS's health check marked
+# the container unhealthy (Bad Gateway) despite the app eventually booting
+# fine. Run migrations manually via the PWS Terminal tab after deploying:
+#   python manage.py migrate --noinput
+CMD ["sh", "-c", "gunicorn tanampedia.wsgi:application --bind 0.0.0.0:${PORT:-8000}"]
