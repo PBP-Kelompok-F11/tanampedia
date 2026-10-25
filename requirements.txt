@@ -5,4 +5,5 @@ gunicorn
 psycopg2-binary
 PyJWT[crypto]
 python-dotenv
+requests
 whitenoise
