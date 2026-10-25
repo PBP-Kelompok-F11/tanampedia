@@ -1,5 +1,7 @@
 from django.conf import settings
 from django.db import models
+from django.db.models import F
+from django.db.models.functions import Greatest
 
 
 class Profile(models.Model):
@@ -39,3 +41,21 @@ class Profile(models.Model):
     @property
     def display_name_or_username(self):
         return self.display_name or self.user.username
+
+    def add_points(self, amount):
+        """
+        Atomically add `amount` PediaPoints (use a negative amount to
+        deduct). Other apps should always go through this instead of
+        `profile.pedia_points += amount; profile.save()` — that read-modify-
+        write pattern loses updates when two requests award points to the
+        same user at the same time (e.g. two upvotes landing together).
+        This does the increment as a single database UPDATE instead, and
+        clamps the result at 0 so points can never go negative.
+
+        Usage from any app, e.g. after an upvote in the forum module:
+            answer.author.profile.add_points(10)
+        """
+        Profile.objects.filter(pk=self.pk).update(
+            pedia_points=Greatest(F('pedia_points') + amount, 0)
+        )
+        self.refresh_from_db(fields=['pedia_points'])
