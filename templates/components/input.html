@@ -1,7 +1,8 @@
 {% with input_type=type|default:"text" %}
+<div class="form-field">
 {% if label and id %}<label for="{{ id }}" class="input-label">{{ label }}</label>{% elif label %}<label class="input-label">{{ label }}{% endif %}
-<input type="{{ input_type }}" 
-        placeholder="{{ placeholder|default:'' }}" 
+<input type="{{ input_type }}"
+        placeholder="{{ placeholder|default:'' }}"
         value="{{ value|default_if_none:'' }}"
         {% if name %} name="{{ name }}" {% endif %}
         {% if id %} id="{{ id }}" {% endif %}
@@ -17,4 +18,5 @@
         {% if disabled %} disabled {% endif %}
         {% if readonly %} readonly {% endif %}>
 {% if label and not id %}</label>{% endif %}
+</div>
 {% endwith %}
