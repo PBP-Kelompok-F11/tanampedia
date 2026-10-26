@@ -205,6 +205,12 @@ STORAGES = {
     },
 }
 
+CSRF_TRUSTED_ORIGINS = [
+    'https://muhammad-fairus51-tanampedia.pws.cs.ui.ac.id/',
+    'https://mohammad-zidane51-tanampedia.pws.cs.ui.ac.id/',
+    'https://localhost:8000'
+]
+
 WHITENOISE_USE_FINDERS = True
 
 # Default primary key field type
