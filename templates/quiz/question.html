@@ -1,0 +1,59 @@
+{% if question %}
+<section data-quiz-card aria-labelledby="quiz-question" class="rounded-xl border border-grey-200 bg-raised p-5 sm:p-8">
+    <div class="mb-6 flex flex-wrap items-center justify-between gap-3 border-b border-grey-200 pb-5">
+        <span class="text-sm font-semibold text-primary-700">Tantangan Hari Ini</span>
+        <span class="inline-flex items-center gap-2 rounded-full bg-primary-50 px-3 py-2 text-sm text-primary-700">
+            {% include 'icons/points-icon.svg' %}
+            +{{ reward_points }} PediaPoints
+        </span>
+    </div>
+
+    <h2 id="quiz-question" class="whitespace-pre-line break-words text-xl sm:text-2xl">{{ question.prompt }}</h2>
+    <p id="quiz-answer-help" class="text-sm text-grey-500">Pilih satu jawaban yang menurutmu paling tepat.</p>
+
+    <div data-quiz-error hidden role="alert" tabindex="-1" class="mb-4 rounded-lg bg-red-50 p-4 text-sm text-red-700">
+        <p data-quiz-error-text class="!mb-2"></p>
+        <a href="{% url 'quiz:today' %}" class="font-semibold underline">Muat Ulang Kuis</a>
+    </div>
+    <p data-quiz-status role="status" class="!mb-0 text-sm text-grey-500"></p>
+    <form data-quiz-answer method="post" action="{% url 'quiz:answer' %}">
+    {% csrf_token %}
+    <input type="hidden" name="answer_token" value="{{ answer_token|default:'' }}">
+    <fieldset aria-describedby="quiz-answer-help" class="m-0 min-w-0 border-0 p-0">
+        <legend class="sr-only">Pilihan jawaban</legend>
+        <div class="mt-6 grid gap-3">
+            {% for option in question.options.all %}
+            <button type="submit" name="option" value="{{ option.pk }}"{% if not answer_token %} disabled{% endif %} class="flex w-full items-center gap-4 rounded-xl border p-4 text-left disabled:cursor-not-allowed focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 {% if result.selected_option_id == option.pk %}{% if result.is_correct %}border-primary-500 bg-primary-100 text-primary-700{% else %}border-red-500 bg-red-50 text-red-700{% endif %}{% else %}border-grey-200 bg-raised text-grey-700 hover:border-primary-500{% endif %}">
+                <span aria-hidden="true" class="grid size-9 shrink-0 place-items-center rounded-lg bg-grey-100 font-semibold text-grey-700">{{ option.get_position_display }}</span>
+                <span class="min-w-0 break-words">{{ option.text }}</span>
+                {% if result.selected_option_id == option.pk %}<span class="ml-auto text-sm font-semibold">{% if result.is_correct %}Benar{% else %}Salah{% endif %}</span>{% endif %}
+            </button>
+            {% endfor %}
+        </div>
+    </fieldset>
+    </form>
+
+    {% if result %}
+    <div data-quiz-result role="status" tabindex="-1" class="mt-4 rounded-lg p-4 {% if result.is_correct %}bg-primary-50 text-primary-700{% else %}bg-red-50 text-red-700{% endif %}">
+        <p class="!mb-2 font-semibold">{% if result.is_correct %}Jawaban benar! +{{ result.points_awarded }} PediaPoints.{% else %}Jawaban belum tepat. Tidak ada PediaPoints yang ditambahkan.{% endif %}</p>
+        <p class="!mb-0 whitespace-pre-line break-words">{{ question.explanation }}</p>
+    </div>
+    {% endif %}
+    {% if cooldown %}
+    <p class="!mb-0 !mt-3 rounded-lg bg-primary-50 p-4 text-sm text-primary-700">Reward PediaPoints hari ini sudah diterima. Kesempatan berikutnya dibuka pukul 00.00 WIB ({{ reset_date|date:'d M Y' }}).</p>
+    {% elif result %}
+    <div class="mt-4">{% url 'quiz:today' as retry_url %}{% include 'components/button.html' with href=retry_url text='Coba Lagi' %}</div>
+    {% elif not user.is_authenticated %}
+    <p class="!mb-0 !mt-3 text-sm text-grey-500">Masuk untuk menjawab kuis dan mendapatkan PediaPoints.</p>
+    {% url 'account_login' as login_url %}
+    <a href="{{ login_url }}?next={% url 'quiz:today' %}" class="btn btn--filled btn--primary">Masuk</a>
+    {% else %}
+    <p class="!mb-0 !mt-3 rounded-lg bg-primary-50 p-4 text-sm text-primary-700">Placeholder keterangan kuis.</p>
+    {% endif %}
+</section>
+{% else %}
+<section aria-labelledby="quiz-empty" class="rounded-xl border border-grey-200 bg-raised p-8 text-center sm:p-12">
+    <span class="mb-4 inline-flex rounded-full bg-primary-100 p-4 text-primary-600">{% include 'icons/quiz-icon.svg' %}</span>
+    <h2 id="quiz-empty" class="text-xl sm:text-2xl">Belum ada soal kuis yang ditambahkan.</h2>
+</section>
+{% endif %}

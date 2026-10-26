@@ -3,12 +3,16 @@ from functools import wraps
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.views import redirect_to_login
 from django.core.exceptions import PermissionDenied, ValidationError
 from django.core.paginator import Paginator
 from django.db import IntegrityError, OperationalError, connection, transaction
 from django.db.models import Count, Exists, OuterRef, Q
 from django.db.models.deletion import ProtectedError
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.template.loader import render_to_string
+from django.urls import reverse
 from django.views.decorators.cache import never_cache
 from django.views.decorators.http import require_GET, require_http_methods, require_POST
 
@@ -61,24 +65,53 @@ def today(request):
 
 
 @never_cache
-@login_required
 @require_POST
 def answer(request):
+    wants_json = request.headers.get('Accept', '').split(',')[0].strip() == 'application/json'
+    if not request.user.is_authenticated:
+        login_redirect = redirect_to_login(reverse('quiz:today'))
+        if wants_json:
+            return JsonResponse({
+                'error': 'Silakan masuk kembali untuk menjawab kuis.',
+                'login_url': login_redirect.url,
+            }, status=401)
+        return login_redirect
     try:
         attempt = process_answer(
             request.user, request.POST.get('answer_token'), request.POST.get('option'),
         )
     except ValidationError as error:
+        if wants_json:
+            return JsonResponse({'error': ' '.join(error.messages)}, status=400)
         messages.error(request, ' '.join(error.messages))
     except IntegrityError:
         if not daily_success(request.user, quiz_date()):
             raise
-        messages.info(request, 'Hadiah kuis hari ini sudah diterima.')
+        if wants_json:
+            return JsonResponse({
+                'error': 'Reward PediaPoints hari ini sudah diterima. Muat ulang halaman kuis.',
+            }, status=409)
+        messages.info(request, 'Reward PediaPoints hari ini sudah diterima.')
     except OperationalError as error:
         if connection.vendor != 'sqlite' or 'locked' not in str(error).lower():
             raise
+        if wants_json:
+            return JsonResponse({
+                'error': 'Jawaban sedang diproses. Silakan coba lagi atau muat ulang halaman kuis.',
+            }, status=503)
         messages.info(request, 'Jawaban sedang diproses. Silakan muat ulang halaman kuis.')
     else:
+        if wants_json:
+            day = quiz_date()
+            success = daily_success(request.user, day)
+            result = success or attempt
+            html = render_to_string('quiz/question.html', {
+                'question': result.selected_option.question, 'answer_token': None,
+                'result': result, 'cooldown': bool(success),
+                'reset_date': next_reset(day).date(),
+                'reward_points': settings.QUIZ_CORRECT_ANSWER_POINTS,
+            }, request=request)
+            return JsonResponse({'html': html})
         request.session['quiz_result_id'] = attempt.pk
     return redirect('quiz:today')
 
