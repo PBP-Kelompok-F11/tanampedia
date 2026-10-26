@@ -2,6 +2,7 @@ import hashlib
 import json
 import uuid
 from datetime import datetime, time, timedelta
+from types import SimpleNamespace
 from zoneinfo import ZoneInfo
 
 from django.conf import settings
@@ -12,7 +13,7 @@ from django.db import transaction
 from django.utils import timezone
 
 from accounts.models import Profile
-from .models import Question, QuizAttempt
+from .models import Question, QuizAttempt, question_snapshot
 
 
 QUIZ_TIMEZONE = ZoneInfo('Asia/Jakarta')
@@ -29,6 +30,17 @@ def next_reset(day):
 
 def daily_success(user, day):
     return QuizAttempt.objects.filter(user=user, quiz_date=day, is_correct=True).first()
+
+
+def result_question(attempt):
+    snapshot = attempt.question_snapshot
+    return SimpleNamespace(
+        pk=snapshot['question_id'], prompt=snapshot['prompt'], explanation=snapshot['explanation'],
+        options=[SimpleNamespace(
+            pk=option['id'], position=option['position'], text=option['text'],
+            get_position_display=chr(64 + option['position']),
+        ) for option in snapshot['options']],
+    )
 
 
 def question_version(question):
@@ -79,6 +91,7 @@ def process_answer(user, token, option_id):
     attempt = QuizAttempt.objects.create(
         user=user, selected_option=option, quiz_date=day,
         submission_id=submission_id, is_correct=option.is_correct, points_awarded=points,
+        question_snapshot=question_snapshot(question, option),
     )
     if option.is_correct:
         profile, _ = Profile.objects.get_or_create(user=user)

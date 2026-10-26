@@ -2,7 +2,7 @@ from django import forms
 from django.core.exceptions import ValidationError
 from django.db import transaction
 
-from .models import AnswerOption, Question, QuizAttempt
+from .models import AnswerOption, Question
 
 
 INPUT_CLASSES = (
@@ -10,13 +10,6 @@ INPUT_CLASSES = (
     'text-primary-900 placeholder:text-grey-500 hover:bg-primary-50 '
     'focus:bg-raised disabled:cursor-not-allowed disabled:bg-grey-100'
 )
-
-
-def question_has_history(question):
-    return bool(question.pk) and (
-        question.challenges.exists()
-        or QuizAttempt.objects.filter(selected_option__question=question).exists()
-    )
 
 
 class QuestionForm(forms.ModelForm):
@@ -52,7 +45,6 @@ class QuestionForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.is_locked = question_has_history(self.instance)
         if self.instance.pk:
             for option in self.instance.options.all():
                 self.initial[f'option_{option.position}'] = option.text
@@ -65,8 +57,6 @@ class QuestionForm(forms.ModelForm):
                 field.widget.attrs['class'] = INPUT_CLASSES
                 if isinstance(field.widget, forms.Textarea):
                     field.widget.attrs['class'] += ' resize-y'
-            if self.is_locked and name != 'is_active':
-                field.disabled = True
 
     def clean(self):
         cleaned = super().clean()
@@ -80,16 +70,10 @@ class QuestionForm(forms.ModelForm):
         if not commit:
             raise ValueError('QuestionForm harus disimpan bersama pilihan jawabannya.')
         if self.instance.pk:
-            current = Question.objects.select_for_update().get(pk=self.instance.pk)
-            if question_has_history(current):
-                if not self.is_locked:
-                    raise ValidationError('Soal baru saja digunakan. Muat ulang form untuk mengubah statusnya.')
-                current.is_active = self.cleaned_data['is_active']
-                current.save(update_fields=['is_active'])
-                self.instance = current
-                return current
+            current = Question.objects.select_for_update().filter(pk=self.instance.pk).first()
+            if current is None:
+                raise ValidationError('Soal sudah dihapus. Kembali ke daftar soal untuk melanjutkan.')
         question = super().save()
-        # Clear the previous key before setting the new one to respect the unique constraint.
         question.options.update(is_correct=False)
         for position in range(1, 5):
             AnswerOption.objects.update_or_create(

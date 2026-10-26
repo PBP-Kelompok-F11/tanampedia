@@ -7,8 +7,7 @@ from django.contrib.auth.views import redirect_to_login
 from django.core.exceptions import PermissionDenied, ValidationError
 from django.core.paginator import Paginator
 from django.db import IntegrityError, OperationalError, connection, transaction
-from django.db.models import Count, Exists, OuterRef, Q
-from django.db.models.deletion import ProtectedError
+from django.db.models import Count, Q
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import render_to_string
@@ -16,9 +15,9 @@ from django.urls import reverse
 from django.views.decorators.cache import never_cache
 from django.views.decorators.http import require_GET, require_http_methods, require_POST
 
-from .forms import QuestionForm, question_has_history
-from .models import DailyChallenge, Question, QuizAttempt
-from .services import answer_token, daily_success, next_reset, process_answer, quiz_date
+from .forms import QuestionForm
+from .models import Question, QuizAttempt
+from .services import answer_token, daily_success, next_reset, process_answer, quiz_date, result_question
 
 
 def superuser_required(view):
@@ -40,9 +39,9 @@ def today(request):
     if request.user.is_authenticated and result_id:
         result = QuizAttempt.objects.filter(
             pk=result_id, user=request.user, quiz_date=day,
-        ).select_related('selected_option__question').first()
+        ).first()
     result = success or result
-    question = result.selected_option.question if result else (
+    question = result_question(result) if result else (
         Question.objects.filter(is_active=True)
         .annotate(
             option_count=Count('options'),
@@ -59,6 +58,7 @@ def today(request):
     )
     return render(request, 'quiz/today.html', {
         'question': question, 'answer_token': token, 'result': result,
+        'question_options': question.options if result else question.options.all() if question else [],
         'cooldown': bool(success), 'reset_date': next_reset(day).date(),
         'reward_points': settings.QUIZ_CORRECT_ANSWER_POINTS,
     })
@@ -105,8 +105,9 @@ def answer(request):
             day = quiz_date()
             success = daily_success(request.user, day)
             result = success or attempt
+            question = result_question(result)
             html = render_to_string('quiz/question.html', {
-                'question': result.selected_option.question, 'answer_token': None,
+                'question': question, 'question_options': question.options, 'answer_token': None,
                 'result': result, 'cooldown': bool(success),
                 'reset_date': next_reset(day).date(),
                 'reward_points': settings.QUIZ_CORRECT_ANSWER_POINTS,
@@ -119,10 +120,7 @@ def answer(request):
 @superuser_required
 @require_GET
 def question_list(request):
-    questions = Question.objects.annotate(
-        has_schedule=Exists(DailyChallenge.objects.filter(question_id=OuterRef('pk'))),
-        has_answers=Exists(QuizAttempt.objects.filter(selected_option__question_id=OuterRef('pk'))),
-    ).prefetch_related('options').order_by('-created_at', '-pk')
+    questions = Question.objects.prefetch_related('options').order_by('-created_at', '-pk')
     page = Paginator(questions, 10).get_page(request.GET.get('page'))
     return render(request, 'quiz/question_list.html', {'page_obj': page})
 
@@ -162,17 +160,7 @@ def question_delete(request, pk):
     if request.method == 'POST':
         with transaction.atomic():
             question = get_object_or_404(Question.objects.select_for_update(), pk=pk)
-            if question_has_history(question):
-                messages.error(request, 'Soal yang sudah digunakan tidak dapat dihapus. Nonaktifkan soal melalui Edit.')
-            else:
-                try:
-                    with transaction.atomic():
-                        question.delete()
-                except ProtectedError:
-                    messages.error(request, 'Soal sudah digunakan dan tidak dapat dihapus.')
-                else:
-                    messages.success(request, 'Soal kuis berhasil dihapus.')
+            question.delete()
+            messages.success(request, 'Soal kuis berhasil dihapus.')
         return redirect('quiz:question_list')
-    return render(request, 'quiz/question_confirm_delete.html', {
-        'question': question, 'is_locked': question_has_history(question),
-    })
+    return render(request, 'quiz/question_confirm_delete.html', {'question': question})

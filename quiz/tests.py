@@ -141,17 +141,23 @@ class QuizModelTests(TestCase):
                 selected_option=self.options[1], is_correct=False, points_awarded=10,
             )
 
-    def test_attempt_preserves_challenge_and_selected_option(self):
+    def test_attempt_preserves_snapshot_when_question_is_deleted(self):
         attempt = QuizAttempt.objects.create(
             user=self.user, challenge=self.challenge,
             selected_option=self.options[0], is_correct=True, points_awarded=10,
         )
         attempt.full_clean()
         self.assertIsNotNone(attempt.answered_at)
-        for referenced in [self.question, self.challenge, self.options[0]]:
-            with self.subTest(model=type(referenced).__name__):
-                with self.assertRaises(ProtectedError):
-                    referenced.delete()
+        snapshot = attempt.question_snapshot
+        with self.assertRaises(ProtectedError):
+            self.challenge.delete()
+        self.question.delete()
+        attempt.refresh_from_db()
+        self.challenge.refresh_from_db()
+        self.assertIsNone(attempt.selected_option_id)
+        self.assertIsNone(self.challenge.question_id)
+        self.assertEqual(attempt.question_snapshot, snapshot)
+        attempt.full_clean()
 
 
 def question_data(**updates):
@@ -227,31 +233,36 @@ class QuestionFormTests(TestCase):
         self.assertEqual(form.initial['option_1'], 'Pilihan 1')
         self.assertEqual(form.initial['correct_position'], 1)
 
-    def test_locked_question_allows_only_status_change_even_with_tampered_post(self):
+    def test_used_question_allows_all_content_and_status_changes(self):
         question = create_bank_question()
-        original_prompt = question.prompt
-        original_explanation = question.explanation
-        original_choices = list(question.options.values_list('text', 'is_correct'))
         DailyChallenge.objects.create(date=date(2026, 1, 1), question=question)
         form = QuestionForm(data=question_data(is_active='', correct_position='4'), instance=question)
-        self.assertTrue(form.is_locked)
+        self.assertFalse(any(field.disabled for field in form.fields.values()))
         self.assertTrue(form.is_valid(), form.errors)
         form.save()
         question.refresh_from_db()
         self.assertFalse(question.is_active)
-        self.assertEqual(question.prompt, original_prompt)
-        self.assertEqual(question.explanation, original_explanation)
-        self.assertEqual(list(question.options.values_list('text', 'is_correct')), original_choices)
+        self.assertEqual(question.prompt, question_data()['prompt'])
+        self.assertEqual(question.explanation, question_data()['explanation'])
+        self.assertEqual(question.options.get(is_correct=True).position, 4)
 
-    def test_new_history_after_form_validation_blocks_content_changes(self):
+    def test_new_history_after_form_validation_still_allows_editing(self):
         question = create_bank_question()
         form = QuestionForm(data=question_data(), instance=question)
         self.assertTrue(form.is_valid(), form.errors)
         DailyChallenge.objects.create(date=date(2026, 1, 1), question=question)
-        with self.assertRaisesMessage(ValidationError, 'baru saja digunakan'):
-            form.save()
+        form.save()
         question.refresh_from_db()
-        self.assertEqual(question.prompt, 'Soal dari bank soal')
+        self.assertEqual(question.prompt, question_data()['prompt'])
+
+    def test_deleted_question_cannot_be_recreated_from_stale_form(self):
+        question = create_bank_question()
+        form = QuestionForm(data=question_data(), instance=question)
+        self.assertTrue(form.is_valid(), form.errors)
+        Question.objects.filter(pk=question.pk).delete()
+        with self.assertRaisesMessage(ValidationError, 'sudah dihapus'):
+            form.save()
+        self.assertFalse(Question.objects.exists())
 
     def test_failure_saving_options_rolls_back_entire_new_question(self):
         from unittest.mock import patch
@@ -356,14 +367,16 @@ class QuestionManagementTests(TestCase):
         self.assertFalse(Question.objects.exists())
         self.assertFalse(AnswerOption.objects.exists())
 
-    def test_cannot_delete_used_question_even_by_direct_post(self):
-        DailyChallenge.objects.create(date=date(2026, 1, 1), question=self.question)
+    def test_can_delete_scheduled_question_and_preserve_schedule(self):
+        challenge = DailyChallenge.objects.create(date=date(2026, 1, 1), question=self.question)
         self.client.force_login(self.admin)
         response = self.client.post(
             reverse('quiz:question_delete', args=[self.question.pk]), follow=True,
         )
-        self.assertContains(response, 'tidak dapat dihapus')
-        self.assertTrue(Question.objects.filter(pk=self.question.pk).exists())
+        self.assertContains(response, 'berhasil dihapus')
+        self.assertFalse(Question.objects.filter(pk=self.question.pk).exists())
+        challenge.refresh_from_db()
+        self.assertIsNone(challenge.question_id)
 
     def test_missing_questions_return_404(self):
         self.client.force_login(self.admin)

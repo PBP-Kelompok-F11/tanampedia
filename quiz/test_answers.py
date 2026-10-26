@@ -211,21 +211,23 @@ class QuizAnswerTests(TestCase):
         reset = next_reset(date(2026, 12, 31))
         self.assertEqual(reset.isoformat(), '2027-01-01T00:00:00+07:00')
 
-    def test_attempt_history_locks_question_and_cannot_be_deleted(self):
+    def test_attempt_history_survives_question_deletion(self):
         from .forms import QuestionForm
-        from django.db.models.deletion import ProtectedError
 
         self.submit(option=self.wrong)
-        self.assertTrue(QuestionForm(instance=self.question).is_locked)
-        with self.assertRaises(ProtectedError):
-            self.question.delete()
+        self.assertFalse(any(field.disabled for field in QuestionForm(instance=self.question).fields.values()))
+        self.question.delete()
+        attempt = QuizAttempt.objects.get()
+        self.assertIsNone(attempt.selected_option_id)
+        self.assertEqual(attempt.question_snapshot['selected_position'], 2)
+        self.assertEqual(self.points(), 0)
 
 
 class QuizRewardMigrationTests(TransactionTestCase):
     def test_existing_attempts_keep_their_challenge_date_and_reward(self):
         executor = MigrationExecutor(connection)
         old = [('quiz', '0001_initial')]
-        new = [('quiz', '0002_daily_answer_rewards')]
+        new = [('quiz', '0003_question_history_snapshots')]
         executor.migrate(old)
         try:
             apps = executor.loader.project_state(old).apps
@@ -248,3 +250,5 @@ class QuizRewardMigrationTests(TransactionTestCase):
         self.assertEqual(migrated.challenge_id, challenge.pk)
         self.assertEqual(migrated.points_awarded, 10)
         self.assertIsNone(migrated.submission_id)
+        self.assertEqual(migrated.question_snapshot['prompt'], 'Legacy')
+        self.assertEqual(migrated.question_snapshot['selected_position'], 1)

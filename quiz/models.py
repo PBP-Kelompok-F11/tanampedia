@@ -3,6 +3,21 @@ from django.core.exceptions import ValidationError
 from django.db import models
 
 
+def question_snapshot(question, selected_option):
+    options = list(question.options.all())
+    return {
+        'question_id': question.pk,
+        'prompt': question.prompt,
+        'explanation': question.explanation,
+        'options': [
+            {'id': option.pk, 'position': option.position, 'text': option.text}
+            for option in options
+        ],
+        'correct_position': next((option.position for option in options if option.is_correct), None),
+        'selected_position': selected_option.position,
+    }
+
+
 class Question(models.Model):
     prompt = models.TextField()
     explanation = models.TextField()
@@ -52,7 +67,9 @@ class AnswerOption(models.Model):
 
 class DailyChallenge(models.Model):
     date = models.DateField(unique=True)
-    question = models.ForeignKey(Question, on_delete=models.PROTECT, related_name='challenges')
+    question = models.ForeignKey(
+        Question, on_delete=models.SET_NULL, related_name='challenges', null=True, blank=True,
+    )
 
     class Meta:
         ordering = ['-date']
@@ -81,7 +98,10 @@ class QuizAttempt(models.Model):
     )
     quiz_date = models.DateField(null=True, blank=True)
     submission_id = models.UUIDField(unique=True, null=True, blank=True)
-    selected_option = models.ForeignKey(AnswerOption, on_delete=models.PROTECT, related_name='attempts')
+    selected_option = models.ForeignKey(
+        AnswerOption, on_delete=models.SET_NULL, related_name='attempts', null=True, blank=True,
+    )
+    question_snapshot = models.JSONField(default=dict, blank=True)
     is_correct = models.BooleanField()
     points_awarded = models.PositiveIntegerField(default=0)
     answered_at = models.DateTimeField(auto_now_add=True)
@@ -111,10 +131,23 @@ class QuizAttempt(models.Model):
     def save(self, *args, **kwargs):
         if self.quiz_date is None and self.challenge_id:
             self.quiz_date = self.challenge.date
+        if not self.question_snapshot and self.selected_option_id:
+            self.question_snapshot = question_snapshot(self.selected_option.question, self.selected_option)
+            if kwargs.get('update_fields') is not None:
+                kwargs['update_fields'] = set(kwargs['update_fields']) | {'question_snapshot'}
         super().save(*args, **kwargs)
+
+    @property
+    def selected_position(self):
+        return self.question_snapshot.get('selected_position')
 
     def clean(self):
         super().clean()
+        if self.question_snapshot:
+            expected_correct = self.selected_position == self.question_snapshot.get('correct_position')
+            if self.is_correct != expected_correct:
+                raise ValidationError({'is_correct': 'Hasil harus sesuai dengan pilihan jawaban.'})
+            return
         if not self.selected_option_id:
             return
         if self.challenge_id and self.selected_option.question_id != self.challenge.question_id:

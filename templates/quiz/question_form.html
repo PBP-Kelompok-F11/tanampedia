@@ -8,9 +8,6 @@
 </header>
 <form method="post" class="rounded-xl border border-grey-200 bg-raised p-5 sm:p-8">
     {% csrf_token %}
-    {% if form.is_locked %}
-    <p class="!mb-6 rounded-lg bg-primary-50 p-4 text-sm text-primary-900">Soal sudah digunakan. Isi soal dikunci untuk menjaga riwayat; kamu dapat mengubah status aktifnya.</p>
-    {% endif %}
     {% if form.non_field_errors %}
     <ul role="alert" class="mb-6 list-none rounded-lg bg-red-50 p-4 text-red-900">
         {% for error in form.non_field_errors %}<li>{{ error }}</li>{% endfor %}
@@ -35,6 +32,10 @@
     </div>
     <div class="mt-8 flex flex-wrap items-center gap-4">
         {% include 'components/button.html' with type='submit' text='Simpan Soal' %}
+        {% if editing %}
+        {% url 'quiz:question_delete' form.instance.pk as delete_url %}
+        {% include 'components/button.html' with href=delete_url text='Hapus Soal' intent='danger' %}
+        {% endif %}
         <a href="{% url 'quiz:question_list' %}" class="font-semibold">Batal</a>
     </div>
 </form>

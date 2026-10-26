@@ -23,8 +23,8 @@
             <p class="!mb-0 whitespace-pre-line break-words text-sm text-grey-600">{{ question.explanation }}</p>
         </details>
         <div class="mt-6 flex flex-wrap items-center gap-4">
-            <a href="{% url 'quiz:question_update' question.pk %}" class="font-semibold">{% if question.has_schedule or question.has_answers %}Ubah Status{% else %}Edit{% endif %}</a>
-            {% if not question.has_schedule and not question.has_answers %}<a href="{% url 'quiz:question_delete' question.pk %}" class="font-semibold !text-red-700">Hapus</a>{% endif %}
+            <a href="{% url 'quiz:question_update' question.pk %}" class="font-semibold">Edit</a>
+            <a href="{% url 'quiz:question_delete' question.pk %}" class="font-semibold !text-red-700">Hapus</a>
         </div>
     </article>
     {% empty %}
