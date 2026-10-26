@@ -1,18 +1,20 @@
 from functools import wraps
 
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied, ValidationError
 from django.core.paginator import Paginator
-from django.db import transaction
+from django.db import IntegrityError, OperationalError, connection, transaction
 from django.db.models import Count, Exists, OuterRef, Q
 from django.db.models.deletion import ProtectedError
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.cache import never_cache
-from django.views.decorators.http import require_GET, require_http_methods
+from django.views.decorators.http import require_GET, require_http_methods, require_POST
 
 from .forms import QuestionForm, question_has_history
 from .models import DailyChallenge, Question, QuizAttempt
+from .services import answer_token, daily_success, next_reset, process_answer, quiz_date
 
 
 def superuser_required(view):
@@ -27,7 +29,16 @@ def superuser_required(view):
 @never_cache
 @require_GET
 def today(request):
-    question = (
+    day = quiz_date()
+    success = daily_success(request.user, day) if request.user.is_authenticated else None
+    result = None
+    result_id = request.session.pop('quiz_result_id', None)
+    if request.user.is_authenticated and result_id:
+        result = QuizAttempt.objects.filter(
+            pk=result_id, user=request.user, quiz_date=day,
+        ).select_related('selected_option__question').first()
+    result = success or result
+    question = result.selected_option.question if result else (
         Question.objects.filter(is_active=True)
         .annotate(
             option_count=Count('options'),
@@ -38,7 +49,38 @@ def today(request):
         .prefetch_related('options')
         .first()
     )
-    return render(request, 'quiz/today.html', {'question': question})
+    token = (
+        answer_token(question, request.user, day)
+        if question and request.user.is_authenticated and not result else None
+    )
+    return render(request, 'quiz/today.html', {
+        'question': question, 'answer_token': token, 'result': result,
+        'cooldown': bool(success), 'reset_date': next_reset(day).date(),
+        'reward_points': settings.QUIZ_CORRECT_ANSWER_POINTS,
+    })
+
+
+@never_cache
+@login_required
+@require_POST
+def answer(request):
+    try:
+        attempt = process_answer(
+            request.user, request.POST.get('answer_token'), request.POST.get('option'),
+        )
+    except ValidationError as error:
+        messages.error(request, ' '.join(error.messages))
+    except IntegrityError:
+        if not daily_success(request.user, quiz_date()):
+            raise
+        messages.info(request, 'Hadiah kuis hari ini sudah diterima.')
+    except OperationalError as error:
+        if connection.vendor != 'sqlite' or 'locked' not in str(error).lower():
+            raise
+        messages.info(request, 'Jawaban sedang diproses. Silakan muat ulang halaman kuis.')
+    else:
+        request.session['quiz_result_id'] = attempt.pk
+    return redirect('quiz:today')
 
 
 @superuser_required

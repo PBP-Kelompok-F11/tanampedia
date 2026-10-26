@@ -76,7 +76,11 @@ class QuizAttempt(models.Model):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='quiz_attempts',
     )
-    challenge = models.ForeignKey(DailyChallenge, on_delete=models.PROTECT, related_name='attempts')
+    challenge = models.ForeignKey(
+        DailyChallenge, on_delete=models.PROTECT, related_name='attempts', null=True, blank=True,
+    )
+    quiz_date = models.DateField(null=True, blank=True)
+    submission_id = models.UUIDField(unique=True, null=True, blank=True)
     selected_option = models.ForeignKey(AnswerOption, on_delete=models.PROTECT, related_name='attempts')
     is_correct = models.BooleanField()
     points_awarded = models.PositiveIntegerField(default=0)
@@ -84,6 +88,14 @@ class QuizAttempt(models.Model):
 
     class Meta:
         constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'quiz_date'], condition=models.Q(is_correct=True),
+                name='quiz_one_success_per_user_day',
+            ),
+            models.CheckConstraint(
+                condition=models.Q(challenge__isnull=False) | models.Q(quiz_date__isnull=False),
+                name='quiz_attempt_has_day',
+            ),
             models.UniqueConstraint(
                 fields=['user', 'challenge'], name='quiz_unique_user_challenge',
             ),
@@ -96,11 +108,16 @@ class QuizAttempt(models.Model):
     def __str__(self):
         return f'{self.user_id} / {self.challenge_id}'
 
+    def save(self, *args, **kwargs):
+        if self.quiz_date is None and self.challenge_id:
+            self.quiz_date = self.challenge.date
+        super().save(*args, **kwargs)
+
     def clean(self):
         super().clean()
-        if not self.selected_option_id or not self.challenge_id:
+        if not self.selected_option_id:
             return
-        if self.selected_option.question_id != self.challenge.question_id:
+        if self.challenge_id and self.selected_option.question_id != self.challenge.question_id:
             raise ValidationError({'selected_option': 'Pilihan bukan milik soal challenge ini.'})
         if self.is_correct != self.selected_option.is_correct:
             raise ValidationError({'is_correct': 'Hasil harus sesuai dengan pilihan jawaban.'})

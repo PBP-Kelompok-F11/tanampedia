@@ -185,6 +185,9 @@ LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'
 
+# Initial reward; the assignment does not mandate a particular number of points.
+QUIZ_CORRECT_ANSWER_POINTS = 10
+
 USE_I18N = True
 
 USE_TZ = True
