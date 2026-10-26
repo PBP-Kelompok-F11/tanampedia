@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     'theme',
     'main',
     'accounts',
+    'quiz',
 ]
 
 TAILWIND_APP_NAME = 'theme'
@@ -161,6 +162,9 @@ AUTH_PASSWORD_VALIDATORS = [
 LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'
+
+# Initial reward; the assignment does not mandate a particular number of points.
+QUIZ_CORRECT_ANSWER_POINTS = 10
 
 USE_I18N = True
 

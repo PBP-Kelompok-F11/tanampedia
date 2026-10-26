@@ -1,0 +1,29 @@
+{% extends 'quiz/base.html' %}
+{% load static %}
+
+{% block quiz_content %}
+<header class="mb-8 flex flex-col items-center text-center sm:mb-10">
+    <span class="mb-4 inline-flex items-center gap-2 rounded-full bg-primary-100 px-4 py-2 text-sm font-semibold text-primary-700">
+        {% include 'icons/quiz-icon.svg' %}
+        Kuis Harian
+    </span>
+    <h1 class="text-3xl sm:text-4xl">Uji Pengetahuan Berkebunmu!</h1>
+    <p class="mx-auto mb-0 w-full max-w-xl !text-center text-grey-500">Jawab kuis seputar tanaman dan berkebun untuk mendapatkan PediaPoints setiap hari.</p>
+</header>
+
+{% if user.is_superuser %}
+<nav aria-label="Pengelolaan soal" class="mb-6 flex flex-wrap justify-center gap-3">
+    {% url 'quiz:question_create' as create_url %}
+    {% include 'components/button.html' with href=create_url text='Tambah Soal Kuis' %}
+    {% url 'quiz:question_list' as list_url %}
+    {% include 'components/button.html' with href=list_url text='Kelola Soal' variant='outline' %}
+</nav>
+{% endif %}
+
+{% include 'quiz/question.html' %}
+{% endblock %}
+
+{% block extra_js %}
+{{ block.super }}
+<script src="{% static 'js/quiz/answer_feedback.js' %}" defer></script>
+{% endblock %}
