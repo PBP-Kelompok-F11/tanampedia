@@ -1,14 +1,14 @@
 {% extends 'quiz/base.html' %}
 
 {% block quiz_content %}
-<header class="mb-8 text-center sm:mb-10">
+<header class="mb-8 flex flex-col items-center text-center sm:mb-10">
     <span class="mb-4 inline-flex items-center gap-2 rounded-full bg-primary-100 px-4 py-2 text-sm font-semibold text-primary-700">
         {% include 'icons/quiz-icon.svg' %}
         Kuis Harian
     </span>
     {# Placeholder copy: replace these texts when the final wording is ready. #}
     <h1 class="text-3xl sm:text-4xl">Placeholder judul kuis</h1>
-    <p class="mx-auto mb-0 max-w-xl text-grey-500">Placeholder deskripsi singkat halaman kuis.</p>
+    <p class="mx-auto mb-0 w-full max-w-xl !text-center text-grey-500">Placeholder deskripsi singkat halaman kuis.</p>
 </header>
 
 <section aria-labelledby="quiz-question" class="rounded-xl border border-grey-200 bg-raised p-5 sm:p-8">
@@ -35,6 +35,6 @@
         </div>
     </fieldset>
 
-    <p class="mb-0 mt-6 rounded-lg bg-primary-50 p-4 text-sm text-primary-700">Placeholder keterangan kuis.</p>
+    <p class="!mb-0 !mt-3 rounded-lg bg-primary-50 p-4 text-sm text-primary-700">Placeholder keterangan kuis.</p>
 </section>
 {% endblock %}
