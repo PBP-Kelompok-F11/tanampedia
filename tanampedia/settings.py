@@ -206,8 +206,9 @@ STORAGES = {
 }
 
 CSRF_TRUSTED_ORIGINS = [
-    'https://muhammad-fairus51-tanampedia.pws.cs.ui.ac.id/',
-    'https://mohammad-zidane51-tanampedia.pws.cs.ui.ac.id/',
+    'https://muhammad-fairus51-tanampedia.pws.cs.ui.ac.id',
+    'https://mohammad-zidane51-tanampedia.pws.cs.ui.ac.id',
+    'https://*.pws.cs.ui.ac.id',
     'https://localhost:8000'
 ]
 
