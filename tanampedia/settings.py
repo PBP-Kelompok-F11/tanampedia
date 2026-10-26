@@ -98,6 +98,11 @@ LOGOUT_REDIRECT_URL = 'main:home'
 GOOGLE_CLIENT_ID = os.getenv('GOOGLE_CLIENT_ID', '')
 GOOGLE_CLIENT_SECRET = os.getenv('GOOGLE_CLIENT_SECRET', '')
 
+# Katalog Tanaman module — Trefle API (https://trefle.io). Optional: if
+# unset, the catalog page still renders with an honest "not configured"
+# message instead of fabricating data. Never log or render this value.
+TREFLE_API_TOKEN = os.getenv('TREFLE_API_TOKEN', '')
+
 SOCIALACCOUNT_LOGIN_ON_GET = True
 
 SOCIALACCOUNT_EMAIL_AUTHENTICATION = True
