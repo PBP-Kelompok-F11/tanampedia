@@ -5,7 +5,10 @@ from django.core.exceptions import ValidationError
 from django.db import IntegrityError, transaction
 from django.db.models.deletion import ProtectedError
 from django.test import TestCase
+from django.test import Client
+from django.urls import reverse
 
+from .forms import QuestionForm
 from .models import AnswerOption, DailyChallenge, Question, QuizAttempt
 
 
@@ -149,3 +152,282 @@ class QuizModelTests(TestCase):
             with self.subTest(model=type(referenced).__name__):
                 with self.assertRaises(ProtectedError):
                     referenced.delete()
+
+
+def question_data(**updates):
+    data = {
+        'prompt': 'Apa yang dibutuhkan tanaman?',
+        'explanation': 'Penjelasan rahasia untuk setelah menjawab.',
+        'option_1': 'Cahaya yang sesuai',
+        'option_2': 'Air tanpa batas',
+        'option_3': 'Tanah selalu kering',
+        'option_4': 'Tidak perlu perawatan',
+        'correct_position': '1',
+        'is_active': 'on',
+    }
+    data.update(updates)
+    return data
+
+
+def create_bank_question(prompt='Soal dari bank soal', active=True):
+    question = Question.objects.create(
+        prompt=prompt, explanation='Penjelasan rahasia bank soal.', is_active=active,
+    )
+    for position in range(1, 5):
+        AnswerOption.objects.create(
+            question=question, position=position,
+            text=f'Pilihan {position}', is_correct=position == 1,
+        )
+    return question
+
+
+class QuestionFormTests(TestCase):
+    def test_saves_four_options_and_exactly_one_correct_answer(self):
+        form = QuestionForm(data=question_data(correct_position='3'))
+        self.assertTrue(form.is_valid(), form.errors)
+        question = form.save()
+        question.validate_options()
+        self.assertEqual(question.options.get(is_correct=True).position, 3)
+        self.assertEqual(question.options.count(), 4)
+
+    def test_required_fields_and_invalid_answer_key(self):
+        for field in ['prompt', 'explanation', 'option_1', 'option_2', 'option_3', 'option_4', 'correct_position']:
+            with self.subTest(field=field):
+                form = QuestionForm(data=question_data(**{field: '   '}))
+                self.assertFalse(form.is_valid())
+                self.assertIn(field, form.errors)
+        for invalid in ['0', '5', 'A']:
+            with self.subTest(key=invalid):
+                form = QuestionForm(data=question_data(correct_position=invalid))
+                self.assertFalse(form.is_valid())
+                self.assertIn('correct_position', form.errors)
+
+    def test_duplicate_choices_ignore_case_and_surrounding_spaces(self):
+        form = QuestionForm(data=question_data(option_2='  CAHAYA YANG SESUAI  '))
+        self.assertFalse(form.is_valid())
+        self.assertIn('Keempat pilihan jawaban harus berbeda.', form.non_field_errors())
+
+    def test_rejects_choice_longer_than_500_characters(self):
+        form = QuestionForm(data=question_data(option_1='x' * 501))
+        self.assertFalse(form.is_valid())
+        self.assertIn('option_1', form.errors)
+
+    def test_edit_moves_answer_key_without_replacing_option_ids(self):
+        question = create_bank_question()
+        original_ids = list(question.options.values_list('id', flat=True))
+        form = QuestionForm(data=question_data(correct_position='4'), instance=question)
+        self.assertTrue(form.is_valid(), form.errors)
+        form.save()
+        self.assertEqual(list(question.options.values_list('id', flat=True)), original_ids)
+        self.assertEqual(question.options.get(is_correct=True).position, 4)
+
+    def test_prefills_options_and_key(self):
+        question = create_bank_question()
+        form = QuestionForm(instance=question)
+        self.assertEqual(form.initial['option_1'], 'Pilihan 1')
+        self.assertEqual(form.initial['correct_position'], 1)
+
+    def test_locked_question_allows_only_status_change_even_with_tampered_post(self):
+        question = create_bank_question()
+        original_prompt = question.prompt
+        original_explanation = question.explanation
+        original_choices = list(question.options.values_list('text', 'is_correct'))
+        DailyChallenge.objects.create(date=date(2026, 1, 1), question=question)
+        form = QuestionForm(data=question_data(is_active='', correct_position='4'), instance=question)
+        self.assertTrue(form.is_locked)
+        self.assertTrue(form.is_valid(), form.errors)
+        form.save()
+        question.refresh_from_db()
+        self.assertFalse(question.is_active)
+        self.assertEqual(question.prompt, original_prompt)
+        self.assertEqual(question.explanation, original_explanation)
+        self.assertEqual(list(question.options.values_list('text', 'is_correct')), original_choices)
+
+    def test_new_history_after_form_validation_blocks_content_changes(self):
+        question = create_bank_question()
+        form = QuestionForm(data=question_data(), instance=question)
+        self.assertTrue(form.is_valid(), form.errors)
+        DailyChallenge.objects.create(date=date(2026, 1, 1), question=question)
+        with self.assertRaisesMessage(ValidationError, 'baru saja digunakan'):
+            form.save()
+        question.refresh_from_db()
+        self.assertEqual(question.prompt, 'Soal dari bank soal')
+
+    def test_failure_saving_options_rolls_back_entire_new_question(self):
+        from unittest.mock import patch
+
+        form = QuestionForm(data=question_data())
+        self.assertTrue(form.is_valid())
+        with patch('quiz.forms.AnswerOption.objects.update_or_create', side_effect=IntegrityError):
+            with self.assertRaises(IntegrityError):
+                form.save()
+        self.assertFalse(Question.objects.exists())
+        self.assertFalse(AnswerOption.objects.exists())
+
+
+class QuestionManagementTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.admin = get_user_model().objects.create_superuser(
+            username='quiz-admin', email='quiz-admin@example.com', password='test-password',
+        )
+        cls.user = get_user_model().objects.create_user(username='quiz-viewer')
+        cls.staff = get_user_model().objects.create_user(username='quiz-staff', is_staff=True)
+        cls.question = create_bank_question()
+
+    def management_urls(self):
+        return [
+            reverse('quiz:question_list'), reverse('quiz:question_create'),
+            reverse('quiz:question_update', args=[self.question.pk]),
+            reverse('quiz:question_delete', args=[self.question.pk]),
+        ]
+
+    def test_anonymous_is_redirected_to_login_on_every_management_endpoint(self):
+        for url in self.management_urls():
+            for method in ['get', 'post']:
+                with self.subTest(url=url, method=method):
+                    response = getattr(self.client, method)(url)
+                    self.assertEqual(response.status_code, 302)
+                    self.assertTrue(response.url.startswith(reverse('account_login') + '?next='))
+        self.assertEqual(Question.objects.count(), 1)
+
+    def test_regular_users_and_staff_are_denied_on_every_management_endpoint(self):
+        for user in [self.user, self.staff]:
+            self.client.force_login(user)
+            for url in self.management_urls():
+                for method in ['get', 'post']:
+                    with self.subTest(user=user.username, url=url, method=method):
+                        self.assertEqual(getattr(self.client, method)(url).status_code, 403)
+        self.assertEqual(Question.objects.count(), 1)
+
+    def test_only_superusers_see_management_links(self):
+        url = reverse('quiz:today')
+        self.assertNotContains(self.client.get(url), 'Tambah Soal Kuis')
+        self.client.force_login(self.user)
+        self.assertNotContains(self.client.get(url), 'Tambah Soal Kuis')
+        self.client.force_login(self.admin)
+        response = self.client.get(url)
+        self.assertContains(response, 'Tambah Soal Kuis')
+        self.assertContains(response, reverse('quiz:question_list'))
+
+    def test_superuser_can_render_all_management_pages(self):
+        self.client.force_login(self.admin)
+        for url in self.management_urls():
+            with self.subTest(url=url):
+                self.assertEqual(self.client.get(url).status_code, 200)
+
+    def test_create_sets_author_from_session_and_saves_options(self):
+        self.client.force_login(self.admin)
+        response = self.client.post(
+            reverse('quiz:question_create'), question_data(created_by=str(self.user.pk)),
+        )
+        self.assertRedirects(response, reverse('quiz:question_list'))
+        question = Question.objects.exclude(pk=self.question.pk).get()
+        self.assertEqual(question.created_by, self.admin)
+        question.validate_options()
+
+    def test_invalid_form_keeps_values_and_creates_nothing(self):
+        self.client.force_login(self.admin)
+        response = self.client.post(reverse('quiz:question_create'), question_data(option_2=''))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Cahaya yang sesuai')
+        self.assertIn('option_2', response.context['form'].errors)
+        self.assertEqual(Question.objects.count(), 1)
+        self.assertEqual(AnswerOption.objects.count(), 4)
+
+    def test_edit_updates_question_and_answer_key(self):
+        self.client.force_login(self.admin)
+        response = self.client.post(
+            reverse('quiz:question_update', args=[self.question.pk]),
+            question_data(correct_position='2'),
+        )
+        self.assertRedirects(response, reverse('quiz:question_list'))
+        self.question.refresh_from_db()
+        self.assertEqual(self.question.prompt, question_data()['prompt'])
+        self.assertEqual(self.question.options.get(is_correct=True).position, 2)
+
+    def test_delete_get_is_confirmation_only_and_post_removes_options(self):
+        self.client.force_login(self.admin)
+        url = reverse('quiz:question_delete', args=[self.question.pk])
+        self.assertEqual(self.client.get(url).status_code, 200)
+        self.assertTrue(Question.objects.filter(pk=self.question.pk).exists())
+        response = self.client.post(url)
+        self.assertRedirects(response, reverse('quiz:question_list'))
+        self.assertFalse(Question.objects.exists())
+        self.assertFalse(AnswerOption.objects.exists())
+
+    def test_cannot_delete_used_question_even_by_direct_post(self):
+        DailyChallenge.objects.create(date=date(2026, 1, 1), question=self.question)
+        self.client.force_login(self.admin)
+        response = self.client.post(
+            reverse('quiz:question_delete', args=[self.question.pk]), follow=True,
+        )
+        self.assertContains(response, 'tidak dapat dihapus')
+        self.assertTrue(Question.objects.filter(pk=self.question.pk).exists())
+
+    def test_missing_questions_return_404(self):
+        self.client.force_login(self.admin)
+        for name in ['quiz:question_update', 'quiz:question_delete']:
+            self.assertEqual(self.client.get(reverse(name, args=[999999])).status_code, 404)
+
+    def test_post_requires_csrf_token(self):
+        csrf_client = Client(enforce_csrf_checks=True)
+        csrf_client.force_login(self.admin)
+        self.assertEqual(csrf_client.post(reverse('quiz:question_create'), question_data()).status_code, 403)
+        csrf_client.get(reverse('quiz:question_create'))
+        data = question_data(csrfmiddlewaretoken=csrf_client.cookies['csrftoken'].value)
+        self.assertEqual(csrf_client.post(reverse('quiz:question_create'), data).status_code, 302)
+
+    def test_management_pages_escape_user_text(self):
+        self.question.prompt = '<script>alert("question")</script>'
+        self.question.save(update_fields=['prompt'])
+        self.client.force_login(self.admin)
+        response = self.client.get(reverse('quiz:question_list'))
+        self.assertContains(response, '&lt;script&gt;')
+        self.assertNotContains(response, self.question.prompt)
+
+
+class RandomQuizPageTests(TestCase):
+    def test_empty_bank_shows_empty_state(self):
+        response = self.client.get(reverse('quiz:today'))
+        self.assertContains(response, 'Belum ada soal kuis yang ditambahkan.')
+        self.assertIsNone(response.context['question'])
+
+    def test_inactive_incomplete_and_keyless_questions_are_not_selected(self):
+        create_bank_question(active=False)
+        incomplete = create_bank_question()
+        incomplete.options.last().delete()
+        keyless = create_bank_question()
+        keyless.options.update(is_correct=False)
+        response = self.client.get(reverse('quiz:today'))
+        self.assertIsNone(response.context['question'])
+
+    def test_one_question_can_reappear_on_refresh(self):
+        question = create_bank_question()
+        for _ in range(3):
+            response = self.client.get(reverse('quiz:today'))
+            self.assertEqual(response.context['question'].pk, question.pk)
+            self.assertContains(response, question.prompt)
+        self.assertEqual(dict(self.client.session), {})
+
+    def test_selected_question_is_from_valid_active_bank(self):
+        choices = [create_bank_question(prompt=f'Valid {index}') for index in range(3)]
+        create_bank_question(active=False)
+        for _ in range(5):
+            response = self.client.get(reverse('quiz:today'))
+            self.assertIn(response.context['question'].pk, [question.pk for question in choices])
+
+    def test_page_does_not_leak_explanation_or_key(self):
+        question = create_bank_question()
+        response = self.client.get(reverse('quiz:today'))
+        self.assertNotContains(response, question.explanation)
+        self.assertNotContains(response, 'Jawaban benar')
+        self.assertContains(response, ' disabled class=', count=4)
+        self.assertEqual(QuizAttempt.objects.count(), 0)
+
+    def test_random_page_is_not_cached_and_escapes_question_content(self):
+        question = create_bank_question(prompt='<script>alert("question")</script>')
+        response = self.client.get(reverse('quiz:today'))
+        self.assertIn('no-store', response['Cache-Control'])
+        self.assertContains(response, '&lt;script&gt;')
+        self.assertNotContains(response, question.prompt)

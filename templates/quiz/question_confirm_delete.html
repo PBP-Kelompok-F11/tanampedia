@@ -1,0 +1,21 @@
+{% extends 'quiz/base.html' %}
+
+{% block title %}Hapus Soal Kuis | Tanampedia{% endblock %}
+
+{% block quiz_content %}
+<section class="rounded-xl border border-grey-200 bg-raised p-5 sm:p-8">
+    <h1 class="text-3xl">Hapus Soal Kuis?</h1>
+    <p class="whitespace-pre-line break-words">{{ question.prompt }}</p>
+    {% if is_locked %}
+    <p class="!mb-6 rounded-lg bg-red-50 p-4 text-red-900">Soal sudah digunakan dan tidak dapat dihapus. Nonaktifkan melalui halaman edit.</p>
+    <a href="{% url 'quiz:question_update' question.pk %}" class="font-semibold">Ubah Status</a>
+    {% else %}
+    <p class="text-grey-500">Pertanyaan, empat pilihan, dan penjelasannya akan dihapus.</p>
+    <form method="post" class="mt-6">
+        {% csrf_token %}
+        {% include 'components/button.html' with type='submit' text='Hapus Soal' intent='danger' %}
+    </form>
+    {% endif %}
+    <a href="{% url 'quiz:question_list' %}" class="mt-6 inline-block font-semibold">Kembali ke Daftar Soal</a>
+</section>
+{% endblock %}

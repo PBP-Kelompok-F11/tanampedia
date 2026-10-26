@@ -11,6 +11,16 @@
     <p class="mx-auto mb-0 w-full max-w-xl !text-center text-grey-500">Placeholder deskripsi singkat halaman kuis.</p>
 </header>
 
+{% if user.is_superuser %}
+<nav aria-label="Pengelolaan soal" class="mb-6 flex flex-wrap justify-center gap-3">
+    {% url 'quiz:question_create' as create_url %}
+    {% include 'components/button.html' with href=create_url text='Tambah Soal Kuis' %}
+    {% url 'quiz:question_list' as list_url %}
+    {% include 'components/button.html' with href=list_url text='Kelola Soal' variant='outline' %}
+</nav>
+{% endif %}
+
+{% if question %}
 <section aria-labelledby="quiz-question" class="rounded-xl border border-grey-200 bg-raised p-5 sm:p-8">
     <div class="mb-6 flex flex-wrap items-center justify-between gap-3 border-b border-grey-200 pb-5">
         <span class="text-sm font-semibold text-primary-700">Placeholder label challenge</span>
@@ -20,16 +30,16 @@
         </span>
     </div>
 
-    <h2 id="quiz-question" class="text-xl sm:text-2xl">Placeholder pertanyaan kuis</h2>
+    <h2 id="quiz-question" class="whitespace-pre-line break-words text-xl sm:text-2xl">{{ question.prompt }}</h2>
     <p id="quiz-answer-help" class="text-sm text-grey-500">Placeholder petunjuk memilih jawaban.</p>
 
     <fieldset aria-describedby="quiz-answer-help" class="m-0 min-w-0 border-0 p-0">
         <legend class="sr-only">Pilihan jawaban</legend>
         <div class="mt-6 grid gap-3">
-            {% for letter in 'ABCD' %}
+            {% for option in question.options.all %}
             <button type="button" disabled class="flex w-full items-center gap-4 rounded-xl border border-grey-200 bg-raised p-4 text-left text-grey-700 disabled:cursor-not-allowed">
-                <span aria-hidden="true" class="grid size-9 shrink-0 place-items-center rounded-lg bg-grey-100 font-semibold text-grey-700">{{ letter }}</span>
-                <span class="min-w-0 break-words">Placeholder pilihan jawaban {{ letter }}</span>
+                <span aria-hidden="true" class="grid size-9 shrink-0 place-items-center rounded-lg bg-grey-100 font-semibold text-grey-700">{{ option.get_position_display }}</span>
+                <span class="min-w-0 break-words">{{ option.text }}</span>
             </button>
             {% endfor %}
         </div>
@@ -37,4 +47,10 @@
 
     <p class="!mb-0 !mt-3 rounded-lg bg-primary-50 p-4 text-sm text-primary-700">Placeholder keterangan kuis.</p>
 </section>
+{% else %}
+<section aria-labelledby="quiz-empty" class="rounded-xl border border-grey-200 bg-raised p-8 text-center sm:p-12">
+    <span class="mb-4 inline-flex rounded-full bg-primary-100 p-4 text-primary-600">{% include 'icons/quiz-icon.svg' %}</span>
+    <h2 id="quiz-empty" class="text-xl sm:text-2xl">Belum ada soal kuis yang ditambahkan.</h2>
+</section>
+{% endif %}
 {% endblock %}

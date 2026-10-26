@@ -1,0 +1,41 @@
+{% extends 'quiz/base.html' %}
+
+{% block title %}{% if editing %}Edit{% else %}Tambah{% endif %} Soal Kuis | Tanampedia{% endblock %}
+
+{% block quiz_content %}
+<header class="mb-6">
+    <h1 class="text-3xl">{% if editing %}Edit{% else %}Tambah{% endif %} Soal Kuis</h1>
+</header>
+<form method="post" class="rounded-xl border border-grey-200 bg-raised p-5 sm:p-8">
+    {% csrf_token %}
+    {% if form.is_locked %}
+    <p class="!mb-6 rounded-lg bg-primary-50 p-4 text-sm text-primary-900">Soal sudah digunakan. Isi soal dikunci untuk menjaga riwayat; kamu dapat mengubah status aktifnya.</p>
+    {% endif %}
+    {% if form.non_field_errors %}
+    <ul role="alert" class="mb-6 list-none rounded-lg bg-red-50 p-4 text-red-900">
+        {% for error in form.non_field_errors %}<li>{{ error }}</li>{% endfor %}
+    </ul>
+    {% endif %}
+    <div class="grid gap-6">
+        {% for field in form %}
+        {% if field.name == 'correct_position' %}
+        <fieldset class="m-0 min-w-0 border-0 p-0"{% if field.errors %} aria-describedby="{{ field.auto_id }}_error"{% endif %}>
+            <legend class="mb-3 font-semibold text-primary-900">{{ field.label }} <span aria-hidden="true">*</span></legend>
+            <div class="flex flex-wrap gap-6">
+                {% for radio in field %}
+                <label for="{{ radio.id_for_label }}" class="inline-flex items-center gap-2">{{ radio.tag }} {{ radio.choice_label }}</label>
+                {% endfor %}
+            </div>
+            {% if field.errors %}<ul id="{{ field.auto_id }}_error" class="mt-2 list-none p-0 text-sm text-red-700">{% for error in field.errors %}<li>{{ error }}</li>{% endfor %}</ul>{% endif %}
+        </fieldset>
+        {% else %}
+        {% include 'quiz/field.html' with field=field only %}
+        {% endif %}
+        {% endfor %}
+    </div>
+    <div class="mt-8 flex flex-wrap items-center gap-4">
+        {% include 'components/button.html' with type='submit' text='Simpan Soal' %}
+        <a href="{% url 'quiz:question_list' %}" class="font-semibold">Batal</a>
+    </div>
+</form>
+{% endblock %}

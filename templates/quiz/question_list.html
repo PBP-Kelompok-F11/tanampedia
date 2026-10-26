@@ -1,0 +1,41 @@
+{% extends 'quiz/base.html' %}
+
+{% block title %}Kelola Soal Kuis | Tanampedia{% endblock %}
+
+{% block quiz_content %}
+<header class="mb-6 flex flex-wrap items-center justify-between gap-4">
+    <h1 class="!mb-0 text-3xl">Kelola Soal Kuis</h1>
+    {% url 'quiz:question_create' as create_url %}
+    {% include 'components/button.html' with href=create_url text='Tambah Soal Kuis' %}
+</header>
+<a href="{% url 'quiz:today' %}" class="mb-6 inline-block text-sm font-semibold">Lihat Halaman Kuis &rarr;</a>
+<div class="grid gap-4">
+    {% for question in page_obj %}
+    <article class="min-w-0 rounded-xl border border-grey-200 bg-raised p-5 sm:p-6">
+        <span class="inline-flex rounded-full px-3 py-1 text-sm font-semibold {% if question.is_active %}bg-primary-100 text-primary-800{% else %}bg-grey-100 text-grey-600{% endif %}">{% if question.is_active %}Aktif{% else %}Nonaktif{% endif %}</span>
+        <h2 class="!mt-4 whitespace-pre-line break-words text-xl">{{ question.prompt }}</h2>
+        <details class="mt-4">
+            <summary class="cursor-pointer font-semibold text-primary-700">Lihat pilihan dan penjelasan</summary>
+            <ol type="A" class="mt-3 list-[upper-alpha] space-y-2 pl-6">
+                {% for option in question.options.all %}<li class="break-words">{{ option.text }}{% if option.is_correct %} <span class="font-semibold text-primary-700">(Jawaban benar)</span>{% endif %}</li>{% endfor %}
+            </ol>
+            <h3 class="!mt-4 text-sm">Penjelasan jawaban</h3>
+            <p class="!mb-0 whitespace-pre-line break-words text-sm text-grey-600">{{ question.explanation }}</p>
+        </details>
+        <div class="mt-6 flex flex-wrap items-center gap-4">
+            <a href="{% url 'quiz:question_update' question.pk %}" class="font-semibold">{% if question.has_schedule or question.has_answers %}Ubah Status{% else %}Edit{% endif %}</a>
+            {% if not question.has_schedule and not question.has_answers %}<a href="{% url 'quiz:question_delete' question.pk %}" class="font-semibold !text-red-700">Hapus</a>{% endif %}
+        </div>
+    </article>
+    {% empty %}
+    <p class="!mb-0 rounded-xl border border-grey-200 bg-raised p-8 text-center text-grey-500">Belum ada soal kuis yang ditambahkan.</p>
+    {% endfor %}
+</div>
+{% if page_obj.has_other_pages %}
+<nav aria-label="Halaman daftar soal" class="mt-6 flex flex-wrap items-center justify-between gap-4 text-sm">
+    {% if page_obj.has_previous %}<a href="?page={{ page_obj.previous_page_number }}">&larr; Sebelumnya</a>{% endif %}
+    <span>Halaman {{ page_obj.number }} dari {{ page_obj.paginator.num_pages }}</span>
+    {% if page_obj.has_next %}<a href="?page={{ page_obj.next_page_number }}">Berikutnya &rarr;</a>{% endif %}
+</nav>
+{% endif %}
+{% endblock %}
