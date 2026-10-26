@@ -1,0 +1,5 @@
+from django.shortcuts import render
+
+
+def today(request):
+    return render(request, 'quiz/today.html')

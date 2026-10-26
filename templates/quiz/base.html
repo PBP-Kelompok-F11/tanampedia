@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block title %}Kuis Harian | Tanampedia{% endblock %}
+
+{% block content %}
+<div class="mx-auto max-w-3xl pb-12 [&_:focus-visible]:outline-2 [&_:focus-visible]:outline-offset-4 [&_:focus-visible]:outline-primary-600">
+    <a href="{% url 'main:home' %}" class="mb-8 inline-flex items-center gap-2 text-sm font-semibold">
+        <span aria-hidden="true">&larr;</span> Beranda
+    </a>
+    {% block quiz_content %}{% endblock %}
+</div>
+{% endblock %}
