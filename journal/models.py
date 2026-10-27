@@ -1,3 +1,5 @@
+import uuid
+
 from django.conf import settings
 from django.db import models
 
@@ -8,6 +10,7 @@ class PlantJournal(models.Model):
         HARVESTED = 'panen', 'Panen'
         FAILED = 'gagal', 'Gagal'
 
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
@@ -15,6 +18,8 @@ class PlantJournal(models.Model):
     )
     plant_name = models.CharField(max_length=200)
     description = models.TextField(blank=True)
+    growing_medium = models.CharField(max_length=200, blank=True)
+    location = models.CharField(max_length=200, blank=True)
     status = models.CharField(
         max_length=20,
         choices=Status.choices,
@@ -62,6 +67,7 @@ class JournalEntry(models.Model):
         WILTED = 'layu', 'Layu'
         DEAD = 'mati', 'Mati'
 
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     journal = models.ForeignKey(
         PlantJournal,
         on_delete=models.CASCADE,
