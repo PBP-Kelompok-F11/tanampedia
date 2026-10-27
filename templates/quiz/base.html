@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block title %}Kuis Harian | Tanampedia{% endblock %}
+
+{% block content %}
+<div class="mx-auto max-w-3xl pb-12 [&_:focus-visible]:outline-2 [&_:focus-visible]:outline-offset-4 [&_:focus-visible]:outline-primary-600">
+    <a href="{% url 'main:home' %}" class="mb-8 inline-flex items-center gap-2 text-sm font-semibold">
+        <span aria-hidden="true">&larr;</span> Beranda
+    </a>
+    {% if messages %}
+    <div role="status" class="mb-6 grid gap-3">
+        {% for message in messages %}
+        <p class="!mb-0 rounded-lg p-4 text-sm {% if message.tags == 'error' %}bg-red-50 text-red-900{% else %}bg-primary-100 text-primary-900{% endif %}">{{ message }}</p>
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% block quiz_content %}{% endblock %}
+</div>
+{% endblock %}

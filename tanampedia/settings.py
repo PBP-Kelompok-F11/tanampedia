@@ -54,12 +54,11 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'allauth',
     'allauth.account',
-    'allauth.socialaccount',
-    'allauth.socialaccount.providers.google',
     'tailwind',
     'theme',
     'main',
     'accounts',
+    'quiz',
 ]
 
 TAILWIND_APP_NAME = 'theme'
@@ -131,7 +130,6 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'accounts.context_processors.google_oauth_enabled',
             ],
         },
     },
@@ -189,6 +187,9 @@ LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'
 
+# Initial reward; the assignment does not mandate a particular number of points.
+QUIZ_CORRECT_ANSWER_POINTS = 10
+
 USE_I18N = True
 
 USE_TZ = True
@@ -206,9 +207,18 @@ STORAGES = {
         "BACKEND": "django.core.files.storage.FileSystemStorage",
     },
     "staticfiles": {
-        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
     },
 }
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://muhammad-fairus51-tanampedia.pws.cs.ui.ac.id',
+    'https://mohammad-zidane51-tanampedia.pws.cs.ui.ac.id',
+    'https://*.pws.cs.ui.ac.id',
+    'https://localhost:8000'
+]
+
+WHITENOISE_USE_FINDERS = True
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field

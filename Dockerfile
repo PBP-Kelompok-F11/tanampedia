@@ -1,8 +1,7 @@
-# Debian-based (glibc), not Alpine — psycopg2-binary, cryptography (needed by
-# PyJWT[crypto] for Google OAuth), etc. all ship prebuilt manylinux wheels for
-# glibc, so pip never needs to compile anything from source. Alpine (musl)
-# lacks those wheels, forcing a slow from-source build that was blowing past
-# PWS's build timeout.
+# Debian-based (glibc), not Alpine — psycopg2-binary ships a prebuilt
+# manylinux wheel for glibc, so pip never needs to compile it. Alpine (musl)
+# has no such wheel, forcing a from-source build (gcc + musl-dev) that blows
+# past PWS's build timeout.
 FROM python:3.13-slim
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
@@ -22,4 +21,7 @@ RUN python manage.py collectstatic --noinput
 
 EXPOSE 8000
 
-CMD ["sh", "-c", "python manage.py migrate --noinput && gunicorn tanampedia.wsgi:application --bind 0.0.0.0:${PORT:-8000}"]
+# Deliberately NOT running `migrate` here — it used to block this CMD before
+# gunicorn could open the port. Run migrations manually via the PWS Terminal
+# tab after deploying: python manage.py migrate --noinput
+CMD ["sh", "-c", "gunicorn tanampedia.wsgi:application --bind 0.0.0.0:${PORT:-8000}"]
