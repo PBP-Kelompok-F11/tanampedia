@@ -2,7 +2,7 @@ from django import forms
 from .models import Question, Answer
 
 class QuestionForms(forms.ModelForm):
-    class meta:
+    class Meta:
         model = Question
         fields = ['title', 'content']
         labels = {
@@ -21,9 +21,9 @@ class QuestionForms(forms.ModelForm):
         }
 
 class AnswerForms(forms.ModelForm):
-    class meta:
+    class Meta:
         model = Answer
-        fiels = ['content']
+        fields = ['content']
         labels = {'content': 'Jawaban anda'}
         widget = {'content': forms.Textarea(attrs={
             'placeholder': 'Contoh: Penguningan daun biasanya terjadi karena...',

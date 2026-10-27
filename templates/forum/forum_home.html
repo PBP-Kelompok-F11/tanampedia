@@ -1,0 +1,154 @@
+{% extends "base.html" %}
+
+{% block title %}Forum Diskusi Komunitas - Tanampedia{% endblock %}
+
+{% block extra_css %}
+<style>
+    .forum-bg { background-color: #F0F8F2; min-height: 100vh; }
+    .forum-card { background-color: #FFFFFF; border-radius: 20px; border: 1px solid #E2E8F0; }
+    .avatar-sm {
+        width: 38px;
+        height: 38px;
+        min-width: 38px;
+        background-color: #DCF2E3;
+        color: #1E4D2B;
+        border-radius: 9999px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 13px;
+    }
+    .tag-pill {
+        background-color: #EAF5EC;
+        color: #1E4D2B;
+        border-radius: 6px;
+        padding: 3px 8px;
+        font-size: 11px;
+        font-weight: 600;
+    }
+    .btn-create {
+        background-color: #1E4D2B;
+        color: #FFFFFF;
+        border-radius: 12px;
+        font-weight: 600;
+        transition: background-color 0.2s;
+    }
+    .btn-create:hover { background-color: #163820; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="forum-bg py-10 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-6xl mx-auto space-y-8">
+
+        <!-- Header -->
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+                <h1 class="text-3xl font-extrabold text-gray-900 tracking-tight">Forum Diskusi Komunitas</h1>
+                <p class="text-sm text-gray-600 mt-1">Tanya jawab dan berbagi ilmu seputar pertanian mandiri</p>
+            </div>
+            <div>
+                <a href="{% url 'forum:create_question' %}" class="btn-create inline-flex items-center gap-2 px-5 py-2.5 text-sm shadow-sm">
+                    <svg width="16" height="16" style="width:16px; height:16px; min-width:16px;" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
+                    </svg>
+                    Ajukan Pertanyaan
+                </a>
+            </div>
+        </div>
+
+        <!-- Search & Filter Bar -->
+        <div class="flex flex-col sm:flex-row items-center gap-3">
+            <div class="relative flex-1 w-full">
+                <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
+                    <svg width="18" height="18" style="width:18px; height:18px; min-width:18px;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                    </svg>
+                </span>
+                <input type="text" placeholder="Cari topik pertanyaan kebun..." 
+                       class="w-full pl-10 pr-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm text-gray-800 placeholder-gray-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-[#1E4D2B]">
+            </div>
+            
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            
+            <div class="lg:col-span-8 space-y-4">
+                {% for question in questions %}
+                <article class="forum-card p-6 shadow-sm hover:shadow-md transition">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="avatar-sm">
+                            {{ question.author.profile.display_name_or_username|default:question.author.username|slice:":2"|upper }}
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <span class="font-bold text-sm text-gray-900">
+                                    {{ question.author.profile.display_name_or_username|default:question.author.username }}
+                                </span>
+                                {% if question.author.profile %}
+                                <span class="text-[11px] font-semibold text-[#1E4D2B] bg-[#EAF5EC] px-2 py-0.5 rounded-full">
+                                    {{ question.author.profile.level.title }}
+                                </span>
+                                {% endif %}
+                            </div>
+                            <span class="text-xs text-gray-400">{{ question.created_at|timesince }} yang lalu</span>
+                        </div>
+                    </div>
+
+                    <h2 class="text-base sm:text-lg font-bold text-gray-900 hover:text-[#1E4D2B] transition">
+                        <a href="{% url 'forum:question_detail' question.pk %}">
+                            {{ question.title }}
+                        </a>
+                    </h2>
+                    <p class="text-sm text-gray-600 mt-2 line-clamp-2 leading-relaxed">
+                        {{ question.content }}
+                    </p>
+
+                    <div class="flex flex-wrap gap-2 mt-4">
+                        <span class="tag-pill">#TanyaKebun</span>
+                        <span class="tag-pill">#UrbanFarming</span>
+                    </div>
+
+                    <div class="flex items-center gap-6 mt-4 pt-4 border-t border-gray-100 text-xs text-gray-500 font-medium">
+                        <span class="flex items-center gap-1.5">
+                            <svg width="14" height="14" style="width:14px; height:14px;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M5 10l7-7m0 0l7 7m-7-7v18"/>
+                            </svg>
+                            Upvoted answers
+                        </span>
+                        <span class="flex items-center gap-1.5">
+                            <svg width="14" height="14" style="width:14px; height:14px;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                            </svg>
+                            {{ question.answers.count }} Jawaban
+                        </span>
+                    </div>
+                </article>
+                {% empty %}
+                <div class="forum-card p-12 text-center text-gray-500 shadow-sm">
+                    <p class="font-medium text-sm">Belum ada pertanyaan di forum ini.</p>
+                    <a href="{% url 'forum:create_question' %}" class="inline-block mt-3 text-sm text-[#1E4D2B] font-bold hover:underline">
+                        Mulai diskusi sekarang &rarr;
+                    </a>
+                </div>
+                {% endfor %}
+            </div>
+
+            <aside class="lg:col-span-4 space-y-6">
+
+                <div class="forum-card p-6 shadow-sm">
+                    <h3 class="font-bold text-gray-900 text-sm mb-4">Panduan Forum</h3>
+                    <ul class="space-y-2.5 text-xs text-gray-600 leading-relaxed list-disc list-inside">
+                        <li>Gunakan fitur pencarian sebelum membuat pertanyaan.</li>
+                        <li>Hormati sesama urban farmer dalam berdiskusi.</li>
+                        <li>Sertakan detail kondisi tanaman sejelas mungkin.</li>
+                        <li>Beri upvote pada jawaban solutif (+1 PediaPoint)[cite: 1, 3].</li>
+                    </ul>
+                </div>
+            </aside>
+        </div>
+
+    </div>
+</div>
+{% endblock %}
