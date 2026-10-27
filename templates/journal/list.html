@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}Jurnal Tanaman | Tanampedia{% endblock %}
 
@@ -28,4 +29,8 @@
         {% endfor %}
     </div>
 </section>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/journal.js' %}" defer></script>
 {% endblock %}

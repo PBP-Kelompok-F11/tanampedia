@@ -11,7 +11,7 @@
             {% include 'components/button.html' with text="Tambah entri baru" href=create_entry_url variant="filled" intent="primary" icon_left="icons/plus-icon.svg" class_name="shrink-0 no-underline!"%}
         {% endif %}
     </div>
-    <div class="journal-detail__layout grid grid-cols-1 items-start gap-8 md:grid-cols-5 md:gap-12">
+    <div class="journal-detail__layout grid grid-cols-1 items-start gap-6 md:grid-cols-5 md:gap-12">
         <aside class="journal-info col-span-1 overflow-hidden rounded-2xl border border-primary-100 bg-raised md:col-span-2" aria-label="Informasi jurnal">
             <div class="journal-info__cover aspect-[4/3] overflow-hidden bg-primary-100 md:aspect-[4/3]">
                 {% if cover_image %}
@@ -23,11 +23,14 @@
             <div class="journal-info__body p-5 md:p-6">
                 <header class="journal-info__heading flex items-start gap-4">
                     <div class="min-w-0">
-                        <h1 class="mb-1 wrap-anywhere font-body text-3xl">{{ journal.plant_name }}</h1>
-                        <p class="m-0 whitespace-pre-line text-grey-500 wrap-anywhere">{{ journal.description|default:"Belum ada deskripsi jurnal." }}</p>
+                        <h1 class="!mb-1 wrap-anywhere font-body text-3xl">{{ journal.plant_name }}</h1>
+                        <p class="!mb-3 whitespace-pre-line text-grey-500 wrap-anywhere">{{ journal.description|default:"Belum ada deskripsi jurnal." }}</p>
                     </div>
                 </header>
-                <div class="journal-info__owner my-6 flex items-center gap-3">
+                
+                    {% include 'journal/partials/journal_like.html' with journal=journal %}
+                
+                <div class="journal-info__owner my-3 flex items-center gap-3">
                     {% if journal.user.profile.profile_picture_url %}
                         <img src="{{ journal.user.profile.profile_picture_url }}" alt="Avatar {{ journal.user.username }}" class="size-10 rounded-full object-cover">
                     {% else %}
@@ -35,7 +38,7 @@
                     {% endif %}
                     <span>{{ journal.user.username }}</span>
                 </div>
-                <dl class="journal-info__metadata m-0 grid grid-cols-2 gap-4 border-y border-grey-200 py-6">
+                <dl class="journal-info__metadata m-0 grid grid-cols-2 gap-4 border-y border-grey-200 py-3">
                     <div><dt class="mb-1 text-sm text-grey-500">Tanggal mulai</dt><dd class="m-0"><time datetime="{{ journal.start_date|date:'Y-m-d' }}">{{ journal.start_date|date:"j M Y" }}</time></dd></div>
                     <div><dt class="mb-1 text-sm text-grey-500">Jumlah entri</dt><dd class="m-0">{{ entry_count }} entri</dd></div>
                 </dl>
