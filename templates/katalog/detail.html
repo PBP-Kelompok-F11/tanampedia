@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{% if plant %}{{ plant.common_name|default:plant.scientific_name }} | Katalog Tanaman{% else %}Katalog Tanaman{% endif %} | Tanampedia{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/pages/_katalog.css' %}">
+{% endblock %}
+
+{% block content %}
+<section class="lp-container kt-detail">
+    <nav class="kt-breadcrumb" aria-label="Breadcrumb">
+        <a href="{% url 'main:home' %}">Tanampedia</a>
+        <span aria-hidden="true">›</span>
+        <a href="{% url 'main:katalog_list' %}">Katalog Tanaman</a>
+        <span aria-hidden="true">›</span>
+        <span aria-current="page">{{ plant.common_name|default:plant.scientific_name|default:"Tanaman" }}</span>
+    </nav>
+
+    {% if error_message %}
+    <div class="kt-state kt-state--error">
+        {% include "icons/danger-icon.svg" %}
+        <h2>Detail tanaman sedang tidak bisa dimuat</h2>
+        <p>{{ error_message }}</p>
+    </div>
+    {% else %}
+    <div class="kt-detail__hero">
+        <div class="kt-detail__image-wrap">
+            {% if plant.image_url %}
+            <img class="kt-detail__image" src="{{ plant.image_url }}" alt="{{ plant.common_name|default:plant.scientific_name|default:'Tanaman' }}" loading="eager">
+            {% elif plant.main_image.image_url %}
+            <img class="kt-detail__image" src="{{ plant.main_image.image_url }}" alt="{{ plant.common_name|default:plant.scientific_name|default:'Tanaman' }}" loading="eager">
+            {% else %}
+            <div class="kt-detail__image kt-detail__image--empty" role="img" aria-label="Gambar tanaman tidak tersedia">
+                {% include "icons/leaf-icon.svg" %}
+            </div>
+            {% endif %}
+        </div>
+        <header class="kt-detail__header">
+            <p class="kt-detail__eyebrow">Referensi tanaman</p>
+            <h1>{{ plant.common_name|default:plant.scientific_name|default:"Tanaman" }}</h1>
+            {% if plant.scientific_name %}<p class="kt-detail__scientific"><em>{{ plant.scientific_name }}</em></p>{% endif %}
+            {% if plant.family_common_name or plant.family %}
+            <p class="kt-detail__family">{{ plant.family_common_name|default:plant.family }}</p>
+            {% endif %}
+            {% if plant.observations %}<p class="kt-detail__description">{{ plant.observations }}</p>{% endif %}
+        </header>
+    </div>
+
+    <div class="kt-detail__grid">
+        <section class="kt-panel kt-panel--taxonomy">
+            <h2>Taksonomi</h2>
+            <dl class="kt-dl">
+                {% if plant.genus %}<dt>Genus</dt><dd>{{ plant.genus }}</dd>{% endif %}
+                {% if plant.family %}<dt>Famili</dt><dd>{{ plant.family }}</dd>{% endif %}
+                {% if plant.year %}<dt>Tahun deskripsi</dt><dd>{{ plant.year }}</dd>{% endif %}
+                {% if plant.bibliography %}<dt>Bibliografi</dt><dd>{{ plant.bibliography }}</dd>{% endif %}
+            </dl>
+        </section>
+
+        <section class="kt-panel kt-panel--care">
+            <h2>Panduan Perawatan</h2>
+            {% if care_cards %}
+            <div class="kt-care-grid">
+                {% for item in care_cards %}
+                <article class="kt-care-card">
+                    <div class="kt-care-card__top"><h3>{{ item.label }}</h3><strong>{{ item.value }}</strong></div>
+                    {% if item.categorical %}
+                    <p class="kt-care-card__detail">Data musiman dari Trefle</p>
+                    {% else %}
+                    <div class="kt-progress" role="progressbar" aria-label="{{ item.label }}" aria-valuemin="0" aria-valuemax="10" aria-valuenow="{{ item.value }}"><span style="width: {{ item.progress }}%"></span></div>
+                    <p class="kt-care-card__detail">Skala {{ item.scale }}</p>
+                    {% endif %}
+                </article>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p class="kt-care-unavailable">
+                Trefle belum menyediakan data perawatan (cahaya, air, atau suhu) yang terverifikasi
+                untuk tanaman ini. Kami tidak menampilkan perkiraan agar informasi tetap akurat.
+            </p>
+            {% endif %}
+        </section>
+    </div>
+
+    <p class="kt-source">
+        Data taksonomi dari <a href="https://trefle.io/" target="_blank" rel="noopener">Trefle API</a>.
+        {% if plant.links.self %}<a href="https://trefle.io{{ plant.links.self }}" target="_blank" rel="noopener">Lihat sumber data</a>.{% endif %}
+    </p>
+    {% endif %}
+</section>
+{% endblock %}

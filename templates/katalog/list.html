@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Katalog Tanaman | Tanampedia{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/pages/_katalog.css' %}">
+{% endblock %}
+
+{% block content %}
+<section class="kt-header lp-container">
+    <h1><span class="lp-gradient-text text-6xl">Cari Tahu Tentang Tanamanmu!</span></h1>
+    <p class="kt-subtitle">
+        Referensi tanaman ini diambil dari <a href="https://trefle.io/" target="_blank" rel="noopener">Trefle</a>.
+        Cari berdasarkan nama umum atau nama ilmiah untuk melihat detail perawatannya.
+    </p>
+
+    <form method="get" action="{% url 'main:katalog_list' %}" class="kt-search" role="search">
+        {% include 'components/input.html' with type="search" name="q" value=query placeholder="Cari nama tanaman, mis. “tomat” atau “Rosa”" aria_label="Cari tanaman" class_name="kt-search__input" %}
+        {% include 'components/button.html' with text="Cari" type="submit" variant="filled" intent="primary" icon_left="icons/search-icon.svg" %}
+    </form>
+</section>
+
+<section class="lp-container kt-results">
+    {% if error_message %}
+    <div class="kt-state kt-state--error">
+        {% include "icons/danger-icon.svg" %}
+        <h2>Katalog sedang tidak bisa diakses</h2>
+        <p>{{ error_message }}</p>
+    </div>
+    {% else %}
+    <div class="kt-toolbar">
+        <p class="kt-toolbar__summary" aria-live="polite">
+            {% if result_total != None %}
+                Menampilkan {{ result_start }}–{{ result_end }} dari {{ result_total }} tanaman
+            {% else %}
+                Menampilkan {{ plants|length }} tanaman pada halaman ini
+            {% endif %}
+        </p>
+        <form method="get" action="{% url 'main:katalog_list' %}" class="kt-sort">
+            {% if query %}<input type="hidden" name="q" value="{{ query }}">{% endif %}
+            <label for="kt-sort-select">Urutkan</label>
+            <select id="kt-sort-select" name="sort" onchange="this.form.submit()">
+                <option value="name_asc"{% if sort == 'name_asc' %} selected{% endif %}>Nama: A–Z</option>
+                <option value="name_desc"{% if sort == 'name_desc' %} selected{% endif %}>Nama: Z–A</option>
+            </select>
+        </form>
+    </div>
+
+    {% if plants %}
+    <div class="kt-grid">
+        {% for plant in plants %}  
+        <a href="{% url 'main:katalog_detail' slug=plant.slug %}" class="kt-card">
+            {% if plant.image_url %}
+                <img
+                    src="{{ plant.image_url }}"
+                    alt="{{ plant.common_name|default:plant.scientific_name }}"
+                    class="kt-card__image"
+                    loading="lazy"
+                >
+            {% elif plant.main_image.image_url %}
+                <img
+                    src="{{ plant.main_image.image_url }}"
+                    alt="{{ plant.common_name|default:plant.scientific_name }}"
+                    class="kt-card__image"
+                    loading="lazy"
+                >
+            {% else %}
+                <div class="kt-card__image kt-card__image--empty">
+                    {% include "icons/leaf-icon.svg" %}
+                </div>
+            {% endif %}
+            <h3>{{ plant.scientific_name|default:plant.common_name }}</h3>
+            <p class="kt-card__scientific">
+                {{ plant.common_name|default:"Nama umum belum tersedia" }}
+            </p>
+            {% if plant.family_common_name or plant.family %}
+                <span class="kt-card__family">
+                    {{ plant.family_common_name|default:plant.family }}
+                </span>
+            {% endif %}
+        </a>
+        {% endfor %}
+    </div>
+
+    {% if has_prev or has_next %}
+    <nav class="kt-pagination" aria-label="Navigasi halaman katalog">
+        {% if has_prev %}
+        <a href="?{% if query %}q={{ query }}&{% endif %}sort={{ sort }}&page={{ page|add:'-1' }}" class="btn btn--outline btn--neutral">Sebelumnya</a>
+        {% else %}
+        <span></span>
+        {% endif %}
+        <span class="kt-pagination__page">Halaman {{ page }}</span>
+        {% if has_next %}
+        <a href="?{% if query %}q={{ query }}&{% endif %}sort={{ sort }}&page={{ page|add:'1' }}" class="btn btn--outline btn--neutral">Berikutnya</a>
+        {% endif %}
+    </nav>
+    {% endif %}
+
+    {% else %}
+    <div class="kt-state kt-state--empty">
+        {% include "icons/sprout-icon.svg" %}
+        {% if query %}
+        <h2>Tidak ada tanaman yang cocok dengan “{{ query }}”</h2>
+        <p>Coba kata kunci lain, misalnya nama umum atau nama ilmiah tanaman.</p>
+        {% else %}
+        <h2>Belum ada tanaman untuk ditampilkan</h2>
+        <p>Trefle tidak mengembalikan data untuk halaman ini.</p>
+        {% endif %}
+    </div>
+    {% endif %}
+    {% endif %}
+</section>
+{% endblock %}

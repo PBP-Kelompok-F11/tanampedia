@@ -80,7 +80,7 @@
 
         <div class="lp-feature-card lp-reveal p-7 rounded-2xl">
             <div class="lp-feature-card__icon inline-flex items-center justify-center w-12 h-12 rounded-xl mb-4">{% include "icons/quiz-icon.svg" %}</div>
-            <h3 class="mb-2">Kuis &amp; Challenge Harian</h3>
+            <h3 class="mb-2"><a href="{% url 'quiz:today' %}">Kuis &amp; Challenge Harian</a></h3>
             <p>Uji pemahamanmu melalui kuis singkat setiap hari. Setiap jawaban benar menambah PediaPoints-mu.</p>
             <span class="lp-feature-card__points inline-flex items-center gap-[0.3rem] mt-4 px-2.5 py-1 rounded-full text-xs font-bold">{% include "icons/points-icon.svg" %} +PediaPoints</span>
         </div>
