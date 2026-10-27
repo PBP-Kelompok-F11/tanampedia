@@ -1,0 +1,206 @@
+[33mcommit f674e84b80f3f9e447d1afcdcb99fc6f8e10dee4[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mfeature/katalog-tanaman[m[33m)[m
+Author: Ervhino Aryo Seto <ervhinoaryoseto@gmail.com>
+Date:   Tue Oct 27 15:04:45 2026 +0700
+
+    feat: add care cards extraction for plant growth data
+
+[33mcommit ec7fc84cd57fcb8803d64a19db68065c2eeff9e5[m
+Author: Ervhino Aryo Seto <ervhinoaryoseto@gmail.com>
+Date:   Tue Oct 27 15:03:39 2026 +0700
+
+    feat:  Update plant catalog page with sorting and improved layout
+
+[33mcommit aa78d177ff8510615a637b803c371acf39f65762[m
+Author: Ervhino Aryo Seto <ervhinoaryoseto@gmail.com>
+Date:   Tue Oct 27 15:01:05 2026 +0700
+
+    style: Add styles for katalog page and plant detail view
+
+[33mcommit c133004c95fc61615e6eb17109ea9dd0587b99b5[m
+Author: Ervhino Aryo Seto <ervhinoaryoseto@gmail.com>
+Date:   Tue Oct 27 14:59:08 2026 +0700
+
+    style: add responsive styles for katalog and plant detail pages
+
+[33mcommit da3285adedd138769c618c6031fe8eb59b91d6b7[m
+Author: Ervhino Aryo Seto <ervhinoaryoseto@gmail.com>
+Date:   Tue Oct 27 14:57:35 2026 +0700
+
+    feat: sort plant catalog by name in ascending or descending order
+
+[33mcommit 836adcb55c8b6884a2fcf5b81d3b3668ddee2544[m
+Author: Ervhino Aryo Seto <ervhinoaryoseto@gmail.com>
+Date:   Tue Oct 27 14:56:54 2026 +0700
+
+    feat: care cards extraction for plant growth data
+
+[33mcommit 482133a880000a99bfafed88184f75c97017273f[m
+Author: Ervhino Aryo Seto <ervhinoaryoseto@gmail.com>
+Date:   Mon Oct 26 14:11:51 2026 +0700
+
+    add: search icon SVG file and update requirements.txt
+
+[33mcommit b01b2e211bfe7904d58a12a44f0af7308aa55b51[m
+Author: Ervhino Aryo Seto <ervhinoaryoseto@gmail.com>
+Date:   Mon Oct 26 14:11:16 2026 +0700
+
+    add: TREFLE_API_TOKEN to settings for Katalog Tanaman module
+
+[33mcommit cc668251021db462d38db25373923a014101877c[m
+Author: Ervhino Aryo Seto <ervhinoaryoseto@gmail.com>
+Date:   Mon Oct 26 14:08:06 2026 +0700
+
+    style: Add initial styles for Katalog Tanaman
+
+[33mcommit b467f2cccb17af59140389bf627e28095867473b[m
+Author: Ervhino Aryo Seto <ervhinoaryoseto@gmail.com>
+Date:   Mon Oct 26 14:06:58 2026 +0700
+
+    feat: detail plant page with taxonomy and care guide
+
+[33mcommit 489e5befcee102f62c05e44681d06be1e58667df[m
+Author: Ervhino Aryo Seto <ervhinoaryoseto@gmail.com>
+Date:   Mon Oct 26 14:06:37 2026 +0700
+
+    feat: list plants in katalog page
+
+[33mcommit 8be70b8670fad12c37084a9565b2cca6cadce2c6[m
+Author: Ervhino Aryo Seto <ervhinoaryoseto@gmail.com>
+Date:   Mon Oct 26 13:13:29 2026 +0700
+
+    feat(catalog): add navigation catalog page in navbar
+
+[33mcommit c3432d71670f07edc70cf0fee8320e8cdb531b93[m
+Author: Ervhino Aryo Seto <ervhinoaryoseto@gmail.com>
+Date:   Mon Oct 26 13:09:08 2026 +0700
+
+    add: Trefle API token for plant catalog feature
+
+[33mcommit 09137e0aeac2d01414ef834a1746a0ef938572a0[m
+Author: Ervhino Aryo Seto <ervhinoaryoseto@gmail.com>
+Date:   Mon Oct 26 13:06:48 2026 +0700
+
+    feat(catalog): add plant catalog tests
+
+[33mcommit cbe77641fe49a99d8f2da4ae090ddc8c084ff0bf[m
+Author: Ervhino Aryo Seto <ervhinoaryoseto@gmail.com>
+Date:   Mon Oct 26 12:35:33 2026 +0700
+
+    feat(catalog): add plant catalog list, detail, and catalog paths
+
+[33mcommit 61deb518b45e0e6334107bae287c13d86a6c4d63[m
+Author: Ervhino Aryo Seto <ervhinoaryoseto@gmail.com>
+Date:   Mon Oct 26 12:32:37 2026 +0700
+
+    feat(catalog):add initial Trefle API service layer for plant catalog
+
+[33mcommit 2b85c2980fb72d1491e3c044978650cd9a9763a6[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mmain[m[33m)[m
+Author: Mohammad Zidane Kurnianto <mzidanek@gmail.com>
+Date:   Sun Oct 25 11:22:21 2026 +0700
+
+    fix(deploy): use Debian-based Dockerfile instead of PWS's auto-generated Alpine one
+    
+    semoga work, plis pws don't dissapoint me
+
+[33mcommit bef7649b320847d76eea5ce55e9b35e55d0d0b7a[m
+Merge: 3faf331 fb324b0
+Author: Mohammad Zidane Kurnianto <117014887+Zikabyte@users.noreply.github.com>
+Date:   Sun Oct 25 11:06:55 2026 +0700
+
+    Merge pull request #12 from PBP-Kelompok-F11/feat/auth
+    
+    feat(auth): smoothen Google authentication process and resolve CI errors regarding requirements
+
+[33mcommit fb324b04b295e633d10be98a0bac3702762cf716[m
+Author: Mohammad Zidane Kurnianto <mzidanek@gmail.com>
+Date:   Sun Oct 25 11:05:09 2026 +0700
+
+    fix(ci): resolve build tailwind workflow error (because of request package not found)
+
+[33mcommit e066c9342ba6a4dc2d49439c7603ef00c395d0ef[m
+Author: Mohammad Zidane Kurnianto <mzidanek@gmail.com>
+Date:   Sun Oct 25 10:54:59 2026 +0700
+
+    fix(accounts): smooth out Google OAuth login/register flow
+    
+    - Add PyJWT[crypto] to requirements.txt (allauth needs it to verify
+      Google's id_token; was missing, caused a ModuleNotFoundError on
+      the OAuth callback)
+    - SOCIALACCOUNT_LOGIN_ON_GET=True skips the unstyled intermediate
+      'continue to Google' confirmation page
+    - SOCIALACCOUNT_EMAIL_AUTHENTICATION + AUTO_CONNECT so signing in
+      with Google on an email that already has a local account logs
+      into that account instead of re-running the signup flow
+
+[33mcommit 3faf33137b184e93179288c42bef610a627e8443[m
+Merge: 6f5520a 02b652e
+Author: Mohammad Zidane Kurnianto <117014887+Zikabyte@users.noreply.github.com>
+Date:   Sun Oct 25 10:49:15 2026 +0700
+
+    Merge pull request #11 from PBP-Kelompok-F11/feat/auth
+    
+    feat(auth): minimum viable authentication and profile management
+
+[33mcommit 02b652e80a38a3191980d3623c99e3c097420b0b[m
+Author: Mohammad Zidane Kurnianto <mzidanek@gmail.com>
+Date:   Sun Oct 25 10:31:43 2026 +0700
+
+    chore: add and wire website favicon
+
+[33mcommit 7ef6c9c269399879c0222efbb7fcfec2fb9af714[m
+Author: Mohammad Zidane Kurnianto <mzidanek@gmail.com>
+Date:   Sun Oct 25 10:24:56 2026 +0700
+
+    feat(accounts): add Profile.add_points() for safe concurrent point awards
+    
+    Also adds accounts/README.md documenting the Profile API, PediaPoints
+    usage, and relevant URL names for teammates building other modules.
+
+[33mcommit 9f3642154a568314005b3080e91185f22f44012e[m
+Author: Mohammad Zidane Kurnianto <mzidanek@gmail.com>
+Date:   Sun Oct 25 10:17:10 2026 +0700
+
+    feat(navbar): add avatar and icon-only logout button to logged-in state
+
+[33mcommit 232d52eac6a1a57aced788c5bc7f14c0a54f1dcd[m
+Author: Mohammad Zidane Kurnianto <mzidanek@gmail.com>
+Date:   Sun Oct 25 10:09:13 2026 +0700
+
+    fix(components): placeholder text was the same color as filled-in input text
+    
+    ::placeholder used var(--color-primary-900), identical to .input's
+    own text color, making it impossible to tell at a glance whether a
+    field had a real value or was just showing its placeholder.
+
+[33mcommit 7290e369ebb1568d7bb3b82279387a7f1151aa76[m
+Author: Mohammad Zidane Kurnianto <mzidanek@gmail.com>
+Date:   Sun Oct 25 10:09:09 2026 +0700
+
+    feat(accounts): custom password validators, required display name, keep email on error
+    
+    Replaces Django's CommonPasswordValidator (opaque 20k-word blocklist,
+    no explainable reasoning) and NumericPasswordValidator with our own
+    PasswordComplexityValidator — one transparent rule: must contain a
+    letter and a digit. Also adds a required display_name field to
+    signup (ACCOUNT_SIGNUP_FORM_CLASS), and fixes login/signup forms
+    losing the submitted email on validation errors (passwords correctly
+    stay cleared).
+
+[33mcommit 67c261623e5d98ea109a5f75977d67d917e14217[m
+Author: Mohammad Zidane Kurnianto <mzidanek@gmail.com>
+Date:   Sun Oct 25 10:09:01 2026 +0700
+
+    feat(accounts): add profile page with display name and profile picture
+    
+    Also fixes LOGIN_URL (was still pointing at the old /accounts/login/
+    prefix after we moved allauth's URLs to root, breaking the redirect
+    for any @login_required view).
+    
+    Note: settings.py also picks up AUTH_PASSWORD_VALIDATORS and
+    ACCOUNT_SIGNUP_FORM_CLASS here since they landed in the same working
+    session and the file can't be split across commits — those features
+    are implemented in the next commit.
+
+[33mcommit 5ac568edc5ec5cb5fbd3e4cd9aa51a156e734c61[m
+Author: Mohammad Zidane Kurnianto <mzidanek@gmail.com>
+Date:  
