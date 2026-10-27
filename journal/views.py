@@ -103,7 +103,7 @@ def show_journal_detail(request, pk):
         'journal': journal,
         'entries': entries,
         'entry_count': len(entries),
-        'cover_image': next((entry.image for entry in reversed(entries) if entry.image), ''),
+        'cover_image': journal.thumbnail,
         **_profile_context(request.user),
     }
     return render(request, 'journal/detail.html', context)

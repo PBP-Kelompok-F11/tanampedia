@@ -1,0 +1,17 @@
+<article class="relative min-w-0 rounded-[18px] border border-grey-200 bg-raised px-5 py-4 shadow-[0_2px_4px_#123d2708]" id="entry-{{ entry.pk }}">
+    {% if timeline %}
+        <span aria-hidden="true" class="absolute top-[18px] -left-9 size-3 rounded-full bg-primary-700 ring-9 ring-primary-100"></span>
+    {% endif %}
+    <header class="flex items-center justify-between gap-4 text-sm text-grey-500">
+        <time datetime="{{ entry.created_at|date:'c' }}">{{ entry.created_at|date:"j M Y" }}</time>
+    </header>
+    <h2 class="my-1 font-body text-base">Kondisi tanaman: {{ entry.get_plant_condition_display }}</h2>
+    <p class="mt-0 mb-3 whitespace-pre-line wrap-anywhere text-sm text-grey-500">{{ entry.content }}</p>
+    {% if entry.image %}
+        <div class="flex gap-3 overflow-x-auto">
+            <a class="min-w-[130px] basis-[31%] shrink-0" href="{{ entry.image }}" target="_blank" rel="noopener noreferrer" aria-label="Lihat foto perkembangan {{ entry.journal.plant_name }}">
+                <img class="block h-25 w-full rounded-lg object-cover" src="{{ entry.image }}" alt="Foto perkembangan {{ entry.journal.plant_name }}" loading="lazy">
+            </a>
+        </div>
+    {% endif %}
+</article>

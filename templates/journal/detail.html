@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}{{ journal.plant_name }} | Jurnal Tanampedia{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/pages/_journal.css' %}">{% endblock %}
+{% block content %}
+<div class="journal-detail text-grey-900">
+    <div class="journal-detail__toolbar mb-4 flex min-h-12 flex-wrap items-center justify-between gap-4">
+        <a class="font-semibold text-primary-700" href="{% url 'journal:show_journal_list' %}"><span aria-hidden="true">&larr;</span> Kembali ke jurnal</a>
+    </div>
+    <div class="journal-detail__layout grid grid-cols-1 items-start gap-8 md:grid-cols-5 md:gap-12">
+        <aside class="journal-info col-span-1 overflow-hidden rounded-2xl border border-primary-100 bg-raised md:col-span-2" aria-label="Informasi jurnal">
+            <div class="journal-info__cover aspect-[4/3] overflow-hidden bg-primary-100 md:aspect-[4/3]">
+                {% if cover_image %}
+                    <img src="{{ cover_image }}" alt="Foto perkembangan {{ journal.plant_name }}" class="block h-full w-full object-cover">
+                {% else %}
+                    <div class="journal-info__no-cover flex h-full flex-col items-center justify-center gap-3 text-primary-700"><span>Belum ada foto perkembangan</span></div>
+                {% endif %}
+            </div>
+            <div class="journal-info__body p-5 md:p-6">
+                <header class="journal-info__heading flex items-start gap-4">
+                    <div class="min-w-0">
+                        <h1 class="mb-1 wrap-anywhere font-body text-3xl">{{ journal.plant_name }}</h1>
+                        <p class="m-0 whitespace-pre-line text-grey-500 wrap-anywhere">{{ journal.description|default:"Belum ada deskripsi jurnal." }}</p>
+                    </div>
+                </header>
+                <div class="journal-info__owner my-6 flex items-center gap-3">
+                    {% if journal.user.profile.profile_picture_url %}
+                        <img src="{{ journal.user.profile.profile_picture_url }}" alt="Avatar {{ journal.user.username }}" class="size-10 rounded-full object-cover">
+                    {% else %}
+                        <span class="journal-info__avatar grid size-10 place-items-center rounded-full bg-primary-100 font-semibold text-primary-700">{{ journal.user.profile.display_name_or_username|slice:":1"|upper }}</span>
+                    {% endif %}
+                    <span>{{ journal.user.username }}</span>
+                </div>
+                <dl class="journal-info__metadata m-0 grid grid-cols-2 gap-4 border-y border-grey-200 py-6">
+                    <div><dt class="mb-1 text-sm text-grey-500">Tanggal mulai</dt><dd class="m-0"><time datetime="{{ journal.start_date|date:'Y-m-d' }}">{{ journal.start_date|date:"j M Y" }}</time></dd></div>
+                    <div><dt class="mb-1 text-sm text-grey-500">Jumlah entri</dt><dd class="m-0">{{ entry_count }} entri</dd></div>
+                </dl>
+                <section class="journal-info__plant-details mt-6 rounded-2xl border border-primary-100 bg-primary-50 p-6" aria-labelledby="plant-details-title">
+                    <h2 id="plant-details-title" class="mb-6 font-body text-base">Detail tanaman</h2>
+                    <dl class="m-0 grid gap-5">
+                        <div><dt class="mb-1 text-sm text-grey-500">Tanaman</dt><dd class="m-0">{{ journal.plant_name }}</dd></div>
+                        <div><dt class="mb-1 text-sm text-grey-500">Media tanam</dt><dd class="m-0">{{ journal.growing_medium|default:"Belum diisi" }}</dd></div>
+                        <div><dt class="mb-1 text-sm text-grey-500">Lokasi</dt><dd class="m-0">{{ journal.location|default:"Belum diisi" }}</dd></div>
+                        <div><dt class="mb-1 text-sm text-grey-500">Status</dt><dd class="m-0">{{ journal.get_status_display }}</dd></div>
+                    </dl>
+                </section>
+            </div>
+        </aside>
+        <section class="journal-timeline col-span-1 min-w-0 pl-2 md:col-span-3 md:pl-6" aria-label="Catatan perkembangan">
+            <div id="entry-list" class="journal-timeline__entries flex flex-col gap-4 border-l-2 border-primary-200 pl-7">
+                {% for entry in entries %}
+                    {% include 'journal/partials/entry_item.html' with entry=entry timeline=True %}
+                {% empty %}
+                    <p id="empty-entries" class="journal-timeline__empty rounded-2xl border border-dashed border-grey-200 bg-raised p-6 text-grey-500">Belum ada catatan perkembangan.</p>
+                {% endfor %}
+            </div>
+        </section>
+    </div>
+</div>
+{% endblock %}
+{% block extra_js %}<script src="{% static 'js/journal.js' %}" defer></script>{% endblock %}
