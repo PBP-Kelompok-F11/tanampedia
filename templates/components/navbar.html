@@ -9,8 +9,8 @@
             <a href="{% url 'main:home' %}">Beranda</a>
             <a href="{% url 'main:design_system' %}">Design System</a>
             <a href="#">Forum</a>
-            <a href="#">Katalog</a>
-            <a href="{% url 'quiz:today' %}"{% if request.resolver_match.app_name == 'quiz' %} aria-current="page"{% endif %}>Kuis</a>
+            <a href="{% url 'main:katalog_list' %}">Katalog</a>
+            <a href="#">Kuis</a>
             <a href="#">Jurnal</a>
         </nav>
         <div class="navbar__auth">
