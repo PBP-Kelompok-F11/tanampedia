@@ -44,6 +44,14 @@
                         <div><dt class="mb-1 text-sm text-grey-500">Status</dt><dd class="m-0">{{ journal.get_status_display }}</dd></div>
                     </dl>
                 </section>
+                {% if journal.user_id == request.user.pk %}
+                    <div class="journal-info__management mt-4 flex flex-wrap gap-3">
+                        {% url 'journal:edit_journal' journal.pk as edit_url %}
+                        {% url 'journal:delete_page' journal.pk as delete_url %}
+                        {% include 'components/button.html' with text="Edit jurnal" href=edit_url variant="filled" intent="primary" class_name="shrink-0 no-underline!"%}
+                        {% include 'components/button.html' with text="Hapus jurnal" href=delete_url variant="filled" intent="danger" class_name="shrink-0 no-underline!"%}
+                    </div>
+                {% endif %}
             </div>
         </aside>
         <section class="journal-timeline col-span-1 min-w-0 pl-2 md:col-span-3 md:pl-6" aria-label="Catatan perkembangan">
