@@ -245,3 +245,35 @@ def extract_care_info(plant: dict) -> list[dict]:
             value = ", ".join(str(v) for v in value)
         entries.append({"label": label, "value": value})
     return entries
+
+
+_SCALE_CARE_FIELDS = [
+    ("light", "Kebutuhan cahaya"),
+    ("atmospheric_humidity", "Kelembapan udara"),
+    ("soil_nutriments", "Nutrisi tanah"),
+    ("soil_salinity", "Toleransi salinitas"),
+    ("soil_humidity", "Kelembapan tanah"),
+]
+
+
+def extract_care_cards(plant: dict) -> list[dict]:
+    """Return verified 0-10 care cards and categorical month data."""
+    growth = _find_growth_dict(plant)
+    cards = []
+    for key, label in _SCALE_CARE_FIELDS:
+        value = growth.get(key)
+        if isinstance(value, bool) or not isinstance(value, (int, float)):
+            continue
+        cards.append({
+            "label": label,
+            "value": value,
+            "progress": max(0, min(float(value), 10)) * 10,
+            "scale": "0–10",
+        })
+
+    months = growth.get("bloom_months")
+    if months not in (None, "", [], {}):
+        if isinstance(months, list):
+            months = ", ".join(str(month) for month in months)
+        cards.append({"label": "Bulan berbunga", "value": months, "categorical": True})
+    return cards
