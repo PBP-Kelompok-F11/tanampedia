@@ -9,14 +9,10 @@
 
 {% block content %}
 <section class="kt-header lp-container">
-    <span class="kt-eyebrow">
-        {% include "icons/plant-icon.svg" %}
-        Katalog Tanaman
-    </span>
-    <h1>Cari dan Kenali Tanamanmu</h1>
+    <h1><span class="lp-gradient-text text-6xl">Cari Tahu Tentang Tanamanmu!</span></h1>
     <p class="kt-subtitle">
-        Referensi tanaman dari <a href="https://trefle.io/" target="_blank" rel="noopener">Trefle</a> —
-        cari berdasarkan nama umum atau nama ilmiah untuk melihat detail perawatannya.
+        Referensi tanaman ini diambil dari <a href="https://trefle.io/" target="_blank" rel="noopener">Trefle</a>.
+        Cari berdasarkan nama umum atau nama ilmiah untuk melihat detail perawatannya.
     </p>
 
     <form method="get" action="{% url 'main:katalog_list' %}" class="kt-search" role="search">
@@ -32,7 +28,26 @@
         <h2>Katalog sedang tidak bisa diakses</h2>
         <p>{{ error_message }}</p>
     </div>
-    {% elif plants %}
+    {% else %}
+    <div class="kt-toolbar">
+        <p class="kt-toolbar__summary" aria-live="polite">
+            {% if result_total != None %}
+                Menampilkan {{ result_start }}–{{ result_end }} dari {{ result_total }} tanaman
+            {% else %}
+                Menampilkan {{ plants|length }} tanaman pada halaman ini
+            {% endif %}
+        </p>
+        <form method="get" action="{% url 'main:katalog_list' %}" class="kt-sort">
+            {% if query %}<input type="hidden" name="q" value="{{ query }}">{% endif %}
+            <label for="kt-sort-select">Urutkan</label>
+            <select id="kt-sort-select" name="sort" onchange="this.form.submit()">
+                <option value="name_asc"{% if sort == 'name_asc' %} selected{% endif %}>Nama: A–Z</option>
+                <option value="name_desc"{% if sort == 'name_desc' %} selected{% endif %}>Nama: Z–A</option>
+            </select>
+        </form>
+    </div>
+
+    {% if plants %}
     <div class="kt-grid">
         {% for plant in plants %}  
         <a href="{% url 'main:katalog_detail' slug=plant.slug %}" class="kt-card">
@@ -71,13 +86,13 @@
     {% if has_prev or has_next %}
     <nav class="kt-pagination" aria-label="Navigasi halaman katalog">
         {% if has_prev %}
-        <a href="?{% if query %}q={{ query }}&{% endif %}page={{ page|add:'-1' }}" class="btn btn--outline btn--neutral">Sebelumnya</a>
+        <a href="?{% if query %}q={{ query }}&{% endif %}sort={{ sort }}&page={{ page|add:'-1' }}" class="btn btn--outline btn--neutral">Sebelumnya</a>
         {% else %}
         <span></span>
         {% endif %}
         <span class="kt-pagination__page">Halaman {{ page }}</span>
         {% if has_next %}
-        <a href="?{% if query %}q={{ query }}&{% endif %}page={{ page|add:'1' }}" class="btn btn--outline btn--neutral">Berikutnya</a>
+        <a href="?{% if query %}q={{ query }}&{% endif %}sort={{ sort }}&page={{ page|add:'1' }}" class="btn btn--outline btn--neutral">Berikutnya</a>
         {% endif %}
     </nav>
     {% endif %}
@@ -93,6 +108,7 @@
         <p>Trefle tidak mengembalikan data untuk halaman ini.</p>
         {% endif %}
     </div>
+    {% endif %}
     {% endif %}
 </section>
 {% endblock %}
