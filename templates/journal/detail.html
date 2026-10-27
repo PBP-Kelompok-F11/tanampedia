@@ -6,6 +6,10 @@
 <div class="journal-detail text-grey-900">
     <div class="journal-detail__toolbar mb-4 flex min-h-12 flex-wrap items-center justify-between gap-4">
         <a class="font-semibold text-primary-700" href="{% url 'journal:show_journal_list' %}"><span aria-hidden="true">&larr;</span> Kembali ke jurnal</a>
+        {% if journal.user_id == request.user.pk %}
+            {% url 'journal:create_entry_page' journal.pk as create_entry_url %}
+            {% include 'components/button.html' with text="Tambah entri baru" href=create_entry_url variant="filled" intent="primary" icon_left="icons/plus-icon.svg" class_name="shrink-0 no-underline!"%}
+        {% endif %}
     </div>
     <div class="journal-detail__layout grid grid-cols-1 items-start gap-8 md:grid-cols-5 md:gap-12">
         <aside class="journal-info col-span-1 overflow-hidden rounded-2xl border border-primary-100 bg-raised md:col-span-2" aria-label="Informasi jurnal">

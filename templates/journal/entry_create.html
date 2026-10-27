@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{% if entry %}Edit Entri{% else %}Tambah Catatan{% endif %} | {{ journal.plant_name }}{% endblock %}
+
+{% block content %}
+<section class="mx-auto max-w-5xl px-4 py-10 sm:px-6 lg:px-8">
+    <a href="{% url 'journal:show_journal_detail' journal.pk %}" class="text-sm font-semibold text-green-800 hover:underline">← Kembali ke {{ journal.plant_name }}</a>
+    <header class="mt-6">
+        <p class="text-sm font-semibold uppercase tracking-wide text-green-700">Jurnal Tanaman</p>
+        <h1 class="mt-2 text-3xl font-bold text-slate-900">{% if entry %}Edit entri{% else %}Tambah catatan perkembangan{% endif %}</h1>
+        <p class="mt-2 text-slate-600">{{ journal.plant_name }} · Level {{ level_title }} · {{ pedia_points }} Pedia Points</p>
+    </header>
+
+    <form id="entry-form" action="{% if entry %}{% url 'journal:edit_entry' journal.pk entry.pk %}{% else %}{% url 'journal:create_entry' journal.pk %}{% endif %}" method="post" class="mt-8 space-y-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8" novalidate>
+        {% csrf_token %}
+        <div>
+            {% include 'components/input.html' with label="Deskripsi catatan" id="id_content" name="content" type="textarea" placeholder="Ceritakan perkembangan tanamanmu..." class_name="input" rows=3 value=entry_form.content.value %}
+            <p class="field-error mt-1 text-sm text-red-700" data-error-for="content" aria-live="polite"></p>
+        </div>
+        <div>
+            {% include 'components/dropdown.html' with dropdown_id="entry-condition" label="Kondisi tanaman" name="plant_condition" placeholder="Pilih kondisi" options=condition_options selected_value=condition_value selected_label=condition_label %}
+            <p class="field-error mt-1 text-sm text-red-700" data-error-for="plant_condition" aria-live="polite"></p>
+        </div>
+        <div>
+            {% include 'components/input.html' with label="URL foto (opsional)" id="id_image" name="image" type="url" placeholder="https://example.com/foto-tanaman.jpg" class_name="input" value=entry_form.image.value %}
+            <p class="field-error mt-1 text-sm text-red-700" data-error-for="image" aria-live="polite"></p>
+        </div>
+        <p id="entry-form-message" class="text-sm text-red-700" role="status" aria-live="polite"></p>
+        {% include 'components/button.html' with text="Simpan catatan" type="submit" variant="filled" intent="primary" %}
+    </form>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/journal.js' %}" defer></script>
+{% endblock %}

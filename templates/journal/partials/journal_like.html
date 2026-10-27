@@ -1,0 +1,15 @@
+<div class="journal-card__actions px-5 pb-4">
+    <button
+        type="button"
+        class="journal-like{% if journal.is_liked %} journal-like--active{% endif %}"
+        data-journal-like
+        data-like-url="{% url 'journal:toggle_journal_like' journal.pk %}"
+        aria-pressed="{{ journal.is_liked|yesno:'true,false' }}"
+        aria-label="{% if journal.is_liked %}Batalkan suka{% else %}Sukai jurnal{% endif %}">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+            <path d="m12 3 2.75 5.57 6.15.9-4.45 4.34 1.05 6.13L12 17.05l-5.5 2.89 1.05-6.13L3.1 9.47l6.15-.9L12 3Z"></path>
+        </svg>
+        <span data-like-count>{{ journal.likes_count }} likes</span>
+    </button>
+    <span class="journal-like__message" data-like-message role="status" aria-live="polite"></span>
+</div>
