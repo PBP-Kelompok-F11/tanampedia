@@ -11,7 +11,7 @@
             <a href="#">Forum</a>
             <a href="{% url 'main:katalog_list' %}">Katalog</a>
             <a href="#">Kuis</a>
-            <a href="#">Jurnal</a>
+            <a href="{% url "journal:show_journal_list" %}">Jurnal</a>
         </nav>
         <div class="navbar__auth">
             {% if user.is_authenticated %}

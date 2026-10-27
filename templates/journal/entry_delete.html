@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block title %}Hapus entri | Tanampedia{% endblock %}
+{% block content %}
+<section class="mx-auto max-w-5xl px-4 py-10">
+    <h1>Hapus entri?</h1>
+    <p>Entri tanggal {{ entry.created_at|date:"j M Y" }} dari jurnal <strong>{{ journal.plant_name }}</strong> akan dihapus permanen.</p>
+    <p>{{ entry.content }}</p>
+    <form method="post" action="{% url 'journal:delete_entry' journal.pk entry.pk %}">
+        {% csrf_token %}
+        {% url 'journal:show_journal_detail' journal.pk as detail_url %}
+        {% include 'components/button.html' with text="Batal" href=detail_url variant="outline" intent="neutral" %}
+        {% include 'components/button.html' with text="Ya, hapus entri" type="submit" variant="filled" intent="danger" %}
+    </form>
+</section>
+{% endblock %}

@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     'theme',
     'main',
     'accounts',
+    'journal',
     'quiz',
 ]
 

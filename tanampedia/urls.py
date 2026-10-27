@@ -23,4 +23,5 @@ urlpatterns = [
     path('', include('allauth.urls')),
     path('', include('accounts.urls')),
     path('', include('main.urls')),
+    path('journal/', include('journal.urls')),
 ]
