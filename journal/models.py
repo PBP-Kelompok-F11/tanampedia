@@ -27,6 +27,7 @@ class PlantJournal(models.Model):
     )
     start_date = models.DateField(auto_now_add=True)
     is_public = models.BooleanField(default=False)
+    thumbnail = models.URLField(blank=True)
 
     class Meta:
         ordering = ('-start_date', '-pk')
