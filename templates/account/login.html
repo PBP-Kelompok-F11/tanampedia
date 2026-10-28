@@ -32,6 +32,14 @@
             {% include 'components/button.html' with text="Masuk" type="submit" variant="filled" intent="primary" class_name="w-full mt-1" %}
         </form>
 
+        {% if google_oauth_enabled %}
+        {% load socialaccount %}
+        <div class="auth-divider flex items-center gap-3 my-6 text-[0.8125rem] text-[var(--color-text-muted)]"><span>atau</span></div>
+        <a href="{% provider_login_url 'google' %}" class="btn btn--outline btn--neutral w-full mb-4">
+            <span>Lanjutkan dengan Google</span>
+        </a>
+        {% endif %}
+
         <p class="mt-6 text-center text-sm text-[var(--color-text-muted)]">Belum punya akun? <a href="{% url 'account_signup' %}">Daftar</a></p>
     </div>
 </section>
