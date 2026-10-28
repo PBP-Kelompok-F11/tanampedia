@@ -1,6 +1,21 @@
 {% with input_type=type|default:"text" %}
 <div class="form-field">
 {% if label and id %}<label for="{{ id }}" class="input-label">{{ label }}</label>{% elif label %}<label class="input-label">{{ label }}{% endif %}
+{% if input_type == "textarea" %}
+<textarea
+        placeholder="{{ placeholder|default:'' }}"
+        {% if name %} name="{{ name }}" {% endif %}
+        {% if id %} id="{{ id }}" {% endif %}
+        {% if autocomplete %} autocomplete="{{ autocomplete }}" {% endif %}
+        {% if aria_label %} aria-label="{{ aria_label }}" {% endif %}
+        rows="{{ rows|default:4 }}"
+        {% if minlength %} minlength="{{ minlength }}" {% endif %}
+        {% if maxlength %} maxlength="{{ maxlength }}" {% endif %}
+        {% if class_name %} class="{{ class_name }}" {% endif %}
+        {% if required %} required {% endif %}
+        {% if disabled %} disabled {% endif %}
+        {% if readonly %} readonly {% endif %}>{{ value|default_if_none:'' }}</textarea>
+{% else %}
 <input type="{{ input_type }}"
         placeholder="{{ placeholder|default:'' }}"
         value="{{ value|default_if_none:'' }}"
@@ -17,6 +32,7 @@
         {% if required %} required {% endif %}
         {% if disabled %} disabled {% endif %}
         {% if readonly %} readonly {% endif %}>
+{% endif %}
 {% if label and not id %}</label>{% endif %}
 </div>
 {% endwith %}

@@ -61,6 +61,8 @@ INSTALLED_APPS = [
     'main',
     'accounts',
     'forum',
+    'journal',
+    'quiz',
 ]
 
 TAILWIND_APP_NAME = 'theme'
@@ -98,6 +100,11 @@ LOGOUT_REDIRECT_URL = 'main:home'
 
 GOOGLE_CLIENT_ID = os.getenv('GOOGLE_CLIENT_ID', '')
 GOOGLE_CLIENT_SECRET = os.getenv('GOOGLE_CLIENT_SECRET', '')
+
+# Katalog Tanaman module — Trefle API (https://trefle.io). Optional: if
+# unset, the catalog page still renders with an honest "not configured"
+# message instead of fabricating data. Never log or render this value.
+TREFLE_API_TOKEN = os.getenv('TREFLE_API_TOKEN', '')
 
 SOCIALACCOUNT_LOGIN_ON_GET = True
 
@@ -185,6 +192,9 @@ LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'
 
+# Initial reward; the assignment does not mandate a particular number of points.
+QUIZ_CORRECT_ANSWER_POINTS = 10
+
 USE_I18N = True
 
 USE_TZ = True
@@ -205,6 +215,13 @@ STORAGES = {
         "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
     },
 }
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://muhammad-fairus51-tanampedia.pws.cs.ui.ac.id',
+    'https://mohammad-zidane51-tanampedia.pws.cs.ui.ac.id',
+    'https://*.pws.cs.ui.ac.id',
+    'https://localhost:8000'
+]
 
 WHITENOISE_USE_FINDERS = True
 

@@ -9,9 +9,9 @@
             <a href="{% url 'main:home' %}">Beranda</a>
             <a href="{% url 'main:design_system' %}">Design System</a>
             <a href="{% url 'forum:forum_home' %}">Forum</a>
-            <a href="#">Katalog</a>
-            <a href="#">Kuis</a>
-            <a href="#">Jurnal</a>
+            <a href="{% url 'main:katalog_list' %}">Katalog</a>
+            <a href="{% url 'quiz:today' %}">Kuis</a>
+            <a href="{% url "journal:show_journal_list" %}">Jurnal</a>
         </nav>
         <div class="navbar__auth">
             {% if user.is_authenticated %}

@@ -5,8 +5,17 @@ from .forms import QuestionForms, AnswerForms
 from django.views.decorators.http import require_POST
 
 def forum_home(request):
+    title_query = request.GET.get("title", "").strip()
     questions = Question.objects.all().order_by('-created_at')
-    return render(request, 'forum/forum_home.html', {'questions': questions})
+
+    if title_query:
+        questions = questions.filter(title__icontains=title_query)
+
+    context = {
+        "title_query": title_query,
+        "questions": questions,
+    }
+    return render(request, 'forum/forum_home.html', context)
 
 def question_detail(request, pk):
     question = get_object_or_404(Question, pk=pk)
@@ -21,7 +30,7 @@ def question_detail(request, pk):
             answer.author = request.user
             answer.question = question
             answer.save()
-            return redirect('question_detail', pk=question.pk)
+            return redirect('forum:question_detail', pk=question.pk)
     else:
         form = AnswerForms()
 
@@ -40,7 +49,7 @@ def create_question(request):
             question = form.save(commit=False)
             question.author = request.user
             question.save()
-            return redirect('question_detail', pk=question.pk)
+            return redirect('forum:question_detail', pk=question.pk)
     else:
         form = QuestionForms()
 
@@ -52,7 +61,7 @@ def upvote_answer(request, pk):
     answer = get_object_or_404(Answer, pk=pk)
 
     if answer.author == request.user:
-        return redirect('question_detail:', pk=answer.question.pk)
+        return redirect('forum:question_detail:', pk=answer.question.pk)
 
     if request.user in answer.upvotes.all():
         answer.upvotes.remove(request.user)
@@ -63,4 +72,4 @@ def upvote_answer(request, pk):
         if hasattr(answer.author, 'profile'):
             answer.author.profile.add_points(1)
 
-    return redirect('question_detail', pk=answer.question.pk)
+    return redirect('forum:question_detail', pk=answer.question.pk)
