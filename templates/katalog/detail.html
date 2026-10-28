@@ -14,7 +14,7 @@
         <span aria-hidden="true">›</span>
         <a href="{% url 'main:katalog_list' %}">Katalog Tanaman</a>
         <span aria-hidden="true">›</span>
-        <span aria-current="page">{{ plant.common_name|default:plant.scientific_name|default:"Tanaman" }}</span>
+        <span aria-current="page">{% if plant %}{{ plant.common_name|default:plant.scientific_name|default:"Tanaman" }}{% else %}Tanaman{% endif %}</span>
     </nav>
 
     {% if error_message %}
