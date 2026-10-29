@@ -573,9 +573,6 @@
   .max-w-\[40ch\] {
     max-width: 40ch;
   }
-  .max-w-\[420px\] {
-    max-width: 420px;
-  }
   .max-w-xl {
     max-width: var(--container-xl);
   }
@@ -830,9 +827,6 @@
   .border-\[\#DCF2E3\] {
     border-color: #DCF2E3;
   }
-  .border-\[var\(--color-border\)\] {
-    border-color: var(--color-border);
-  }
   .border-gray-100 {
     border-color: var(--color-gray-100);
   }
@@ -895,9 +889,6 @@
   }
   .bg-\[\#FBFDFB\] {
     background-color: #FBFDFB;
-  }
-  .bg-\[var\(--color-raised\)\] {
-    background-color: var(--color-raised);
   }
   .bg-blue-500 {
     background-color: var(--color-blue-500);

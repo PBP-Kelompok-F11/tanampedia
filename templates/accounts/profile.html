@@ -3,40 +3,82 @@
 
 {% block title %}Profil - Tanampedia{% endblock %}
 
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/pages/_profile.css' %}">
+{% endblock %}
+
 {% block content %}
-<section class="flex justify-center px-4 py-12">
-    <div class="w-full max-w-[420px]">
-        <div class="rounded-2xl border border-[var(--color-border)] bg-[var(--color-raised)] p-6">
-            <div class="flex items-center gap-3 mb-6">
+<section class="profile-page">
+    <div class="profile-card">
+        <div class="profile-card__header">
+            <div class="profile-card__identity">
                 {% if profile.profile_picture_url %}
-                <img src="{{ profile.profile_picture_url }}" alt="" class="w-12 h-12 rounded-full object-cover">
+                <img src="{{ profile.profile_picture_url }}" alt="" class="profile-card__avatar">
                 {% else %}
-                <span class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-primary-100 text-primary-700">
+                <span class="profile-card__avatar profile-card__avatar--placeholder">
                     {% include "icons/user-icon.svg" %}
                 </span>
                 {% endif %}
                 <div>
-                    <p class="font-semibold">{{ profile.display_name_or_username }}</p>
-                    <p class="text-sm text-[var(--color-text-muted)]">@{{ user.username }}</p>
+                    <h1 data-profile-display-name>{{ profile.display_name_or_username }}</h1>
+                    <p class="profile-card__username">@{{ user.username }}</p>
                 </div>
             </div>
-
-            <div class="rounded-xl bg-primary-50 p-4 mb-4">
-                <div class="flex items-center gap-2 mb-1 text-primary-700">
-                    {% include "icons/points-icon.svg" %}
-                    <span class="font-semibold">{{ profile.level.title }}</span>
-                </div>
-                <p class="text-sm text-[var(--color-text-muted)]">{{ profile.level.description }}</p>
-            </div>
-
-            <div class="flex items-center justify-between text-sm">
-                <span class="text-[var(--color-text-muted)]">PediaPoints</span>
-                <span class="font-semibold">{{ profile.pedia_points }}</span>
-            </div>
+            <span class="profile-badge">{{ profile.level.title }} &middot; {{ profile.pedia_points }} PediaPoints</span>
         </div>
 
-        {% url 'accounts:logout' as logout_url %}
-        {% include 'components/button.html' with text="Keluar" href=logout_url variant="outline" intent="neutral" class_name="w-full mt-4" %}
+        <p class="profile-card__bio" data-profile-bio>{{ profile.bio|default:"Belum ada bio." }}</p>
+
+        <div class="profile-card__meta">
+            {% include "icons/calendar-icon.svg" %}
+            <span>Bergabung {{ user.date_joined|date:"F Y" }}</span>
+        </div>
+
+        <div class="profile-card__level">
+            <p class="font-semibold mb-0">{{ profile.level.title }}</p>
+            <p class="text-sm text-[var(--color-text-muted)] mb-0">{{ profile.level.description }}</p>
+        </div>
+
+        <div class="profile-card__actions">
+            <button type="button" class="btn btn--outline btn--neutral" data-modal-open="edit-profile-modal">Edit Profil</button>
+            {% url 'accounts:logout' as logout_url %}
+            {% include 'components/button.html' with text="Keluar" href=logout_url variant="outline" intent="neutral" %}
+        </div>
     </div>
 </section>
+
+<div class="modal" id="edit-profile-modal" hidden>
+    <div class="modal__overlay" data-modal-close></div>
+    <div class="modal__dialog" role="dialog" aria-modal="true" aria-labelledby="edit-profile-title">
+        <div class="modal__header">
+            <h2 id="edit-profile-title">Edit Profil</h2>
+            <button type="button" class="modal__close" data-modal-close aria-label="Tutup">{% include "icons/close-icon.svg" %}</button>
+        </div>
+
+        <form id="edit-profile-form" action="{% url 'accounts:edit_profile' %}" method="post" class="flex flex-col gap-4">
+            {% csrf_token %}
+
+            {% include 'components/input.html' with label="Nama tampilan" id="id_edit_display_name" name="display_name" type="text" placeholder="Nama tampilan" class_name="input" maxlength=100 value=edit_form.display_name.value %}
+            <p class="field-error" data-error-for="display_name" aria-live="polite"></p>
+
+            {% include 'components/input.html' with label="Bio" id="id_edit_bio" name="bio" type="textarea" placeholder="Ceritakan sedikit tentang dirimu" class_name="input" rows=3 value=edit_form.bio.value %}
+            <p class="field-error" data-error-for="bio" aria-live="polite"></p>
+
+            {% include 'components/input.html' with label="URL foto profil" id="id_edit_profile_picture_url" name="profile_picture_url" type="url" placeholder="https://..." class_name="input" value=edit_form.profile_picture_url.value %}
+            <p class="field-error" data-error-for="profile_picture_url" aria-live="polite"></p>
+
+            <p id="edit-profile-message" class="text-sm text-red-700" role="status" aria-live="polite"></p>
+
+            <div class="modal__actions">
+                <button type="button" class="btn btn--outline btn--neutral" data-modal-close>Batal</button>
+                {% include 'components/button.html' with text="Simpan" type="submit" variant="filled" intent="primary" %}
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+{% load static %}
+<script src="{% static 'js/accounts.js' %}" defer></script>
 {% endblock %}

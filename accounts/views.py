@@ -2,10 +2,12 @@ from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
+from django.http import JsonResponse
 from django.shortcuts import redirect, render
 from django.utils.http import url_has_allowed_host_and_scheme
+from django.views.decorators.http import require_POST
 
-from .forms import RegisterForm
+from .forms import ProfileEditForm, RegisterForm
 
 
 def _safe_next(request, next_url):
@@ -45,4 +47,23 @@ def logout_user(request):
 
 @login_required
 def profile(request):
-    return render(request, 'accounts/profile.html', {'profile': request.user.profile})
+    return render(request, 'accounts/profile.html', {
+        'profile': request.user.profile,
+        'edit_form': ProfileEditForm(instance=request.user.profile),
+    })
+
+
+@login_required
+@require_POST
+def edit_profile(request):
+    form = ProfileEditForm(request.POST, instance=request.user.profile)
+    if not form.is_valid():
+        return JsonResponse({'errors': form.errors.get_json_data()}, status=400)
+
+    profile = form.save()
+    return JsonResponse({
+        'display_name': profile.display_name,
+        'display_name_or_username': profile.display_name_or_username,
+        'bio': profile.bio,
+        'profile_picture_url': profile.profile_picture_url,
+    }, status=200)

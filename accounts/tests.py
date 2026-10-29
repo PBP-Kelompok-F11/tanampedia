@@ -5,7 +5,7 @@ from django.urls import reverse
 
 from .admin import ProfileAdmin
 from .context_processors import google_oauth_enabled
-from .forms import RegisterForm
+from .forms import ProfileEditForm, RegisterForm
 from .models import Profile
 from .validators import (
     FriendlyMinimumLengthValidator,
@@ -145,6 +145,63 @@ class RegisterFormTests(TestCase):
         user = form.save(commit=False)
         self.assertIsNone(user.pk)
         self.assertFalse(User.objects.filter(username='uncommitted_user').exists())
+
+
+class ProfileEditFormTests(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username='edit-form-user', password='TestPass123')
+
+    def test_valid_data_updates_profile(self):
+        form = ProfileEditForm({
+            'display_name': 'New Name',
+            'bio': 'Hobi berkebun',
+            'profile_picture_url': 'https://example.com/avatar.png',
+        }, instance=self.user.profile)
+        self.assertTrue(form.is_valid(), form.errors)
+        profile = form.save()
+        self.assertEqual(profile.display_name, 'New Name')
+        self.assertEqual(profile.bio, 'Hobi berkebun')
+        self.assertEqual(profile.profile_picture_url, 'https://example.com/avatar.png')
+
+    def test_blank_optional_fields_are_valid(self):
+        form = ProfileEditForm({
+            'display_name': '',
+            'bio': '',
+            'profile_picture_url': '',
+        }, instance=self.user.profile)
+        self.assertTrue(form.is_valid(), form.errors)
+
+    def test_invalid_profile_picture_url_is_rejected(self):
+        form = ProfileEditForm({
+            'display_name': 'New Name',
+            'bio': '',
+            'profile_picture_url': 'not-a-url',
+        }, instance=self.user.profile)
+        self.assertFalse(form.is_valid())
+        self.assertIn('profile_picture_url', form.errors)
+
+    def test_display_name_strips_tags(self):
+        # strip_tags removes tag markers only, not their text content - it's
+        # not a script sanitizer. The actual XSS protection is that the
+        # result later gets rendered via Django's auto-escaping template
+        # output (or set via .textContent on the client), never raw HTML.
+        form = ProfileEditForm({
+            'display_name': 'Hello <b>World</b>',
+            'bio': '',
+            'profile_picture_url': '',
+        }, instance=self.user.profile)
+        self.assertTrue(form.is_valid(), form.errors)
+        self.assertEqual(form.cleaned_data['display_name'], 'Hello World')
+        self.assertNotIn('<b>', form.cleaned_data['display_name'])
+
+    def test_bio_strips_tags(self):
+        form = ProfileEditForm({
+            'display_name': 'Name',
+            'bio': 'Suka <b>berkebun</b> organik',
+            'profile_picture_url': '',
+        }, instance=self.user.profile)
+        self.assertTrue(form.is_valid(), form.errors)
+        self.assertEqual(form.cleaned_data['bio'], 'Suka berkebun organik')
 
 
 class ValidatorsTests(TestCase):
@@ -316,3 +373,63 @@ class ProfileViewTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context['profile'], user.profile)
         self.assertContains(response, 'Profile View User')
+        self.assertIsInstance(response.context['edit_form'], ProfileEditForm)
+
+
+class EditProfileViewTests(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username='edit-view-user', password='Str0ngPassword')
+        self.client.force_login(self.user)
+
+    def test_anonymous_cannot_edit(self):
+        self.client.logout()
+        response = self.client.post(reverse('accounts:edit_profile'), {
+            'display_name': 'New Name',
+            'bio': '',
+            'profile_picture_url': '',
+        })
+        self.assertRedirects(
+            response,
+            f"{reverse('accounts:login')}?next={reverse('accounts:edit_profile')}",
+        )
+
+    def test_get_is_not_allowed(self):
+        response = self.client.get(reverse('accounts:edit_profile'))
+        self.assertEqual(response.status_code, 405)
+
+    def test_valid_post_updates_profile_and_returns_json(self):
+        response = self.client.post(reverse('accounts:edit_profile'), {
+            'display_name': 'Updated Name',
+            'bio': 'Suka berkebun organik',
+            'profile_picture_url': 'https://example.com/avatar.png',
+        })
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertEqual(data['display_name'], 'Updated Name')
+        self.assertEqual(data['display_name_or_username'], 'Updated Name')
+        self.assertEqual(data['bio'], 'Suka berkebun organik')
+        self.assertEqual(data['profile_picture_url'], 'https://example.com/avatar.png')
+
+        self.user.profile.refresh_from_db()
+        self.assertEqual(self.user.profile.display_name, 'Updated Name')
+
+    def test_invalid_post_returns_field_errors(self):
+        response = self.client.post(reverse('accounts:edit_profile'), {
+            'display_name': 'Updated Name',
+            'bio': '',
+            'profile_picture_url': 'not-a-url',
+        })
+        self.assertEqual(response.status_code, 400)
+        data = response.json()
+        self.assertIn('profile_picture_url', data['errors'])
+
+    def test_script_tags_are_stripped_before_saving(self):
+        response = self.client.post(reverse('accounts:edit_profile'), {
+            'display_name': 'Name <script>alert(1)</script>',
+            'bio': '',
+            'profile_picture_url': '',
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertNotIn('<script>', response.json()['display_name'])
+        self.user.profile.refresh_from_db()
+        self.assertNotIn('<script>', self.user.profile.display_name)

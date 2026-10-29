@@ -21,7 +21,7 @@
                 {% else %}
                 <span class="navbar__avatar navbar__avatar--placeholder">{% include "icons/user-icon.svg" %}</span>
                 {% endif %}
-                <span>{{ user.profile.display_name_or_username }}</span>
+                <span data-navbar-display-name>{{ user.profile.display_name_or_username }}</span>
             </a>
             <span class="navbar__auth-divider"></span>
             <a href="{% url 'accounts:logout' %}" class="navbar__logout" aria-label="Logout">
