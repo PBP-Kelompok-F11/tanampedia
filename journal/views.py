@@ -53,7 +53,7 @@ def show_journal_list(request):
     journals = list(journals)
     for journal in journals:
         journal.entry_count = len(journal.latest_entries)
-        journal.cover_image = journal.thumbnail or next((entry.image for entry in journal.latest_entries if entry.image), '')
+        journal.cover_image = journal.thumbnail
         journal.last_activity = journal.latest_entries[0].created_at if journal.latest_entries else None
 
     context = {
