@@ -3,6 +3,8 @@ import random
 from django.http import Http404
 from django.shortcuts import render
 
+from accounts.models import Profile
+
 from . import trefle
 
 HERO_IMAGES = [
@@ -18,6 +20,15 @@ def home(request):
 
 def design_system(request):
     return render(request, 'design_system.html')
+
+
+def leaderboard(request):
+    top_profiles = (
+        Profile.objects
+        .select_related('user')
+        .order_by('-pedia_points', 'user__username')[:10]
+    )
+    return render(request, 'leaderboard.html', {'top_profiles': top_profiles})
 
 
 def _parse_page(raw_page):

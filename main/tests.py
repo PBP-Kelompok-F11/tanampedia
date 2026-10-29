@@ -1,6 +1,7 @@
 from unittest.mock import patch, MagicMock
 
 import requests
+from django.contrib.auth import get_user_model
 from django.test import TestCase, override_settings
 from django.urls import reverse
 
@@ -222,3 +223,49 @@ class KatalogViewTests(TestCase):
     def test_navbar_katalog_link_is_wired(self):
         response = self.client.get(reverse("main:home"))
         self.assertContains(response, reverse("main:katalog_list"))
+
+
+class LeaderboardViewTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        User = get_user_model()
+        cls.users = []
+        for i, points in enumerate([900, 800, 700, 600, 500, 400, 300, 200, 100, 50, 10]):
+            user = User.objects.create_user(username=f"lb-user-{i}")
+            user.profile.pedia_points = points
+            user.profile.save()
+            cls.users.append(user)
+
+    def test_anonymous_can_view_leaderboard(self):
+        response = self.client.get(reverse("main:leaderboard"))
+        self.assertEqual(response.status_code, 200)
+
+    def test_shows_at_most_top_ten(self):
+        response = self.client.get(reverse("main:leaderboard"))
+        self.assertEqual(len(response.context["top_profiles"]), 10)
+
+    def test_ranked_highest_points_first(self):
+        response = self.client.get(reverse("main:leaderboard"))
+        points = [profile.pedia_points for profile in response.context["top_profiles"]]
+        self.assertEqual(points, sorted(points, reverse=True))
+
+    def test_eleventh_place_is_excluded(self):
+        response = self.client.get(reverse("main:leaderboard"))
+        self.assertNotContains(response, "lb-user-10")
+
+    def test_top_scorer_is_shown(self):
+        response = self.client.get(reverse("main:leaderboard"))
+        self.assertContains(response, "lb-user-0")
+
+    def test_navbar_links_to_leaderboard_not_design_system(self):
+        response = self.client.get(reverse("main:home"))
+        self.assertContains(response, reverse("main:leaderboard"))
+        self.assertNotContains(response, "Design System")
+
+
+class LeaderboardEmptyStateTests(TestCase):
+    def test_shows_empty_message_when_no_profiles_exist(self):
+        response = self.client.get(reverse("main:leaderboard"))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.context["top_profiles"]), 0)
+        self.assertContains(response, "Belum ada data PediaPoints")
