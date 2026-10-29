@@ -13,11 +13,11 @@ class Question(models.Model):
 
     def __str__(self):
         return self.title
-    
+
 class Answer(models.Model):
     question = models.ForeignKey(
-        Question, 
-        on_delete=models.CASCADE, 
+        Question,
+        on_delete=models.CASCADE,
         related_name='answers'
     )
     author = models.ForeignKey(
@@ -29,7 +29,7 @@ class Answer(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     upvotes = models.ManyToManyField(
         settings.AUTH_USER_MODEL,
-        related_name='upvoted_answers', 
+        related_name='upvoted_forum_answers',
         blank=True
     )
 
@@ -38,4 +38,4 @@ class Answer(models.Model):
         return self.upvotes.count()
 
     def __str__(self):
-        return self.title
+        return f"Answer by {self.author} on '{self.question.title}'"
