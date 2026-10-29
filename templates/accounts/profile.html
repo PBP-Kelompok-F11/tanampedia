@@ -27,6 +27,11 @@
             <span class="profile-badge">{{ profile.level.title }} &middot; {{ profile.pedia_points }} PediaPoints</span>
         </div>
 
+        <a href="{% url 'main:leaderboard' %}" class="profile-rank">
+            {% include "icons/points-icon.svg" %}
+            <span>#{{ leaderboard_rank }} di Leaderboard</span>
+        </a>
+
         <p class="profile-card__bio" data-profile-bio>{{ profile.bio|default:"Belum ada bio." }}</p>
 
         <div class="profile-card__meta">

@@ -375,6 +375,49 @@ class ProfileViewTests(TestCase):
         self.assertContains(response, 'Profile View User')
         self.assertIsInstance(response.context['edit_form'], ProfileEditForm)
 
+    def test_sole_user_is_rank_one(self):
+        user = User.objects.create_user(username='rank-sole-user', password='Str0ngPassword')
+        self.client.force_login(user)
+        response = self.client.get(reverse('accounts:profile'))
+        self.assertEqual(response.context['leaderboard_rank'], 1)
+        self.assertContains(response, '#1 di Leaderboard')
+
+    def test_rank_reflects_position_among_other_profiles(self):
+        leader = User.objects.create_user(username='rank-leader', password='Str0ngPassword')
+        leader.profile.pedia_points = 500
+        leader.profile.save()
+
+        me = User.objects.create_user(username='rank-me', password='Str0ngPassword')
+        me.profile.pedia_points = 100
+        me.profile.save()
+
+        self.client.force_login(me)
+        response = self.client.get(reverse('accounts:profile'))
+        self.assertEqual(response.context['leaderboard_rank'], 2)
+        self.assertContains(response, '#2 di Leaderboard')
+
+    def test_tied_points_share_the_same_rank(self):
+        me = User.objects.create_user(username='rank-tied-me', password='Str0ngPassword')
+        me.profile.pedia_points = 300
+        me.profile.save()
+
+        rival = User.objects.create_user(username='rank-tied-rival', password='Str0ngPassword')
+        rival.profile.pedia_points = 300
+        rival.profile.save()
+
+        lower = User.objects.create_user(username='rank-tied-lower', password='Str0ngPassword')
+        lower.profile.pedia_points = 50
+        lower.profile.save()
+
+        self.client.force_login(me)
+        response = self.client.get(reverse('accounts:profile'))
+        # Both tied users are #1; the next distinct score is #3, not #2.
+        self.assertEqual(response.context['leaderboard_rank'], 1)
+
+        self.client.force_login(lower)
+        response = self.client.get(reverse('accounts:profile'))
+        self.assertEqual(response.context['leaderboard_rank'], 3)
+
 
 class EditProfileViewTests(TestCase):
     def setUp(self):

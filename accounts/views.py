@@ -8,6 +8,7 @@ from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.decorators.http import require_POST
 
 from .forms import ProfileEditForm, RegisterForm
+from .models import Profile
 
 
 def _safe_next(request, next_url):
@@ -47,9 +48,13 @@ def logout_user(request):
 
 @login_required
 def profile(request):
+    my_points = request.user.profile.pedia_points
+    rank = Profile.objects.filter(pedia_points__gt=my_points).count() + 1
+
     return render(request, 'accounts/profile.html', {
         'profile': request.user.profile,
         'edit_form': ProfileEditForm(instance=request.user.profile),
+        'leaderboard_rank': rank,
     })
 
 
