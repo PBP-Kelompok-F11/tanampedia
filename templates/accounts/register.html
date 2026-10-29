@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "base_auth.html" %}
 {% load static %}
 
 {% block title %}Daftar - Tanampedia{% endblock %}
@@ -8,8 +8,10 @@
 {% endblock %}
 
 {% block content %}
-<section class="flex justify-center px-4 py-12">
-    <div class="w-full max-w-[380px]">
+<section class="auth-page">
+    <div class="auth-page__bg" aria-hidden="true"></div>
+
+    <div class="auth-card">
         <h1 class="mb-6 text-2xl">Daftar</h1>
 
         {% if form.non_field_errors %}
@@ -38,6 +40,7 @@
         {% load socialaccount %}
         <div class="auth-divider flex items-center gap-3 my-6 text-[0.8125rem] text-[var(--color-text-muted)]"><span>atau</span></div>
         <a href="{% provider_login_url 'google' %}" class="btn btn--outline btn--neutral w-full mb-4">
+            {% include "icons/google-icon.svg" %}
             <span>Lanjutkan dengan Google</span>
         </a>
         {% endif %}
