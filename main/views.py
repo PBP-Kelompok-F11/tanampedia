@@ -1,9 +1,11 @@
 import random
 
+from django.db.models import Count
 from django.http import Http404
 from django.shortcuts import render
 
 from accounts.models import Profile
+from journal.models import PlantJournal
 
 from . import trefle
 
@@ -15,7 +17,21 @@ HERO_IMAGES = [
 
 
 def home(request):
-    return render(request, 'home.html', {'hero_image': random.choice(HERO_IMAGES)})
+    hero_image = random.choice(HERO_IMAGES)
+
+    community_journals = list(
+        PlantJournal.objects
+        .filter(is_public=True)
+        .select_related('user', 'user__profile')
+        .annotate(likes_count=Count('likes', distinct=True))[:3]
+    )
+    for journal in community_journals:
+        journal.cover_image = journal.thumbnail
+
+    return render(request, 'home.html', {
+        'hero_image': hero_image,
+        'community_journals': community_journals,
+    })
 
 
 def design_system(request):

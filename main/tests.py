@@ -5,6 +5,8 @@ from django.contrib.auth import get_user_model
 from django.test import TestCase, override_settings
 from django.urls import reverse
 
+from journal.models import PlantJournal
+
 from . import trefle
 
 
@@ -269,3 +271,61 @@ class LeaderboardEmptyStateTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.context["top_profiles"]), 0)
         self.assertContains(response, "Belum ada data PediaPoints")
+
+
+class HomeCommunityJournalsTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        User = get_user_model()
+        cls.user = User.objects.create_user(username="community-journal-user")
+
+    def test_shows_empty_message_when_no_public_journals_exist(self):
+        response = self.client.get(reverse("main:home"))
+        self.assertEqual(list(response.context["community_journals"]), [])
+        self.assertContains(response, "Belum ada jurnal publik")
+
+    def test_only_public_journals_are_shown(self):
+        PlantJournal.objects.create(user=self.user, plant_name="Rahasia", is_public=False)
+        public = PlantJournal.objects.create(user=self.user, plant_name="Cabai Rawit", is_public=True)
+        response = self.client.get(reverse("main:home"))
+        shown = list(response.context["community_journals"])
+        self.assertEqual(shown, [public])
+        self.assertNotContains(response, "Rahasia")
+        self.assertContains(response, "Cabai Rawit")
+
+    def test_shows_at_most_three(self):
+        for i in range(5):
+            PlantJournal.objects.create(user=self.user, plant_name=f"Tanaman {i}", is_public=True)
+        response = self.client.get(reverse("main:home"))
+        self.assertEqual(len(response.context["community_journals"]), 3)
+
+    def test_links_to_journal_detail(self):
+        journal = PlantJournal.objects.create(user=self.user, plant_name="Tomat", is_public=True)
+        response = self.client.get(reverse("main:home"))
+        self.assertContains(response, reverse("journal:show_journal_detail", args=[journal.pk]))
+
+    def test_shows_placeholder_when_no_thumbnail(self):
+        PlantJournal.objects.create(user=self.user, plant_name="Tanpa Foto", is_public=True, thumbnail="")
+        response = self.client.get(reverse("main:home"))
+        self.assertContains(response, "lp-post-card__image--empty")
+
+    def test_shows_real_image_when_thumbnail_set(self):
+        PlantJournal.objects.create(
+            user=self.user, plant_name="Dengan Foto", is_public=True,
+            thumbnail="https://example.com/foto.jpg",
+        )
+        response = self.client.get(reverse("main:home"))
+        self.assertContains(response, "https://example.com/foto.jpg")
+        self.assertNotContains(response, "lp-post-card__image--empty")
+
+    def test_shows_likes_count(self):
+        from accounts.models import Profile
+        from journal.models import JournalLike
+
+        journal = PlantJournal.objects.create(user=self.user, plant_name="Populer", is_public=True)
+        User = get_user_model()
+        liker = User.objects.create_user(username="liker")
+        JournalLike.objects.create(journal=journal, user=liker)
+
+        response = self.client.get(reverse("main:home"))
+        self.assertContains(response, "1 likes")
