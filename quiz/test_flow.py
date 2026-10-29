@@ -29,7 +29,7 @@ class QuizFlowTests(TestCase):
 
     def test_home_to_correct_answer_and_profile_balance(self):
         home = self.client.get(reverse('main:home'))
-        self.assertContains(home, f'href="{self.today}"', count=2)
+        self.assertContains(home, f'href="{self.today}"', count=4)
         page = self.client.get(self.today)
         self.assertContains(page, '/static/js/quiz/answer_feedback.js')
         response = self.submit_json(page)
@@ -114,7 +114,7 @@ class QuizFlowTests(TestCase):
         self.client.logout()
         response = self.client.post(self.answer, data, HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 401)
-        self.assertTrue(response.json()['login_url'].startswith(reverse('account_login')))
+        self.assertTrue(response.json()['login_url'].startswith(reverse('accounts:login')))
         self.assertIn('next=' + self.today, response.json()['login_url'])
         fallback = self.client.post(self.answer, data)
         self.assertEqual(fallback.status_code, 302)

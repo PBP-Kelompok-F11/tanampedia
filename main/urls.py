@@ -7,6 +7,7 @@ app_name = 'main'
 urlpatterns = [
     path('', views.home, name='home'),
     path('ds', views.design_system, name='design_system'),
+    path('leaderboard/', views.leaderboard, name='leaderboard'),
     path('katalog/', views.katalog_list, name='katalog_list'),
     path('katalog/<slug:slug>/', views.katalog_detail, name='katalog_detail'),
 ]

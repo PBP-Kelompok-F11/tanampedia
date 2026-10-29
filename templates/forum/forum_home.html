@@ -14,21 +14,22 @@
             </div>
             <div>
                 {% if user.is_authenticated %}
-                <button type="button" 
-                        id="btn-open-create-modal"
-                        class="inline-flex items-center gap-2 px-5 py-2.5 text-sm bg-[#1E4D2B] hover:bg-[#163820] text-white rounded-xl font-semibold shadow-sm transition cursor-pointer">
-                    <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                <a href="{% url 'forum:create_question' %}" 
+                style="color: #ffffff !important;"
+                class="inline-flex items-center gap-2 px-5 py-2.5 text-sm bg-[#1E4D2B] hover:bg-[#163820] !text-white rounded-xl font-semibold shadow-sm transition">
+                    <svg class="w-4 h-4 shrink-0 !text-white" style="color: #ffffff !important;" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
                     </svg>
-                    Ajukan Pertanyaan
-                </button>
+                    <span style="color: #ffffff !important;" class="!text-white">Ajukan Pertanyaan</span>
+                </a>
                 {% else %}
-                <a href="{% url 'login' %}?next={% url 'forum:forum_home' %}" 
-                   class="inline-flex items-center gap-2 px-5 py-2.5 text-sm bg-[#1E4D2B] hover:bg-[#163820] text-white rounded-xl font-semibold shadow-sm transition">
-                    <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                <a href="{{ login_url }}?next={% url 'forum:create_question' %}" 
+                style="color: #ffffff !important;"
+                class="inline-flex items-center gap-2 px-5 py-2.5 text-sm bg-[#1E4D2B] hover:bg-[#163820] !text-white rounded-xl font-semibold shadow-sm transition">
+                    <svg class="w-4 h-4 shrink-0 !text-white" style="color: #ffffff !important;" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
                     </svg>
-                    Ajukan Pertanyaan
+                    <span style="color: #ffffff !important;" class="!text-white">Ajukan Pertanyaan</span>
                 </a>
                 {% endif %}
             </div>
@@ -129,210 +130,4 @@
         </div>
     </div>
 </div>
-
-{% if user.is_authenticated %}
-<div id="create-question-modal" 
-     class="fixed inset-0 z-50 items-center justify-center bg-black/50 backdrop-blur-xs p-4 hidden">
-    <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-2xl w-full shadow-2xl border border-gray-100 max-h-[90vh] overflow-y-auto">
-        <div class="flex items-center justify-between pb-4 border-b border-gray-100 mb-6">
-            <div>
-                <h2 class="text-xl font-extrabold text-gray-900">Buat Pertanyaan Baru</h2>
-                <p class="text-xs text-gray-500 mt-0.5">Bagikan kendala tanaman dan dapatkan solusi dari komunitas.</p>
-            </div>
-            <button type="button" id="btn-close-modal" class="text-gray-400 hover:text-gray-700 text-2xl font-bold p-1 cursor-pointer">&times;</button>
-        </div>
-
-        <form id="ajax-create-question-form" action="{% url 'forum:create_question' %}" method="POST" class="space-y-5">
-            {% csrf_token %}
-
-            <div>
-                <div class="flex items-center justify-between mb-1.5">
-                    <label for="modal_id_title" class="text-xs font-bold text-gray-900">Judul pertanyaan *</label>
-                    <span class="text-[11px] text-gray-400">Maksimal 100 karakter</span>
-                </div>
-                <input type="text" 
-                       name="title" 
-                       id="modal_id_title" 
-                       required 
-                       maxlength="100"
-                       placeholder="Contoh: Mengapa daun selada hidroponik saya menguning?"
-                       class="w-full px-4 py-2.5 bg-[#DCF2E3] border border-gray-800 rounded-2xl text-sm text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#1E4D2B]">
-            </div>
-
-            <div>
-                <label for="modal_id_content" class="text-xs font-bold text-gray-900 block mb-1.5">Isi pertanyaan *</label>
-                <div class="flex items-center gap-3 px-4 py-2 bg-gray-50 border border-gray-800 rounded-t-2xl text-gray-600 text-xs border-b-0">
-                    <span class="font-bold">B</span>
-                    <span class="italic font-serif">I</span>
-                    <span>≡</span>
-                    <span>🔗</span>
-                    <span class="text-gray-400 text-[11px] ml-auto">Tulis pertanyaanmu secara detail</span>
-                </div>
-                <textarea name="content" 
-                          id="modal_id_content" 
-                          rows="5" 
-                          required
-                          placeholder="Ceritakan kondisi tanaman, media tanam, intensitas sinar matahari, atau pupuk..."
-                          class="w-full px-4 py-2.5 bg-[#DCF2E3] border border-gray-800 rounded-b-2xl rounded-t-none text-sm text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#1E4D2B] resize-y"></textarea>
-            </div>
-
-            <div class="flex items-center justify-between pt-4 border-t border-gray-100">
-                <span class="text-[11px] text-gray-400">* Wajib diisi</span>
-                <div class="flex items-center gap-2">
-                    <button type="button" id="btn-cancel-modal" class="px-4 py-2 border border-gray-400 rounded-xl text-xs font-semibold text-gray-700 hover:bg-gray-100 cursor-pointer">
-                        Batal
-                    </button>
-                    <button type="submit" id="btn-submit-question" class="px-5 py-2 bg-[#1E4D2B] hover:bg-[#163820] text-white rounded-xl text-xs font-semibold shadow-sm transition cursor-pointer">
-                        Publikasikan Pertanyaan
-                    </button>
-                </div>
-            </div>
-        </form>
-    </div>
-</div>
-{% endif %}
-
-<script>
-document.addEventListener("DOMContentLoaded", function() {
-    function showToast(message, type = "success") {
-        const container = document.getElementById("toast-container");
-        if (!container) return;
-
-        const toast = document.createElement("div");
-        toast.className = `pointer-events-auto flex items-center gap-3 px-5 py-3.5 rounded-2xl shadow-xl border text-sm font-semibold transition-all duration-300 transform translate-y-[-10px] opacity-0 ${
-            type === "success" 
-                ? "bg-[#1E4D2B] text-white border-[#163820]" 
-                : "bg-red-600 text-white border-red-700"
-        }`;
-
-        const icon = type === "success" 
-            ? `<svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>`
-            : `<svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>`;
-
-        toast.innerHTML = `${icon}<span>${message}</span>`;
-        container.appendChild(toast);
-
-        requestAnimationFrame(() => {
-            toast.classList.remove("translate-y-[-10px]", "opacity-0");
-            toast.classList.add("translate-y-0", "opacity-100");
-        });
-
-        setTimeout(() => {
-            toast.classList.add("opacity-0", "translate-y-[-10px]");
-            setTimeout(() => toast.remove(), 300);
-        }, 3500);
-    }
-
-    function getCsrfToken() {
-        const input = document.querySelector('[name=csrfmiddlewaretoken]');
-        if (input && input.value) return input.value;
-        const cookie = document.cookie.split('; ').find(row => row.startsWith('csrftoken='));
-        return cookie ? decodeURIComponent(cookie.split('=')[1]) : '';
-    }
-
-    const modal = document.getElementById("create-question-modal");
-    const openBtn = document.getElementById("btn-open-create-modal");
-    const closeBtn = document.getElementById("btn-close-modal");
-    const cancelBtn = document.getElementById("btn-cancel-modal");
-    const createForm = document.getElementById("ajax-create-question-form");
-
-    function openModal() { 
-        if (modal) {
-            modal.classList.remove("hidden");
-            modal.classList.add("flex");
-        }
-    }
-    
-    function closeModal() { 
-        if (modal) {
-            modal.classList.add("hidden");
-            modal.classList.remove("flex");
-        }
-    }
-
-    if (openBtn) openBtn.addEventListener("click", openModal);
-    if (closeBtn) closeBtn.addEventListener("click", closeModal);
-    if (cancelBtn) cancelBtn.addEventListener("click", closeModal);
-    if (modal) {
-        modal.addEventListener("click", function(e) {
-            if (e.target === modal) closeModal();
-        });
-    }
-
-    if (createForm) {
-        createForm.addEventListener("submit", function(e) {
-            e.preventDefault();
-            const submitBtn = document.getElementById("btn-submit-question");
-            submitBtn.disabled = true;
-            submitBtn.innerText = "Mempublikasikan...";
-
-            const formData = new FormData(createForm);
-
-            fetch(createForm.action, {
-                method: "POST",
-                headers: {
-                    "X-Requested-With": "XMLHttpRequest",
-                    "X-CSRFToken": getCsrfToken(),
-                },
-                body: formData
-            })
-            .then(res => res.json())
-            .then(data => {
-                submitBtn.disabled = false;
-                submitBtn.innerText = "Publikasikan Pertanyaan";
-
-                if (data.status === "success") {
-                    createForm.reset();
-                    closeModal();
-
-                    const emptyState = document.getElementById("empty-state");
-                    if (emptyState) emptyState.remove();
-
-                    const feed = document.getElementById("questions-feed");
-                    const article = document.createElement("article");
-                    article.id = `question-card-${data.question.id}`;
-                    article.className = "bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition";
-                    article.innerHTML = `
-                        <div class="flex items-center gap-3 mb-3">
-                            <div class="w-10 h-10 min-w-[40px] rounded-full bg-[#DCF2E3] text-[#1E4D2B] font-bold text-sm flex items-center justify-center shrink-0">
-                                ${data.question.avatar_initials}
-                            </div>
-                            <div>
-                                <div class="flex items-center gap-2">
-                                    <span class="font-bold text-sm text-gray-900">${data.question.author}</span>
-                                    ${data.question.level ? `<span class="text-[11px] font-semibold text-[#1E4D2B] bg-[#EAF5EC] px-2 py-0.5 rounded-full border border-[#DCF2E3]">${data.question.level}</span>` : ''}
-                                </div>
-                                <span class="text-xs text-gray-400 block mt-0.5">${data.question.created_at}</span>
-                            </div>
-                        </div>
-                        <h2 class="text-base sm:text-lg font-bold text-gray-900 hover:text-[#1E4D2B] transition">
-                            <a href="${data.question.detail_url}">${data.question.title}</a>
-                        </h2>
-                        <p class="text-sm text-gray-600 mt-2 line-clamp-2 leading-relaxed">${data.question.content}</p>
-                        <div class="flex items-center gap-6 mt-4 pt-4 border-t border-gray-100 text-xs text-gray-500 font-medium">
-                            <span class="flex items-center gap-1.5">
-                                <svg class="w-4 h-4 text-gray-400 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
-                                </svg>
-                                0 Jawaban
-                            </span>
-                        </div>
-                    `;
-                    feed.prepend(article);
-                    showToast("Pertanyaan berhasil dipublikasikan!");
-                } else if (data.status === "error" && data.errors) {
-                    const firstMsg = Object.values(data.errors).flat()[0];
-                    showToast(firstMsg, "error");
-                }
-            })
-            .catch(err => {
-                submitBtn.disabled = false;
-                submitBtn.innerText = "Publikasikan Pertanyaan";
-                showToast("Gagal mempublikasikan pertanyaan.", "error");
-                console.error(err);
-            });
-        });
-    }
-});
-</script>
 {% endblock %}
