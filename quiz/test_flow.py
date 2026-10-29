@@ -29,7 +29,7 @@ class QuizFlowTests(TestCase):
 
     def test_home_to_correct_answer_and_profile_balance(self):
         home = self.client.get(reverse('main:home'))
-        self.assertContains(home, f'href="{self.today}"', count=2)
+        self.assertContains(home, f'href="{self.today}"', count=3)
         page = self.client.get(self.today)
         self.assertContains(page, '/static/js/quiz/answer_feedback.js')
         response = self.submit_json(page)

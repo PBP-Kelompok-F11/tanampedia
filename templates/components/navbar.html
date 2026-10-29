@@ -32,5 +32,20 @@
             <a href="{% url 'accounts:register' %}">Register</a>
             {% endif %}
         </div>
+        <button type="button" class="navbar__toggle" id="navbar-toggle" aria-expanded="false" aria-controls="navbar-mobile-menu" aria-label="Buka menu navigasi">
+            <span class="navbar__toggle-icon navbar__toggle-icon--open">{% include "icons/menu-icon.svg" %}</span>
+            <span class="navbar__toggle-icon navbar__toggle-icon--close">{% include "icons/close-icon.svg" %}</span>
+        </button>
     </div>
+
+    <nav id="navbar-mobile-menu" class="navbar__mobile-menu" hidden>
+        <a href="{% url 'main:home' %}">Beranda</a>
+        <a href="{% url 'main:leaderboard' %}">Leaderboard</a>
+        <a href="{% url 'forum:forum_home' %}">Forum</a>
+        <a href="{% url 'main:katalog_list' %}">Katalog</a>
+        <a href="{% url 'quiz:today' %}">Kuis</a>
+        <a href="{% url "journal:show_journal_list" %}">Jurnal</a>
+    </nav>
 </header>
+
+<script src="{% static 'js/navbar.js' %}" defer></script>
