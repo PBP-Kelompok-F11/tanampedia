@@ -218,6 +218,8 @@ def delete_journal(request, pk):
     # Existing CASCADE relationships remove entries and likes. Images are
     # external URLs, so there are no locally stored files to delete.
     journal.delete()
+    if 'application/json' in request.headers.get('Accept', ''):
+        return JsonResponse({'url': reverse('journal:show_journal_list')})
     return redirect('journal:show_journal_list')
 
 
@@ -253,6 +255,8 @@ def delete_entry(request, journal_pk, entry_pk):
     entry = get_object_or_404(JournalEntry, pk=entry_pk, journal=journal)
     if request.method == 'POST':
         entry.delete()
+        if 'application/json' in request.headers.get('Accept', ''):
+            return JsonResponse({'deleted': str(entry_pk), 'entry_count': journal.entries.count()})
         return redirect('journal:show_journal_detail', pk=journal.pk)
     return render(request, 'journal/entry_delete.html', {'journal': journal, 'entry': entry})
 

@@ -1,4 +1,90 @@
 (function () {
+    function initializeDeleteDialog() {
+        const dialog = document.getElementById('journal-delete-dialog');
+        if (!dialog) return;
+        const form = document.getElementById('delete-dialog-form');
+        const title = document.getElementById('delete-dialog-title');
+        const description = document.getElementById('delete-dialog-description');
+        const error = dialog.querySelector('[data-delete-error]');
+        const cancel = dialog.querySelector('[data-delete-cancel] button');
+        let trigger = null;
+        let busy = false;
+        document.querySelectorAll('[data-delete-trigger]').forEach((element) => {
+            const button = element.matches('button') ? element : element.querySelector('button');
+            if (button) {
+                button.setAttribute('aria-haspopup', 'dialog');
+                button.setAttribute('aria-controls', dialog.id);
+            }
+        });
+
+        document.addEventListener('click', (event) => {
+            const target = event.target.closest('[data-delete-trigger]');
+            if (!target || busy) return;
+            trigger = target;
+            const isJournal = trigger.dataset.deleteKind === 'journal';
+            title.textContent = isJournal ? 'Hapus jurnal?' : 'Hapus entri?';
+            description.textContent = isJournal
+                ? `Jurnal “${trigger.dataset.deleteLabel}”, beserta semua entri dan likes, akan dihapus permanen.`
+                : `Entri “${trigger.dataset.deleteLabel}” akan dihapus permanen. Tindakan ini tidak dapat dibatalkan.`;
+            form.action = trigger.dataset.deleteUrl;
+            error.textContent = '';
+            const menu = trigger.closest('details');
+            if (menu) menu.open = false;
+            dialog.showModal();
+            cancel.focus();
+        });
+        cancel.addEventListener('click', () => {
+            if (!busy) dialog.close();
+        });
+        dialog.addEventListener('cancel', (event) => {
+            if (busy) event.preventDefault();
+        });
+        dialog.addEventListener('close', () => {
+            if (!trigger || !trigger.isConnected) return;
+            const menu = trigger.closest('details');
+            const focusTarget = menu ? menu.querySelector('summary')
+                : trigger.matches('button') ? trigger : trigger.querySelector('button');
+            if (focusTarget) focusTarget.focus();
+        });
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            if (busy || !trigger) return;
+            busy = true;
+            form.querySelectorAll('button').forEach((button) => { button.disabled = true; });
+            error.textContent = '';
+            try {
+                const response = await fetch(form.action, {
+                    method: 'POST',
+                    headers: { 'X-CSRFToken': getCookie('csrftoken'), 'Accept': 'application/json' },
+                    body: new FormData(form),
+                    credentials: 'same-origin',
+                });
+                if (response.redirected) throw new Error('Sesi berakhir. Muat ulang halaman dan masuk kembali.');
+                if (!response.ok) throw new Error('Gagal menghapus. Muat ulang halaman atau coba lagi.');
+                const data = await response.json();
+                if (trigger.dataset.deleteKind === 'journal') {
+                    window.location.assign(data.url);
+                    return;
+                }
+                const card = document.getElementById(`entry-${data.deleted}`);
+                if (card) card.remove();
+                document.querySelectorAll('[data-entry-count]').forEach((element) => {
+                    element.textContent = data.entry_count;
+                });
+                const empty = document.getElementById('empty-entries');
+                if (empty) empty.hidden = data.entry_count !== 0;
+                dialog.close();
+                const addEntry = document.querySelector('.journal-detail__toolbar .btn');
+                if (addEntry) addEntry.focus();
+            } catch (failure) {
+                error.textContent = failure.message || 'Gagal menghapus. Periksa koneksi dan coba lagi.';
+            } finally {
+                busy = false;
+                form.querySelectorAll('button').forEach((button) => { button.disabled = false; });
+            }
+        });
+    }
+
     function getCookie(name) {
         const cookie = document.cookie.split('; ').find((item) => item.startsWith(`${name}=`));
         return cookie ? decodeURIComponent(cookie.split('=').slice(1).join('=')) : '';
@@ -153,6 +239,7 @@
         });
     }
 
+    initializeDeleteDialog();
     initializeDropdowns();
     initializeJournalForm();
     initializeEntryForm();
