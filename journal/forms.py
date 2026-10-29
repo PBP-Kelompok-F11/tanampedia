@@ -24,8 +24,12 @@ class PlantJournalForm(forms.ModelForm):
 class JournalEntryForm(forms.ModelForm):
     class Meta:
         model = JournalEntry
-        fields = ('content', 'plant_condition', 'image')
+        fields = ('header', 'content', 'plant_condition', 'image')
         widgets = {
+            'header': forms.TextInput(attrs={
+                'placeholder': 'Contoh: Daun baru mulai tumbuh',
+                'maxlength': 200,
+            }),
             'content': forms.Textarea(attrs={
                 'placeholder': 'Ceritakan perkembangan tanamanmu...',
                 'rows': 4,

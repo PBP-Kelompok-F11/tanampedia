@@ -69,6 +69,7 @@ class JournalEntry(models.Model):
         DEAD = 'mati', 'Mati'
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    header = models.CharField(max_length=200)
     journal = models.ForeignKey(
         PlantJournal,
         on_delete=models.CASCADE,

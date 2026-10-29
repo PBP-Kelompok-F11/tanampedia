@@ -14,7 +14,12 @@
             </details>
         {% endif %}
     </header>
-    <h2 class="my-1 font-body text-base">Kondisi tanaman: {{ entry.get_plant_condition_display }}</h2>
+    <div class="my-1 flex flex-wrap items-center justify-between gap-3">
+        <h2 class="m-0! min-w-0 wrap-anywhere font-body text-lg font-semibold">{{ entry.header }}</h2>
+        <span class="shrink-0 rounded-full px-3 py-1 text-xs font-semibold {% if entry.plant_condition == 'sehat' %}bg-primary-50 text-primary-700{% elif entry.plant_condition == 'layu' %}bg-grey-100 text-grey-700{% else %}bg-red-50 text-red-700{% endif %}">
+            {{ entry.get_plant_condition_display }}
+        </span>
+    </div>
     <p class="mt-0 mb-3 whitespace-pre-line wrap-anywhere text-sm text-grey-500">{{ entry.content }}</p>
     {% if entry.image %}
         <div class="flex gap-3 overflow-x-auto">
