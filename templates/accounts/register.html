@@ -16,24 +16,20 @@
         <div class="mb-4 px-4 py-3 rounded-lg bg-red-50 text-red-700 text-sm">{{ form.non_field_errors.0 }}</div>
         {% endif %}
 
-        <form method="post" action="{% url 'account_signup' %}" class="flex flex-col gap-4 mb-4">
+        <form method="post" action="{% url 'accounts:register' %}" class="flex flex-col gap-4 mb-4">
             {% csrf_token %}
 
-            {% include 'components/input.html' with label="Nama tampilan" id="id_display_name" name="display_name" type="text" placeholder="Nama yang mau ditampilkan" class_name="input" required=True autocomplete="nickname" value=form.display_name.value %}
+            {% include 'components/input.html' with label="Display Name" id="id_display_name" name="display_name" type="text" placeholder="Misal: Samuel Example" class_name="input" required=True autocomplete="nickname" value=form.display_name.value %}
             {% if form.display_name.errors %}<p class="-mt-2 text-[0.8125rem] text-red-600">{{ form.display_name.errors.0 }}</p>{% endif %}
 
-            {% include 'components/input.html' with label="Email" id="id_email" name="email" type="email" placeholder="nama@email.com" class_name="input" required=True autocomplete="email" value=form.email.value %}
-            {% if form.email.errors %}<p class="-mt-2 text-[0.8125rem] text-red-600">{{ form.email.errors.0 }}</p>{% endif %}
+            {% include 'components/input.html' with label="Username" id="id_username" name="username" type="text" placeholder="Misal: samuelex" class_name="input" required=True autocomplete="username" value=form.username.value %}
+            {% if form.username.errors %}<p class="-mt-2 text-[0.8125rem] text-red-600">{{ form.username.errors.0 }}</p>{% endif %}
 
-            {% include 'components/input.html' with label="Kata sandi" id="id_password1" name="password1" type="password" placeholder="Kata sandi" class_name="input" required=True autocomplete="new-password" %}
+            {% include 'components/input.html' with label="Kata sandi" id="id_password1" name="password1" type="password" placeholder="" class_name="input" required=True autocomplete="new-password" %}
             {% if form.password1.errors %}<p class="-mt-2 text-[0.8125rem] text-red-600">{{ form.password1.errors.0 }}</p>{% endif %}
 
-            {% include 'components/input.html' with label="Ulangi kata sandi" id="id_password2" name="password2" type="password" placeholder="Ulangi kata sandi" class_name="input" required=True autocomplete="new-password" %}
+            {% include 'components/input.html' with label="Ulangi kata sandi" id="id_password2" name="password2" type="password" placeholder="" class_name="input" required=True autocomplete="new-password" %}
             {% if form.password2.errors %}<p class="-mt-2 text-[0.8125rem] text-red-600">{{ form.password2.errors.0 }}</p>{% endif %}
-
-            {% if redirect_field_value %}
-            <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}">
-            {% endif %}
 
             {% include 'components/button.html' with text="Daftar" type="submit" variant="filled" intent="primary" class_name="w-full mt-1" %}
         </form>
@@ -46,7 +42,7 @@
         </a>
         {% endif %}
 
-        <p class="mt-6 text-center text-sm text-[var(--color-text-muted)]">Sudah punya akun? <a href="{% url 'account_login' %}">Masuk</a></p>
+        <p class="mt-6 text-center text-sm text-[var(--color-text-muted)]">Sudah punya akun? <a href="{% url 'accounts:login' %}">Masuk</a></p>
     </div>
 </section>
 {% endblock %}

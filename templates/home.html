@@ -191,7 +191,7 @@
         <p>Gabung dengan Tanampedia dan jadi bagian dari gaya hidup berkelanjutan, satu tanaman pada satu waktu.</p>
 
         <div class="mt-8">
-            {% url 'account_signup' as signup_url %}
+            {% url 'accounts:register' as signup_url %}
             {% include 'components/button.html' with text="Daftar Sekarang" href=signup_url variant="filled" intent="primary" icon_right="icons/arrow-right-icon.svg" %}
         </div>
     </div>

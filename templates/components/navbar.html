@@ -24,12 +24,12 @@
                 <span>{{ user.profile.display_name_or_username }}</span>
             </a>
             <span class="navbar__auth-divider"></span>
-            <a href="{% url 'account_logout' %}" class="navbar__logout" aria-label="Logout">
+            <a href="{% url 'accounts:logout' %}" class="navbar__logout" aria-label="Logout">
                 {% include "icons/logout-icon.svg" %}
             </a>
             {% else %}
-            <a href="{% url 'account_login' %}">Login</a>
-            <a href="{% url 'account_signup' %}">Register</a>
+            <a href="{% url 'accounts:login' %}">Login</a>
+            <a href="{% url 'accounts:register' %}">Register</a>
             {% endif %}
         </div>
     </div>

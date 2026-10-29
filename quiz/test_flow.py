@@ -114,7 +114,7 @@ class QuizFlowTests(TestCase):
         self.client.logout()
         response = self.client.post(self.answer, data, HTTP_ACCEPT='application/json')
         self.assertEqual(response.status_code, 401)
-        self.assertTrue(response.json()['login_url'].startswith(reverse('account_login')))
+        self.assertTrue(response.json()['login_url'].startswith(reverse('accounts:login')))
         self.assertIn('next=' + self.today, response.json()['login_url'])
         fallback = self.client.post(self.answer, data)
         self.assertEqual(fallback.status_code, 302)

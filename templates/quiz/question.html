@@ -45,7 +45,7 @@
     <div class="mt-4">{% url 'quiz:today' as retry_url %}{% include 'components/button.html' with href=retry_url text='Coba Lagi' %}</div>
     {% elif not user.is_authenticated %}
     <p class="!mb-0 !mt-3 text-sm text-grey-500">Masuk untuk menjawab kuis dan mendapatkan PediaPoints.</p>
-    {% url 'account_login' as login_url %}
+    {% url 'accounts:login' as login_url %}
     <a href="{{ login_url }}?next={% url 'quiz:today' %}" class="btn btn--filled btn--primary">Masuk</a>
     {% else %}
     <p class="!mb-0 !mt-3 rounded-lg bg-primary-50 p-4 text-sm text-primary-700">Jawaban benar akan menambahkan 10 PediaPoints; Jawaban salah tidak akan menambahkan PediaPoints. Jika menjawab dengan benar, akan terdapat jeda waktu untuk menjawab soal hingga hari berikutnya.</p>

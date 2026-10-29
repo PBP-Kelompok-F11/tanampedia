@@ -17,7 +17,7 @@
                 {% endif %}
                 <div>
                     <p class="font-semibold">{{ profile.display_name_or_username }}</p>
-                    <p class="text-sm text-[var(--color-text-muted)]">{{ user.email }}</p>
+                    <p class="text-sm text-[var(--color-text-muted)]">@{{ user.username }}</p>
                 </div>
             </div>
 
@@ -35,7 +35,7 @@
             </div>
         </div>
 
-        {% url 'account_logout' as logout_url %}
+        {% url 'accounts:logout' as logout_url %}
         {% include 'components/button.html' with text="Keluar" href=logout_url variant="outline" intent="neutral" class_name="w-full mt-4" %}
     </div>
 </section>
