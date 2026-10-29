@@ -70,7 +70,11 @@ TAILWIND_APP_NAME = 'theme'
 SITE_ID = 1
 
 AUTHENTICATION_BACKENDS = [
+    # Handles our own username/password login (AuthenticationForm).
     'django.contrib.auth.backends.ModelBackend',
+    # Required internally by allauth.socialaccount to finish logging a user
+    # in after a successful Google OAuth callback - not used by our own
+    # login view.
     'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
@@ -86,17 +90,12 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-# django-allauth
-ACCOUNT_LOGIN_METHODS = {'email'}
-ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
-ACCOUNT_SIGNUP_FORM_CLASS = 'accounts.forms.CustomSignupForm'
-ACCOUNT_EMAIL_VERIFICATION = 'none'
-ACCOUNT_LOGOUT_ON_GET = True
-ACCOUNT_SESSION_REMEMBER = True
-
-LOGIN_URL = 'account_login'
+# Manual login/register/logout are our own views (accounts/views.py), not
+# allauth's. allauth.account/allauth.socialaccount stay installed only to
+# power the Google OAuth button - only allauth.socialaccount.providers.google
+# .urls is mounted (see tanampedia/urls.py), not allauth.urls.
+LOGIN_URL = 'accounts:login'
 LOGIN_REDIRECT_URL = 'accounts:profile'
-LOGOUT_REDIRECT_URL = 'main:home'
 
 GOOGLE_CLIENT_ID = os.getenv('GOOGLE_CLIENT_ID', '')
 GOOGLE_CLIENT_SECRET = os.getenv('GOOGLE_CLIENT_SECRET', '')

@@ -299,7 +299,7 @@ class QuestionManagementTests(TestCase):
                 with self.subTest(url=url, method=method):
                     response = getattr(self.client, method)(url)
                     self.assertEqual(response.status_code, 302)
-                    self.assertTrue(response.url.startswith(reverse('account_login') + '?next='))
+                    self.assertTrue(response.url.startswith(reverse('accounts:login') + '?next='))
         self.assertEqual(Question.objects.count(), 1)
 
     def test_regular_users_and_staff_are_denied_on_every_management_endpoint(self):

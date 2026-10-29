@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Leaderboard - Tanampedia{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/pages/_leaderboard.css' %}">
+{% endblock %}
+
+{% block content %}
+<section class="leaderboard-page">
+    <header class="leaderboard-header">
+        <h1><span class="lp-gradient-text">Leaderboard</span></h1>
+    </header>
+
+    {% if top_profiles %}
+    <ol class="leaderboard-list">
+        {% for profile in top_profiles %}
+        <li class="leaderboard-row{% if forloop.counter <= 3 %} leaderboard-row--top{% endif %}">
+            <span class="leaderboard-rank leaderboard-rank--{{ forloop.counter }}">{{ forloop.counter }}</span>
+
+            {% if profile.profile_picture_url %}
+            <img src="{{ profile.profile_picture_url }}" alt="" class="leaderboard-avatar">
+            {% else %}
+            <span class="leaderboard-avatar leaderboard-avatar--placeholder">{% include "icons/user-icon.svg" %}</span>
+            {% endif %}
+
+            <div class="leaderboard-identity">
+                <p class="leaderboard-name">{{ profile.display_name_or_username }}</p>
+                <p class="leaderboard-level">{{ profile.level.title }}</p>
+            </div>
+
+            <span class="leaderboard-points">
+                {{ profile.pedia_points }}
+                <span class="leaderboard-points-label">PediaPoints</span>
+            </span>
+        </li>
+        {% endfor %}
+    </ol>
+    {% else %}
+    <p class="leaderboard-empty">Belum ada data PediaPoints untuk ditampilkan.</p>
+    {% endif %}
+</section>
+
+<section class="lp-flow lp-bleed lp-reveal mt-16 py-16">
+    <div class="lp-section-heading text-center max-w-[40ch] mx-auto mb-12">
+        <h2>Bagaimana Cara Dapat <span class="lp-gradient-text">PediaPoints</span>?</h2>
+    </div>
+
+    <div class="flex flex-col sm:flex-row items-center justify-center gap-4 flex-wrap">
+        <div class="lp-flow__step flex flex-col items-center gap-3 w-[150px] text-center">
+            <div class="lp-flow__step-icon flex items-center justify-center w-16 h-16 rounded-full">{% include "icons/forum-icon.svg" %}</div>
+            <strong>Berkontribusi</strong>
+            <span class="lp-flow__step-note">Jawab, posting, atau ikut kuis</span>
+        </div>
+
+        <span class="lp-flow__arrow shrink-0 rotate-90 sm:rotate-0">{% include "icons/arrow-right-icon.svg" %}</span>
+
+        <div class="lp-flow__step flex flex-col items-center gap-3 w-[150px] text-center">
+            <div class="lp-flow__step-icon flex items-center justify-center w-16 h-16 rounded-full">{% include "icons/points-icon.svg" %}</div>
+            <strong>Dapat Apresiasi</strong>
+            <span class="lp-flow__step-note">Upvote, like, atau jawaban benar</span>
+        </div>
+
+        <span class="lp-flow__arrow shrink-0 rotate-90 sm:rotate-0">{% include "icons/arrow-right-icon.svg" %}</span>
+
+        <div class="lp-flow__step flex flex-col items-center gap-3 w-[150px] text-center">
+            <div class="lp-flow__step-icon flex items-center justify-center w-16 h-16 rounded-full">{% include "icons/plant-icon.svg" %}</div>
+            <strong>Tumbuh Bareng</strong>
+            <span class="lp-flow__step-note">PediaPoints naik, reputasimu ikut tumbuh</span>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/home.js' %}" defer></script>
+{% endblock %}

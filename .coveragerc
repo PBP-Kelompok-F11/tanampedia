@@ -1,0 +1,21 @@
+[run]
+source = .
+omit =
+    manage.py
+    */migrations/*
+    */__pycache__/*
+    .venv/*
+    venv/*
+    env/*
+    theme/*
+    tanampedia/asgi.py
+    tanampedia/wsgi.py
+    */test_e2e.py
+
+[report]
+precision = 1
+exclude_lines =
+    pragma: no cover
+    def __repr__
+    raise NotImplementedError
+    if __name__ == .__main__.:
