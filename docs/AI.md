@@ -2,9 +2,9 @@
 
 ## Ervhino Aryo Seto
 
-(...)
+Saya menggunakan generative AI berupa ChatGPT yang digunakan untuk memberikan guide dalam pengembangan fitur Katalog Tanaman, khususnya untuk membantu membuat gambaran alur implementasi, memahami struktur integrasi API Trefle, dan membantu saya belajar untuk menggunakan Tailwind CSS untuk styling halaman katalog. AI juga membantu saya dalam penyusunan test untuk memastikan fitur pencarian, sorting, detail tanaman, dan error handling berjalan sesuai kebutuhan.
 
-> Tools Digunakan: (...)
+> Tools Digunakan: ChatGPT
 
 ## Forza Derian
 
