@@ -8,9 +8,9 @@
 
 ## Forza Derian
 
-(...)
+Menggunakan AI untuk membantu membuat HTML, CSS, models, views, urls, forms, serta bug fix.
 
-> Tools Digunakan: (...)
+> Tools Digunakan: Codex
 
 ## Mohammad Zidane Kurnianto
 
