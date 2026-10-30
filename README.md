@@ -46,6 +46,25 @@
 2. **Petani/Pekebun Berpengalaman:** Berpengalaman dalam dunia pertanian, menjawab dan membangun koleksi PediaPoint
 3. **Admin:** Moderasi konten dan mengelola data
 
+## Dependencies
+
+| Package | Versi | Kegunaan |
+| --- | --- | --- |
+| [Django](https://www.djangoproject.com/) | 5.2.17 | Web framework utama. |
+| [django-allauth](https://docs.allauth.org/) | 65.20.1 | Login dengan Google OAuth (login/register manual pakai auth bawaan Django sendiri). |
+| [django-tailwind](https://django-tailwind.readthedocs.io/) | 4.6.0 | Integrasi Tailwind CSS ke dalam Django. |
+| [pytailwindcss](https://github.com/timonweb/pytailwindcss) | 0.4.2 | Mengunduh & menjalankan Tailwind CLI tanpa perlu install Node.js. |
+| [whitenoise](https://whitenoise.readthedocs.io/) | 6.12.0 | Serve static files langsung dari Django, tanpa web server terpisah. |
+| [gunicorn](https://gunicorn.org/) | 26.2.0 | WSGI HTTP server untuk deployment production. |
+| [psycopg2-binary](https://www.psycopg.org/) | 2.9.13 | Driver PostgreSQL untuk database production. |
+| [PyJWT](https://pyjwt.readthedocs.io/)[crypto] | 2.15.1 | Verifikasi token, dipakai `django-allauth` untuk Google OAuth. |
+| [python-dotenv](https://github.com/theskumar/python-dotenv) | 1.2.4 | Memuat environment variable dari file `.env`. |
+| [requests](https://requests.readthedocs.io/) | 2.32.3 | HTTP client, dipakai untuk memanggil Trefle API (Katalog Tanaman). |
+| [asgiref](https://github.com/django/asgiref) | 3.12.1 | Utilitas ASGI/WSGI, dependency internal Django. |
+| [sqlparse](https://github.com/andialbrecht/sqlparse) | 0.6.0 | Parsing SQL, dependency internal Django (migrations, admin). |
+| [tzdata](https://pypi.org/project/tzdata/) | 2026.4 | Database timezone, dibutuhkan di sistem (mis. Windows) yang tidak punya tz database bawaan OS. |
+| [coverage](https://coverage.readthedocs.io/) | 7.17.0 | Mengukur code coverage dari test suite. |
+
 ## Essential Links
 
 | Name       | Link                           |
