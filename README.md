@@ -15,13 +15,13 @@
 
 ### Anggota
 
-| NPM        | Nama                           |
-| ---------- | ------------------------------ |
-| 2506551125 | Ervhino Aryo Seto              |
-| 2506596041 | Forza Derian                   |
-| 2506584861 | Mohammad Zidane Kurnianto      |
-| 2506588752 | Muhammad Fairus Azfar Arisandi |
-| 2506602896 | Muhammad Naufal Syarifuddin    |
+| | NPM | Nama | Jurusan | Role |
+| :-: | --- | --- | --- | --- |
+| <img src="https://github.com/ervhinoaryoseto-del.png" width="64" alt="Ervhino Aryo Seto"> | 2506551125 | **Ervhino Aryo Seto** | Information Systems '25 @ Universitas Indonesia | Katalog Tanaman |
+| <img src="https://github.com/voruzaa.png" width="64" alt="Forza Derian"> | 2506596041 | **Forza Derian** | Information Systems '25 @ Universitas Indonesia | Kuis & Challenge Harian |
+| <img src="https://github.com/zikabyte.png" width="64" alt="Mohammad Zidane Kurnianto"> | 2506584861 | **Mohammad Zidane Kurnianto** | Information Systems '25 @ Universitas Indonesia | Authentication, Profile, & Leaderboard |
+| <img src="https://github.com/fairusarisandi.png" width="64" alt="Muhammad Fairus Azfar Arisandi"> | 2506588752 | **Muhammad Fairus Azfar Arisandi** | Information Systems '25 @ Universitas Indonesia | User Journal & Posting |
+| <img src="https://github.com/Roatsky.png" width="64" alt="Muhammad Naufal Syarifuddin"> | 2506602896 | **Muhammad Naufal Syarifuddin** | Information Systems '25 @ Universitas Indonesia | Q&A Forum |
 
 ## Deskripsi
 
