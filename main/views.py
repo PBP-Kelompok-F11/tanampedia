@@ -55,8 +55,8 @@ def _parse_page(raw_page):
     return page if page > 0 else 1
 
 
+# Menampilkan daftar tanaman dengan fitur pencarian, sorting, dan pagination
 def katalog_list(request):
-    """Katalog Tanaman: browse/search plants sourced from the Trefle API."""
     query = request.GET.get('q', '').strip()
     sort = request.GET.get('sort', 'name_asc')
     if sort not in {'name_asc', 'name_desc'}:
@@ -72,9 +72,7 @@ def katalog_list(request):
     except trefle.TrefleError as exc:
         error_message = exc.message
 
-    # Trefle's response is page-scoped in this integration. Sort the returned
-    # page deterministically without implying that the complete remote catalog
-    # has been globally reordered.
+    # Sorting hanya diterapkan pada data di halaman yang sedang ditampilkan
     plants = sorted(
         plants,
         key=lambda plant: (plant.get('scientific_name') or plant.get('common_name') or '').casefold(),
@@ -109,8 +107,8 @@ def katalog_list(request):
     return render(request, 'katalog/list.html', context)
 
 
+# Menampilkan detail tanaman berdasarkan slug dari Trefle
 def katalog_detail(request, slug):
-    """Katalog Tanaman detail page for a single species, by Trefle slug."""
     try:
         plant = trefle.get_plant_detail(slug)
     except trefle.TrefleError as exc:
