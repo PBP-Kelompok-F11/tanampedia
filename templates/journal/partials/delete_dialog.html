@@ -1,0 +1,14 @@
+<dialog id="journal-delete-dialog" class="m-auto w-[calc(100%-2rem)] max-w-md rounded-2xl border border-grey-200 bg-raised p-6 text-grey-900 shadow-xl backdrop:bg-black/40" aria-labelledby="delete-dialog-title" aria-describedby="delete-dialog-description">
+    <h2 id="delete-dialog-title" class="mb-3 font-body text-xl font-semibold">Konfirmasi hapus</h2>
+    <p id="delete-dialog-description" class="text-sm text-grey-600"></p>
+    <form id="delete-dialog-form" method="post">
+        {% csrf_token %}
+        <p data-delete-error class="mb-4 text-sm text-red-700" role="alert" aria-live="assertive"></p>
+        <div class="flex flex-wrap justify-end gap-3">
+            <span data-delete-cancel>
+                {% include 'components/button.html' with text="Batal" variant="outline" intent="neutral" %}
+            </span>
+            {% include 'components/button.html' with text="Ya, hapus" type="submit" variant="filled" intent="danger" %}
+        </div>
+    </form>
+</dialog>

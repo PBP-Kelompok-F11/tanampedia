@@ -3,7 +3,7 @@
 {% block content %}
 <section class="mx-auto max-w-5xl px-4 py-10">
     <h1>Hapus entri?</h1>
-    <p>Entri tanggal {{ entry.created_at|date:"j M Y" }} dari jurnal <strong>{{ journal.plant_name }}</strong> akan dihapus permanen.</p>
+    <p><strong>{{ entry.header }}</strong> dari jurnal <strong>{{ journal.plant_name }}</strong> pada {{ entry.created_at|date:"j M Y" }} akan dihapus permanen.</p>
     <p>{{ entry.content }}</p>
     <form method="post" action="{% url 'journal:delete_entry' journal.pk entry.pk %}">
         {% csrf_token %}

@@ -9,12 +9,17 @@
                 <summary class="cursor-pointer list-none rounded px-1.5 py-0.5 focus-visible:outline-2 focus-visible:outline-primary-600 [&::-webkit-details-marker]:hidden" aria-label="Tindakan entri tanggal {{ entry.created_at|date:'j M Y' }}">&bull;&bull;&bull;</summary>
                 <div class="absolute top-full right-0 z-10 min-w-35 rounded-[10px] border border-grey-200 bg-raised p-2 shadow-lg">
                     <a class="block rounded-md p-2 hover:bg-primary-50 no-underline!" href="{% url 'journal:edit_entry' entry.journal_id entry.pk %}">Edit entri</a>
-                    <a class="block rounded-md p-2 hover:bg-primary-50 no-underline!" href="{% url 'journal:delete_entry' entry.journal_id entry.pk %}">Hapus entri</a>
+                    <button type="button" class="block w-full cursor-pointer rounded-md p-2 text-left text-red-700 hover:bg-red-50" data-delete-trigger data-delete-kind="entry" data-delete-url="{% url 'journal:delete_entry' entry.journal_id entry.pk %}" data-delete-label="{{ entry.header|default:'Entri' }}" data-entry-id="{{ entry.pk }}" aria-haspopup="dialog" aria-controls="journal-delete-dialog">Hapus entri</button>
                 </div>
             </details>
         {% endif %}
     </header>
-    <h2 class="my-1 font-body text-base">Kondisi tanaman: {{ entry.get_plant_condition_display }}</h2>
+    <div class="my-1 flex flex-wrap items-center justify-between gap-3">
+        <h2 class="m-0! min-w-0 wrap-anywhere font-body text-lg font-semibold">{{ entry.header }}</h2>
+        <span class="shrink-0 rounded-full px-3 py-1 text-xs font-semibold {% if entry.plant_condition == 'sehat' %}bg-primary-50 text-primary-700{% elif entry.plant_condition == 'layu' %}bg-grey-100 text-grey-700{% else %}bg-red-50 text-red-700{% endif %}">
+            {{ entry.get_plant_condition_display }}
+        </span>
+    </div>
     <p class="mt-0 mb-3 whitespace-pre-line wrap-anywhere text-sm text-grey-500">{{ entry.content }}</p>
     {% if entry.image %}
         <div class="flex gap-3 overflow-x-auto">
