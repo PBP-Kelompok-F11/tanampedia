@@ -22,9 +22,13 @@
                     <div class="space-y-6">
                         
                         <div class="flex items-center">
+                            {% if question.author.profile.profile_picture_url %}
+                            <img src="{{ question.author.profile.profile_picture_url }}" alt="" class="w-12 h-12 min-w-[48px] rounded-full object-cover mr-4 shrink-0 shadow-inner">
+                            {% else %}
                             <div class="w-12 h-12 min-w-[48px] rounded-full bg-[#DCF2E3] text-[#1E4D2B] font-bold text-sm flex items-center justify-center mr-4 shrink-0 shadow-inner">
                                 {{ question.author.profile.display_name_or_username|default:question.author.username|slice:":2"|upper }}
                             </div>
+                            {% endif %}
                             <div class="flex flex-col justify-center">
                                 <div class="flex items-center flex-wrap gap-2">
                                     <span class="font-bold text-sm sm:text-base text-gray-900 leading-tight">
@@ -81,9 +85,13 @@
                                 <div class="flex items-center justify-between gap-2">
                                     <div class="flex items-center">
                                         <!-- Reply author avatar with explicit mr-3 -->
+                                        {% if answer.author.profile.profile_picture_url %}
+                                        <img src="{{ answer.author.profile.profile_picture_url }}" alt="" class="w-8 h-8 min-w-[32px] rounded-full object-cover mr-3 shrink-0">
+                                        {% else %}
                                         <div class="w-8 h-8 min-w-[32px] rounded-full bg-[#DCF2E3] text-[#1E4D2B] font-bold text-xs flex items-center justify-center mr-3 shrink-0">
                                             {{ answer.author.profile.display_name_or_username|default:answer.author.username|slice:":2"|upper }}
                                         </div>
+                                        {% endif %}
                                         <div>
                                             <p class="font-bold text-xs text-gray-900 leading-tight">
                                                 {{ answer.author.profile.display_name_or_username|default:answer.author.username }}

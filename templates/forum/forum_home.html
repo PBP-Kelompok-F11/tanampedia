@@ -18,6 +18,7 @@
         justify-content: center;
         font-weight: 700;
         font-size: 13px;
+        object-fit: cover;
     }
     .tag-pill {
         background-color: #EAF5EC;
@@ -91,9 +92,13 @@
                 {% for question in questions %}
                 <article class="forum-card p-6 shadow-sm hover:shadow-md transition">
                     <div class="flex items-center gap-3 mb-3">
+                        {% if question.author.profile.profile_picture_url %}
+                        <img src="{{ question.author.profile.profile_picture_url }}" alt="" class="avatar-sm">
+                        {% else %}
                         <div class="avatar-sm">
                             {{ question.author.profile.display_name_or_username|default:question.author.username|slice:":2"|upper }}
                         </div>
+                        {% endif %}
                         <div>
                             <div class="flex items-center gap-2">
                                 <span class="font-bold text-sm text-gray-900">
