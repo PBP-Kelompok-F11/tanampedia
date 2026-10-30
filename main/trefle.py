@@ -1,39 +1,6 @@
-"""
-Thin service layer around the Trefle API (https://trefle.io) used by the
-Katalog Tanaman (plant catalog) module.
-
-Kept deliberately separate from views.py so that:
-  - HTTP/request concerns (timeouts, retries, error translation) live in
-    one place instead of being duplicated across views.
-  - views.py stays about HTTP request/response handling for *our* app,
-    not about talking to a third-party API.
-  - This module can be unit tested by mocking ``requests.get`` without
-    touching Django's request/response cycle.
-
-Design notes
-------------
-* No local database model is used to mirror Trefle's catalog. The catalog
-  is read-only reference data owned by Trefle; the simplest solution that
-  satisfies "browse + search + view detail" is: call the API and cache the
-  JSON response for a while. A local model would mean writing a sync job,
-  handling staleness, and a migration — none of which this feature needs.
-* Caching uses Django's built-in cache framework (``django.core.cache``).
-  No cache backend is configured in settings.py, so Django falls back to
-  its local-memory cache automatically — no new dependency, no settings
-  change required for caching itself.
-* Every field pulled out of a Trefle response is read defensively with
-  ``.get()``. Trefle's public field list for `/species/search` is
-  documented (see https://docs.trefle.io/docs/guides/getting-started):
-  author, bibliography, common_name, family, family_common_name, genus,
-  genus_id, id, links, rank, scientific_name, slug, status,
-  synonyms_count, year. Growth/care fields (light, watering, temperature,
-  humidity, etc.) are documented to exist on the *species detail* response
-  but their exact shape was not confirmed against a live response in this
-  environment (no network access to trefle.io, and no API token was
-  available — see README). This module therefore never invents a value:
-  if a field is missing from the response, callers get ``None`` for it,
-  and templates show an honest "not available" message instead.
-"""
+# Service untuk mengambil dan mengolah data katalog tanaman dari Trefle API
+# Request API, cache, error handling, dan ekstraksi data perawatan dipisahkan
+# dari views agar mudah diuji dan digunakan kembali
 from __future__ import annotations
 
 import logging
@@ -45,17 +12,16 @@ from django.core.cache import cache
 logger = logging.getLogger(__name__)
 
 TREFLE_BASE_URL = "https://trefle.io/api/v1"
-REQUEST_TIMEOUT = 8  # seconds
+REQUEST_TIMEOUT = 8  # batas waktu request dalam detik
 
-CACHE_TTL_LIST = 60 * 30       # 30 minutes — list/search results change rarely
-CACHE_TTL_DETAIL = 60 * 60 * 6  # 6 hours — a single species' data is near-static
+CACHE_TTL_LIST = 60 * 30       # cache daftar dan pencarian selama 30 menit
+CACHE_TTL_DETAIL = 60 * 60 * 6  # cache detail tanaman selama 6 jam
 CACHE_VERSION_PREFIX = "trefle:v1"
 
 
 class TrefleError(Exception):
-    """Base class for every catalog-facing error. ``message`` is safe to
-    show directly to the end user (never includes the token or raw
-    exception internals)."""
+    # Error dasar untuk seluruh proses katalog
+    pass
 
     def __init__(self, message: str):
         self.message = message
@@ -63,15 +29,18 @@ class TrefleError(Exception):
 
 
 class TrefleNotConfigured(TrefleError):
-    """Raised when there is no API token, or the token was rejected."""
+    # Error saat token belum tersedia atau ditolak
+    pass
 
 
 class TrefleUnavailable(TrefleError):
-    """Raised for network failures, timeouts, and unexpected server errors."""
+    # Error saat API tidak dapat diakses atau mengembalikan error server
+    pass
 
 
 class TrefleRateLimited(TrefleError):
-    """Raised when Trefle responds with HTTP 429."""
+    # Error saat jumlah request melewati batas Trefle
+    pass
 
 
 def _get_token() -> str:
@@ -84,13 +53,22 @@ def _get_token() -> str:
     return token
 
 
-def _request(path: str, params: dict | None = None) -> dict | None:
-    """Perform one GET request against the Trefle API.
+def _normalize_page(page: int | str | None) -> int:
+    # Pastikan nomor halaman selalu berupa bilangan positif
+    try:
+        return max(int(page or 1), 1)
+    except (TypeError, ValueError):
+        return 1
 
-    Returns the parsed JSON body, or ``None`` if Trefle returned 404.
-    Raises a ``TrefleError`` subclass for every other failure mode so
-    callers only ever have to handle one exception family.
-    """
+
+def _build_cache_key(resource: str, *parts: object) -> str:
+    # Buat key cache berdasarkan resource dan parameter request
+    suffix = ":".join(str(part) for part in parts)
+    return f"{CACHE_VERSION_PREFIX}:{resource}:{suffix}" if suffix else f"{CACHE_VERSION_PREFIX}:{resource}"
+
+
+def _request(path: str, params: dict | None = None) -> dict | None:
+    # Kirim satu request GET dan ubah error API menjadi TrefleError
     token = _get_token()
     query = dict(params or {})
     query["token"] = token
@@ -109,8 +87,7 @@ def _request(path: str, params: dict | None = None) -> dict | None:
             "Tidak dapat terhubung ke Trefle API. Periksa koneksi jaringan server."
         ) from exc
     except requests.exceptions.RequestException as exc:
-        # Catch-all for anything requests raises that isn't more specific
-        # above (e.g. malformed URL, too many redirects).
+        # Menangani error requests lain yang belum ditangani
         logger.warning("Trefle API request error on %s: %s", path, exc.__class__.__name__)
         raise TrefleUnavailable(
             "Terjadi kesalahan saat menghubungi Trefle API."
@@ -141,49 +118,57 @@ def _request(path: str, params: dict | None = None) -> dict | None:
         ) from exc
 
 
-def list_plants(page: int = 1) -> tuple[list[dict], dict]:
-    """Browse the catalog without a search term."""
-    page = max(int(page or 1), 1)
-    cache_key = f"{CACHE_VERSION_PREFIX}:list:{page}"
+def _extract_catalog_result(payload: dict | None) -> tuple[list[dict], dict]:
+    # Ambil data dan metadata dengan format return yang konsisten
+    payload = payload or {}
+    return payload.get("data") or [], payload.get("meta") or {}
+
+
+def _fetch_catalog_page(
+    endpoint: str,
+    params: dict,
+    cache_key: str,
+) -> tuple[list[dict], dict]:
+    # Ambil, proses, dan simpan satu halaman katalog ke cache
     cached = cache.get(cache_key)
     if cached is not None:
         return cached
 
-    payload = _request("/species", {"page": page})
-    data = (payload or {}).get("data") or []
-    meta = (payload or {}).get("meta") or {}
-    result = (data, meta)
+    result = _extract_catalog_result(_request(endpoint, params))
     cache.set(cache_key, result, CACHE_TTL_LIST)
     return result
+
+
+def list_plants(page: int = 1) -> tuple[list[dict], dict]:
+    # Ambil daftar tanaman tanpa kata pencarian
+    page = _normalize_page(page)
+    return _fetch_catalog_page(
+        "/species",
+        {"page": page},
+        _build_cache_key("list", page),
+    )
 
 
 def search_plants(query: str, page: int = 1) -> tuple[list[dict], dict]:
-    """Search the catalog by common/scientific name."""
+    # Cari tanaman berdasarkan nama umum atau nama ilmiah
     query = (query or "").strip()
-    page = max(int(page or 1), 1)
+    page = _normalize_page(page)
     if not query:
         return list_plants(page=page)
 
-    cache_key = f"{CACHE_VERSION_PREFIX}:search:{query.lower()}:{page}"
-    cached = cache.get(cache_key)
-    if cached is not None:
-        return cached
-
-    payload = _request("/species/search", {"q": query, "page": page})
-    data = (payload or {}).get("data") or []
-    meta = (payload or {}).get("meta") or {}
-    result = (data, meta)
-    cache.set(cache_key, result, CACHE_TTL_LIST)
-    return result
+    return _fetch_catalog_page(
+        "/species/search",
+        {"q": query, "page": page},
+        _build_cache_key("search", query.lower(), page),
+    )
 
 
 _MISSING = object()
 
 
 def get_plant_detail(slug: str) -> dict | None:
-    """Fetch one species by its Trefle slug. Returns ``None`` if Trefle
-    has no such species (caller should turn that into an HTTP 404)."""
-    cache_key = f"{CACHE_VERSION_PREFIX}:detail:{slug}"
+    # Ambil detail tanaman berdasarkan slug dan kembalikan None jika tidak ada
+    cache_key = _build_cache_key("detail", slug)
     cached = cache.get(cache_key, _MISSING)
     if cached is not _MISSING:
         return cached
@@ -194,20 +179,29 @@ def get_plant_detail(slug: str) -> dict | None:
     return data
 
 
-# Candidate locations for growth/care data within a Trefle species-detail
-# response. Trefle's community-documented schema nests this information
-# under `main_species.growth`, but some responses may expose it at the
-# top level instead. We check both and use whichever is present, without
-# assuming either exists — see module docstring.
+# Cari data pertumbuhan pada main_species.growth atau growth di level utama
 def _find_growth_dict(plant: dict) -> dict:
     main_species = plant.get("main_species") or {}
     growth = main_species.get("growth") or plant.get("growth") or {}
     return growth if isinstance(growth, dict) else {}
 
 
-# (label, path-within-growth-dict) — every one of these is looked up with
-# .get() and simply omitted from the UI if absent. None are guessed or
-# defaulted to a plausible-looking value.
+def _format_care_value(value: object) -> object | None:
+    # Ubah nilai perawatan ke format yang siap ditampilkan
+    if value in (None, "", [], {}):
+        return None
+    if isinstance(value, dict):
+        min_value = value.get("min")
+        max_value = value.get("max")
+        if min_value is None and max_value is None:
+            return None
+        return f"{min_value if min_value is not None else '?'} - {max_value if max_value is not None else '?'}"
+    if isinstance(value, list):
+        return ", ".join(str(item) for item in value)
+    return value
+
+
+# Field perawatan yang dibaca dari data growth tanpa membuat nilai tambahan
 _CARE_FIELD_MAP = [
     ("light", "Kebutuhan cahaya (skala 0-10)"),
     ("atmospheric_humidity", "Kelembapan udara (skala 0-10)"),
@@ -225,24 +219,13 @@ _CARE_FIELD_MAP = [
 
 
 def extract_care_info(plant: dict) -> list[dict]:
-    """Build a list of {label, value} entries for whichever care fields
-    Trefle actually returned. Fields that are missing or null are left
-    out entirely — the template separately shows an honest "not
-    available" note when this list comes back empty."""
+    # Bentuk daftar informasi dari field perawatan yang tersedia
     growth = _find_growth_dict(plant)
     entries = []
     for key, label in _CARE_FIELD_MAP:
-        value = growth.get(key)
-        if value in (None, "", [], {}):
+        value = _format_care_value(growth.get(key))
+        if value is None:
             continue
-        if isinstance(value, dict):
-            min_v = value.get("min")
-            max_v = value.get("max")
-            if min_v is None and max_v is None:
-                continue
-            value = f"{min_v if min_v is not None else '?'} - {max_v if max_v is not None else '?'}"
-        elif isinstance(value, list):
-            value = ", ".join(str(v) for v in value)
         entries.append({"label": label, "value": value})
     return entries
 
@@ -257,7 +240,7 @@ _SCALE_CARE_FIELDS = [
 
 
 def extract_care_cards(plant: dict) -> list[dict]:
-    """Return verified 0-10 care cards and categorical month data."""
+    # Bentuk kartu perawatan berskala 0 sampai 10 dan data bulan berbunga
     growth = _find_growth_dict(plant)
     cards = []
     for key, label in _SCALE_CARE_FIELDS:
@@ -272,8 +255,7 @@ def extract_care_cards(plant: dict) -> list[dict]:
         })
 
     months = growth.get("bloom_months")
-    if months not in (None, "", [], {}):
-        if isinstance(months, list):
-            months = ", ".join(str(month) for month in months)
+    months = _format_care_value(months)
+    if months is not None:
         cards.append({"label": "Bulan berbunga", "value": months, "categorical": True})
     return cards
