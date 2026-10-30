@@ -53,4 +53,103 @@
 | Figma Design | https://www.figma.com/design/THxw4O2FNxy30dOkLS9P72/TanamPedia--PBP-F-11-?node-id=0-1&t=jWu86prW4uvzR0tt-1              |
 | Deployment | https://muhammad-fairus51-tanampedia.pws.cs.ui.ac.id/ |
 
+## Get Started
+
+Panduan untuk menjalankan proyek ini secara lokal.
+
+### Requirements
+
+- Python 3.13
+- Git
+
+### 1. Clone repository
+
+```bash
+git clone https://github.com/PBP-Kelompok-F11/tanampedia.git
+cd tanampedia
+```
+
+### 2. Buat & aktifkan virtual environment
+
+```bash
+python -m venv .venv
+
+# Windows
+.venv\Scripts\activate
+
+# macOS/Linux
+source .venv/bin/activate
+```
+
+### 3. Install dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+### 4. Siapkan environment variables
+
+Salin `.env.example` menjadi `.env`, lalu isi sesuai kebutuhan:
+
+```bash
+# Windows
+copy .env.example .env
+
+# macOS/Linux
+cp .env.example .env
+```
+
+| Variable | Wajib? | Keterangan |
+| --- | --- | --- |
+| `PRODUCTION` | Tidak | Biarkan `False` untuk lokal - otomatis pakai SQLite, tidak perlu setup database terpisah. |
+| `SECRET_KEY` | Disarankan | Generate dengan `python -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"`. |
+| `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | Tidak | Opsional, dari [Google Cloud Console](https://console.cloud.google.com/). Tanpa ini, login/register manual tetap jalan normal, tombol "Lanjutkan dengan Google" otomatis tersembunyi. |
+| `TREFLE_API_TOKEN` | Tidak | Opsional, dari [Trefle](https://trefle.io/). Tanpa ini, halaman Katalog Tanaman tetap tampil dengan fallback ke pesan "belum dikonfigurasi". |
+
+### 5. Jalankan migrasi database
+
+```bash
+python manage.py migrate
+```
+
+### 6. (Opsional) Buat akun admin
+
+```bash
+python manage.py createsuperuser
+```
+
+### 7. (Opsional) Isi data demo
+
+Mengisi database dengan data dummy (user, journal, forum, kuis) supaya aplikasi tidak terasa kosong saat dicoba:
+
+```bash
+python manage.py seed_data
+```
+
+Semua akun hasil seed memakai password yang sama, dicetak di akhir perintah di atas.
+
+### 8. Jalankan development server
+
+```bash
+python manage.py runserver
+```
+
+Buka [http://127.0.0.1:8000/](http://127.0.0.1:8000/) di browser.
+
+> CSS Tailwind yang sudah di-*build* sudah ikut ter-*commit* di repo, jadi langkah di atas saja sudah cukup. Kalau mau mengubah styling Tailwind dan melihat perubahannya secara *live*, jalankan `python manage.py tailwind start` di terminal terpisah.
+
+### Menjalankan Test
+
+```bash
+python manage.py test
+```
+
+Atau sekalian dengan laporan *code coverage*:
+
+```bash
+coverage run manage.py test
+coverage report        # ringkasan di terminal
+coverage html          # laporan HTML di htmlcov/index.html
+```
+
 > **Made with 😹 by PBP-F11**
