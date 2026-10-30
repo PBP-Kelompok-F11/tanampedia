@@ -141,7 +141,7 @@
                         </form>
                         {% else %}
                         <div class="bg-gray-100 rounded-2xl p-4 text-center text-xs text-gray-600">
-                            Silakan <a href="{% url 'login' %}" class="text-[#1E4D2B] font-bold underline">login</a> terlebih dahulu untuk menjawab.
+                            Silakan <a href="{% url 'accounts:login' %}?next={{ request.path }}" class="text-[#1E4D2B] font-bold underline">login</a> terlebih dahulu untuk menjawab.
                         </div>
                         {% endif %}
                     </div>
