@@ -1,6 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
-from django.db.models import Count, Exists, OuterRef, Prefetch
+from django.db.models import Count, Exists, OuterRef, Prefetch, Q
 from django.http import Http404, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
@@ -22,6 +22,7 @@ def _profile_context(user):
 @ensure_csrf_cookie
 def show_journal_list(request):
     tab = request.GET.get('tab', 'my')
+    query = request.GET.get('q', '').strip()
     sort = request.GET.get('sort', 'newest')
     if sort not in ('newest', 'most_liked'):
         sort = 'newest'
@@ -61,6 +62,10 @@ def show_journal_list(request):
         journals = journals.filter(is_liked=True)
     if status != 'all':
         journals = journals.filter(status=status)
+    if query:
+        journals = journals.filter(
+            Q(plant_name__icontains=query) | Q(description__icontains=query)
+        )
 
     ordering = ('-start_date', '-pk')
     if sort == 'most_liked':
@@ -74,6 +79,7 @@ def show_journal_list(request):
     context = {
         'journals': journals,
         'active_tab': tab,
+        'query': query,
         'sort': sort,
         'sort_options': [
             {'value': 'newest', 'label': 'Terbaru'},
@@ -99,7 +105,7 @@ def show_journal_list(request):
         'list_query_params': [
             (key, value)
             for key, values in request.GET.lists()
-            if key not in ('sort', 'liked', 'status', 'page')
+            if key not in ('q', 'sort', 'liked', 'status', 'page')
             for value in values
         ],
         **_profile_context(request.user),

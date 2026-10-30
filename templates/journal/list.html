@@ -11,8 +11,8 @@
     </header>
     <nav class="journal-page__nav mb-7 flex flex-wrap items-center justify-between gap-x-4 gap-y-3 border-b border-grey-200" aria-label="Menu jurnal">
         <div class="flex gap-1 sm:gap-2">
-            <a href="{% querystring tab='my' sort=sort page=None %}" class="border-b-2 px-4 py-4 font-semibold no-underline! sm:px-6 {% if active_tab == 'my' %}border-primary-600 text-primary-700{% else %}border-transparent text-grey-500 hover:text-primary-700{% endif %}" {% if active_tab == 'my' %}aria-current="page"{% endif %}>My Journal</a>
-            <a href="{% querystring tab='for-you' sort=sort page=None %}" class="border-b-2 px-4 py-4 font-semibold no-underline! sm:px-6 {% if active_tab == 'for-you' %}border-primary-600 text-primary-700{% else %}border-transparent text-grey-500 hover:text-primary-700{% endif %}" {% if active_tab == 'for-you' %}aria-current="page"{% endif %}>For You</a>
+            <a data-journal-tab href="{% querystring tab='my' sort=sort page=None %}" class="border-b-2 px-4 py-4 font-semibold no-underline! sm:px-6 {% if active_tab == 'my' %}border-primary-600 text-primary-700{% else %}border-transparent text-grey-500 hover:text-primary-700{% endif %}" {% if active_tab == 'my' %}aria-current="page"{% endif %}>My Journal</a>
+            <a data-journal-tab href="{% querystring tab='for-you' sort=sort page=None %}" class="border-b-2 px-4 py-4 font-semibold no-underline! sm:px-6 {% if active_tab == 'for-you' %}border-primary-600 text-primary-700{% else %}border-transparent text-grey-500 hover:text-primary-700{% endif %}" {% if active_tab == 'for-you' %}aria-current="page"{% endif %}>For You</a>
         </div>
         <div class="pb-3 sm:pb-2">
             {% url 'journal:create_journal_page' as create_journal_url %}
@@ -20,21 +20,28 @@
         </div>
     </nav>
     <div class="mb-6 flex justify-end">
-        <form method="get" action="{% url 'journal:show_journal_list' %}" class="flex max-w-full flex-wrap justify-end gap-4" data-journal-filters-form>
+        <form method="get" action="{% url 'journal:show_journal_list' %}" class="flex w-full flex-wrap items-center gap-4" data-journal-filters-form>
             {% for name, value in list_query_params %}
                 <input type="hidden" name="{{ name }}" value="{{ value }}">
             {% endfor %}
-            {% include 'components/dropdown.html' with dropdown_id="journal-liked" label="Suka" name="liked" options=liked_options selected_value=liked selected_label=liked_label compact_inline=True %}
-            {% include 'components/dropdown.html' with dropdown_id="journal-status" label="Status" name="status" options=status_options selected_value=status selected_label=status_label compact_inline=True %}
-            {% include 'components/dropdown.html' with dropdown_id="journal-sort" label="Urutkan" name="sort" options=sort_options selected_value=sort selected_label=sort_label compact_inline=True %}
+            <div class="min-w-0 flex-[1_1_240px]">
+                {% include 'components/input.html' with id="journal-search" type="search" name="q" value=query placeholder="Cari nama tanaman atau deskripsi..." aria_label="Cari jurnal" class_name="w-full min-h-10 rounded-[30px] border border-grey-200 bg-raised px-4 py-2 font-body text-sm text-grey-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600" %}
+            </div>
+            <div class="ml-auto flex max-w-full flex-wrap justify-end gap-4">
+                {% include 'components/dropdown.html' with dropdown_id="journal-liked" label="Suka" name="liked" options=liked_options selected_value=liked selected_label=liked_label compact_inline=True %}
+                {% include 'components/dropdown.html' with dropdown_id="journal-status" label="Status" name="status" options=status_options selected_value=status selected_label=status_label compact_inline=True %}
+                {% include 'components/dropdown.html' with dropdown_id="journal-sort" label="Urutkan" name="sort" options=sort_options selected_value=sort selected_label=sort_label compact_inline=True %}
+            </div>
+            <noscript><button type="submit" class="btn btn--filled btn--primary">Cari</button></noscript>
         </form>
     </div>
+    <p id="journal-search-message" class="text-sm text-grey-500" role="status" aria-live="polite"></p>
     <div id="journal-list" class="journal-list grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6">
         {% for journal in journals %}
             {% include 'journal/partials/journal_card.html' with journal=journal %}
         {% empty %}
             <p id="empty-journals" class="col-span-full rounded-2xl border border-dashed border-grey-300 p-8 text-grey-500">
-                {% if has_filters %}Tidak ada jurnal yang sesuai dengan filter yang dipilih.{% elif active_tab == 'my' %}Belum ada jurnal. Gunakan tombol Buat Jurnal Baru untuk memulai.{% else %}Belum ada jurnal publik yang bisa ditampilkan.{% endif %}
+                {% if query %}Tidak ada jurnal yang sesuai dengan pencarian dan filter yang dipilih.{% elif has_filters %}Tidak ada jurnal yang sesuai dengan filter yang dipilih.{% elif active_tab == 'my' %}Belum ada jurnal. Gunakan tombol Buat Jurnal Baru untuk memulai.{% else %}Belum ada jurnal publik yang bisa ditampilkan.{% endif %}
             </p>
         {% endfor %}
     </div>
