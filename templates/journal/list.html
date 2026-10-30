@@ -20,10 +20,12 @@
         </div>
     </nav>
     <div class="mb-6 flex justify-end">
-        <form method="get" action="{% url 'journal:show_journal_list' %}" class="max-w-full" data-sort-form>
-            {% for name, value in sort_query_params %}
+        <form method="get" action="{% url 'journal:show_journal_list' %}" class="flex max-w-full flex-wrap justify-end gap-4" data-journal-filters-form>
+            {% for name, value in list_query_params %}
                 <input type="hidden" name="{{ name }}" value="{{ value }}">
             {% endfor %}
+            {% include 'components/dropdown.html' with dropdown_id="journal-liked" label="Suka" name="liked" options=liked_options selected_value=liked selected_label=liked_label compact_inline=True %}
+            {% include 'components/dropdown.html' with dropdown_id="journal-status" label="Status" name="status" options=status_options selected_value=status selected_label=status_label compact_inline=True %}
             {% include 'components/dropdown.html' with dropdown_id="journal-sort" label="Urutkan" name="sort" options=sort_options selected_value=sort selected_label=sort_label compact_inline=True %}
         </form>
     </div>
@@ -32,7 +34,7 @@
             {% include 'journal/partials/journal_card.html' with journal=journal %}
         {% empty %}
             <p id="empty-journals" class="col-span-full rounded-2xl border border-dashed border-grey-300 p-8 text-grey-500">
-                {% if active_tab == 'my' %}Belum ada jurnal. Gunakan tombol Buat Jurnal Baru untuk memulai.{% else %}Belum ada jurnal publik yang bisa ditampilkan.{% endif %}
+                {% if has_filters %}Tidak ada jurnal yang sesuai dengan filter yang dipilih.{% elif active_tab == 'my' %}Belum ada jurnal. Gunakan tombol Buat Jurnal Baru untuk memulai.{% else %}Belum ada jurnal publik yang bisa ditampilkan.{% endif %}
             </p>
         {% endfor %}
     </div>

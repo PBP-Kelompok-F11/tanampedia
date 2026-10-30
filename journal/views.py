@@ -25,6 +25,10 @@ def show_journal_list(request):
     sort = request.GET.get('sort', 'newest')
     if sort not in ('newest', 'most_liked'):
         sort = 'newest'
+    liked = '1' if request.GET.get('liked') == '1' else 'all'
+    status = request.GET.get('status', 'all')
+    if status not in PlantJournal.Status.values:
+        status = 'all'
     journals = PlantJournal.objects.select_related(
         'user',
         'user__profile',
@@ -53,6 +57,11 @@ def show_journal_list(request):
         tab = 'my'
         journals = journals.filter(user=request.user)
 
+    if liked == '1':
+        journals = journals.filter(is_liked=True)
+    if status != 'all':
+        journals = journals.filter(status=status)
+
     ordering = ('-start_date', '-pk')
     if sort == 'most_liked':
         ordering = ('-likes_count', *ordering)
@@ -71,10 +80,26 @@ def show_journal_list(request):
             {'value': 'most_liked', 'label': 'Paling Disukai'},
         ],
         'sort_label': 'Paling Disukai' if sort == 'most_liked' else 'Terbaru',
-        'sort_query_params': [
+        'liked': liked,
+        'liked_options': [
+            {'value': 'all', 'label': 'Semua jurnal'},
+            {'value': '1', 'label': 'Disukai oleh saya'},
+        ],
+        'liked_label': 'Disukai oleh saya' if liked == '1' else 'Semua jurnal',
+        'status': status,
+        'status_options': [
+            {'value': 'all', 'label': 'Semua status'},
+            *[
+                {'value': value, 'label': label}
+                for value, label in PlantJournal.Status.choices
+            ],
+        ],
+        'status_label': dict(PlantJournal.Status.choices).get(status, 'Semua status'),
+        'has_filters': liked == '1' or status != 'all',
+        'list_query_params': [
             (key, value)
             for key, values in request.GET.lists()
-            if key not in ('sort', 'page')
+            if key not in ('sort', 'liked', 'status', 'page')
             for value in values
         ],
         **_profile_context(request.user),
