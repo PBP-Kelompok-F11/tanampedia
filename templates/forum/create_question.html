@@ -19,9 +19,13 @@
 
         <div class="bg-white rounded-[24px] p-6 sm:p-10 shadow-sm border border-[#E2E8F0]">
             <div class="flex items-center gap-4 pb-6 border-b border-gray-100 mb-6">
-                <div class="w-11 h-11 min-w-[44px] bg-[#DCF2E3] text-[#1E4D2B] rounded-full flex items-center justify-center font-bold">
+                {% if user.profile.profile_picture_url %}
+                <img src="{{ user.profile.profile_picture_url }}" alt="" class="avatar-circle">
+                {% else %}
+                <div class="avatar-circle">
                     {{ user.profile.display_name_or_username|default:user.username|slice:":2"|upper }}
                 </div>
+                {% endif %}
                 <div>
                     <h3 class="font-bold text-sm text-gray-900 leading-tight">
                         {{ user.profile.display_name_or_username|default:user.username }}

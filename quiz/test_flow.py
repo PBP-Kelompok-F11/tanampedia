@@ -27,6 +27,25 @@ class QuizFlowTests(TestCase):
             'option': page.context['question'].options.get(position=position).pk,
         }, HTTP_ACCEPT='application/json')
 
+    def test_anonymous_quiz_page_redirects_to_login(self):
+        self.client.logout()
+        response = self.client.get(self.today)
+        self.assertRedirects(response, f'{reverse("account_login")}?next={self.today}')
+
+    def test_login_returns_to_quiz_page(self):
+        self.user.email = 'quiz-flow@example.com'
+        self.user.set_password('test-password-123')
+        self.user.save()
+        self.client.logout()
+        login_page = self.client.get(self.today, follow=True)
+        self.assertContains(login_page, f'name="next" value="{self.today}"')
+        response = self.client.post(reverse('account_login'), {
+            'login': self.user.email,
+            'password': 'test-password-123',
+            'next': self.today,
+        })
+        self.assertRedirects(response, self.today)
+
     def test_home_to_correct_answer_and_profile_balance(self):
         home = self.client.get(reverse('main:home'))
         self.assertContains(home, f'href="{self.today}"', count=4)

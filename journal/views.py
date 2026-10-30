@@ -1,6 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
-from django.db.models import Count, Exists, OuterRef, Prefetch
+from django.db.models import Count, Exists, OuterRef, Prefetch, Q
 from django.http import Http404, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
@@ -22,6 +22,14 @@ def _profile_context(user):
 @ensure_csrf_cookie
 def show_journal_list(request):
     tab = request.GET.get('tab', 'my')
+    query = request.GET.get('q', '').strip()
+    sort = request.GET.get('sort', 'newest')
+    if sort not in ('newest', 'most_liked'):
+        sort = 'newest'
+    liked = '1' if request.GET.get('liked') == '1' else 'all'
+    status = request.GET.get('status', 'all')
+    if status not in PlantJournal.Status.values:
+        status = 'all'
     journals = PlantJournal.objects.select_related(
         'user',
         'user__profile',
@@ -50,15 +58,56 @@ def show_journal_list(request):
         tab = 'my'
         journals = journals.filter(user=request.user)
 
-    journals = list(journals)
+    if liked == '1':
+        journals = journals.filter(is_liked=True)
+    if status != 'all':
+        journals = journals.filter(status=status)
+    if query:
+        journals = journals.filter(
+            Q(plant_name__icontains=query) | Q(description__icontains=query)
+        )
+
+    ordering = ('-start_date', '-pk')
+    if sort == 'most_liked':
+        ordering = ('-likes_count', *ordering)
+    journals = list(journals.order_by(*ordering))
     for journal in journals:
         journal.entry_count = len(journal.latest_entries)
-        journal.cover_image = journal.thumbnail or next((entry.image for entry in journal.latest_entries if entry.image), '')
+        journal.cover_image = journal.thumbnail
         journal.last_activity = journal.latest_entries[0].created_at if journal.latest_entries else None
 
     context = {
         'journals': journals,
         'active_tab': tab,
+        'query': query,
+        'sort': sort,
+        'sort_options': [
+            {'value': 'newest', 'label': 'Terbaru'},
+            {'value': 'most_liked', 'label': 'Paling Disukai'},
+        ],
+        'sort_label': 'Paling Disukai' if sort == 'most_liked' else 'Terbaru',
+        'liked': liked,
+        'liked_options': [
+            {'value': 'all', 'label': 'Semua jurnal'},
+            {'value': '1', 'label': 'Disukai oleh saya'},
+        ],
+        'liked_label': 'Disukai oleh saya' if liked == '1' else 'Semua jurnal',
+        'status': status,
+        'status_options': [
+            {'value': 'all', 'label': 'Semua status'},
+            *[
+                {'value': value, 'label': label}
+                for value, label in PlantJournal.Status.choices
+            ],
+        ],
+        'status_label': dict(PlantJournal.Status.choices).get(status, 'Semua status'),
+        'has_filters': liked == '1' or status != 'all',
+        'list_query_params': [
+            (key, value)
+            for key, values in request.GET.lists()
+            if key not in ('q', 'sort', 'liked', 'status', 'page')
+            for value in values
+        ],
         **_profile_context(request.user),
     }
     return render(request, 'journal/list.html', context)
@@ -218,6 +267,8 @@ def delete_journal(request, pk):
     # Existing CASCADE relationships remove entries and likes. Images are
     # external URLs, so there are no locally stored files to delete.
     journal.delete()
+    if 'application/json' in request.headers.get('Accept', ''):
+        return JsonResponse({'url': reverse('journal:show_journal_list')})
     return redirect('journal:show_journal_list')
 
 
@@ -253,6 +304,8 @@ def delete_entry(request, journal_pk, entry_pk):
     entry = get_object_or_404(JournalEntry, pk=entry_pk, journal=journal)
     if request.method == 'POST':
         entry.delete()
+        if 'application/json' in request.headers.get('Accept', ''):
+            return JsonResponse({'deleted': str(entry_pk), 'entry_count': journal.entries.count()})
         return redirect('journal:show_journal_detail', pk=journal.pk)
     return render(request, 'journal/entry_delete.html', {'journal': journal, 'entry': entry})
 

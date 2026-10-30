@@ -40,7 +40,7 @@
                 </div>
                 <dl class="journal-info__metadata m-0 grid grid-cols-2 gap-4 border-y border-grey-200 py-3">
                     <div><dt class="mb-1 text-sm text-grey-500">Tanggal mulai</dt><dd class="m-0"><time datetime="{{ journal.start_date|date:'Y-m-d' }}">{{ journal.start_date|date:"j M Y" }}</time></dd></div>
-                    <div><dt class="mb-1 text-sm text-grey-500">Jumlah entri</dt><dd class="m-0">{{ entry_count }} entri</dd></div>
+                    <div><dt class="mb-1 text-sm text-grey-500">Jumlah entri</dt><dd class="m-0"><span data-entry-count>{{ entry_count }}</span> entri</dd></div>
                 </dl>
                 <section class="journal-info__plant-details mt-6 rounded-2xl border border-primary-100 bg-primary-50 p-6" aria-labelledby="plant-details-title">
                     <h2 id="plant-details-title" class="mb-6 font-body text-base">Detail tanaman</h2>
@@ -54,9 +54,10 @@
                 {% if journal.user_id == request.user.pk %}
                     <div class="journal-info__management mt-4 flex flex-wrap gap-3">
                         {% url 'journal:edit_journal' journal.pk as edit_url %}
-                        {% url 'journal:delete_page' journal.pk as delete_url %}
                         {% include 'components/button.html' with text="Edit jurnal" href=edit_url variant="filled" intent="primary" class_name="shrink-0 no-underline!"%}
-                        {% include 'components/button.html' with text="Hapus jurnal" href=delete_url variant="filled" intent="danger" class_name="shrink-0 no-underline!"%}
+                        <span data-delete-trigger data-delete-url="{% url 'journal:delete' journal.pk %}" data-delete-kind="journal" data-delete-label="{{ journal.plant_name }}">
+                            {% include 'components/button.html' with text="Hapus jurnal" variant="filled" intent="danger" %}
+                        </span>
                     </div>
                 {% endif %}
             </div>
@@ -65,12 +66,14 @@
             <div id="entry-list" class="journal-timeline__entries flex flex-col gap-4 border-l-2 border-primary-200 pl-7">
                 {% for entry in entries %}
                     {% include 'journal/partials/entry_item.html' with entry=entry timeline=True %}
-                {% empty %}
-                    <p id="empty-entries" class="journal-timeline__empty rounded-2xl border border-dashed border-grey-200 bg-raised p-6 text-grey-500">Belum ada catatan perkembangan.</p>
                 {% endfor %}
+                <p id="empty-entries" class="journal-timeline__empty rounded-2xl border border-dashed border-grey-200 bg-raised p-6 text-grey-500"{% if entries %} hidden{% endif %}>Belum ada catatan perkembangan.</p>
             </div>
         </section>
     </div>
 </div>
+{% if journal.user_id == request.user.pk %}
+    {% include 'journal/partials/delete_dialog.html' %}
+{% endif %}
 {% endblock %}
 {% block extra_js %}<script src="{% static 'js/journal.js' %}" defer></script>{% endblock %}

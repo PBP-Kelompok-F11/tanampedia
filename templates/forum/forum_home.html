@@ -70,6 +70,7 @@
                         <div class="w-10 h-10 min-w-[40px] rounded-full bg-[#DCF2E3] text-[#1E4D2B] font-bold text-sm flex items-center justify-center shrink-0">
                             {{ question.author.profile.display_name_or_username|default:question.author.username|slice:":2"|upper }}
                         </div>
+                        {% endif %}
                         <div>
                             <div class="flex items-center gap-2">
                                 <span class="font-bold text-sm text-gray-900">

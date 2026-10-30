@@ -6,6 +6,7 @@ from django.http import JsonResponse
 from django.urls import reverse
 from django.db.models import Count
 from django.conf import settings
+from django.contrib.auth.views import redirect_to_login
 from .models import Question, Answer
 from .forms import QuestionForms, AnswerForms
 
