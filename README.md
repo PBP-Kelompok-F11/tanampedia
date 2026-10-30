@@ -71,6 +71,7 @@
 | ---------- | ------------------------------ |
 | Figma Design | https://www.figma.com/design/THxw4O2FNxy30dOkLS9P72/TanamPedia--PBP-F-11-?node-id=0-1&t=jWu86prW4uvzR0tt-1              |
 | Deployment | https://muhammad-fairus51-tanampedia.pws.cs.ui.ac.id/ |
+| AI Disclosure | [docs/AI.md](docs/AI.md) |
 
 ## Get Started
 
