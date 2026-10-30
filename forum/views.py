@@ -1,5 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.views import redirect_to_login
 from .models import Question, Answer
 from .forms import QuestionForms, AnswerForms
 from django.views.decorators.http import require_POST
@@ -23,7 +24,7 @@ def question_detail(request, pk):
 
     if request.method == 'POST':
         if not request.user.is_authenticated:
-            return redirect('login')
+            return redirect_to_login(request.get_full_path())
         form = AnswerForms(request.POST)
         if form.is_valid():
             answer = form.save(commit=False)
@@ -61,7 +62,7 @@ def upvote_answer(request, pk):
     answer = get_object_or_404(Answer, pk=pk)
 
     if answer.author == request.user:
-        return redirect('forum:question_detail:', pk=answer.question.pk)
+        return redirect('forum:question_detail', pk=answer.question.pk)
 
     if request.user in answer.upvotes.all():
         answer.upvotes.remove(request.user)
