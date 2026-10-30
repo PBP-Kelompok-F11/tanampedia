@@ -26,6 +26,6 @@ AI digunakan terutama untuk tugas repetitif (seperti writing tests dan script se
 
 ## Muhammad Naufal Syarifuddin
 
-(...)
+AI digunakan terutama untuk pembentukan css, html, serta pembenaran bugs dan error yang terjadi dalam pembuatan model, views, urls, dan forms.
 
-> Tools Digunakan: (...)
+> Tools Digunakan: Gemini
