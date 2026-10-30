@@ -38,4 +38,4 @@ class Answer(models.Model):
         return self.upvotes.count()
 
     def __str__(self):
-        return self.title
+        return f'Re: {self.question.title}'
