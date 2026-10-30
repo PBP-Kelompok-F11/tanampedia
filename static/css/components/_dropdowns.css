@@ -25,6 +25,20 @@
     box-sizing: border-box;
 }
 
+.dropdown--compact-inline {
+    grid-template-columns: auto minmax(0, 180px);
+    align-items: center;
+    gap: 12px;
+    width: fit-content;
+    max-width: 100%;
+    font-size: 14px;
+}
+
+.dropdown--compact-inline .dropdown__trigger {
+    min-height: 40px;
+    padding: 8px 12px;
+}
+
 .dropdown__label {
     display: block;
 }
