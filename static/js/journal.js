@@ -128,6 +128,8 @@
                     });
                     trigger.setAttribute('aria-expanded', 'false');
                     menu.hidden = true;
+                    const filtersForm = dropdown.closest('[data-journal-filters-form]');
+                    if (filtersForm) filtersForm.requestSubmit();
                 });
             });
         });

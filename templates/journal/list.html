@@ -11,14 +11,22 @@
     </header>
     <nav class="journal-page__nav mb-7 flex flex-wrap items-center justify-between gap-x-4 gap-y-3 border-b border-grey-200" aria-label="Menu jurnal">
         <div class="flex gap-1 sm:gap-2">
-            <a href="{% url 'journal:show_journal_list' %}" class="border-b-2 px-4 py-4 font-semibold no-underline! sm:px-6 {% if active_tab == 'my' %}border-primary-600 text-primary-700{% else %}border-transparent text-grey-500 hover:text-primary-700{% endif %}" {% if active_tab == 'my' %}aria-current="page"{% endif %}>My Journal</a>
-            <a href="{% url 'journal:show_journal_list' %}?tab=for-you" class="border-b-2 px-4 py-4 font-semibold no-underline! sm:px-6 {% if active_tab == 'for-you' %}border-primary-600 text-primary-700{% else %}border-transparent text-grey-500 hover:text-primary-700{% endif %}" {% if active_tab == 'for-you' %}aria-current="page"{% endif %}>For You</a>
+            <a href="{% querystring tab='my' sort=sort page=None %}" class="border-b-2 px-4 py-4 font-semibold no-underline! sm:px-6 {% if active_tab == 'my' %}border-primary-600 text-primary-700{% else %}border-transparent text-grey-500 hover:text-primary-700{% endif %}" {% if active_tab == 'my' %}aria-current="page"{% endif %}>My Journal</a>
+            <a href="{% querystring tab='for-you' sort=sort page=None %}" class="border-b-2 px-4 py-4 font-semibold no-underline! sm:px-6 {% if active_tab == 'for-you' %}border-primary-600 text-primary-700{% else %}border-transparent text-grey-500 hover:text-primary-700{% endif %}" {% if active_tab == 'for-you' %}aria-current="page"{% endif %}>For You</a>
         </div>
         <div class="pb-3 sm:pb-2">
             {% url 'journal:create_journal_page' as create_journal_url %}
             {% include 'components/button.html' with text="Buat Jurnal Baru" href=create_journal_url variant="filled" intent="primary" icon_left="icons/plus-icon.svg" class_name="shrink-0 no-underline!" %}
         </div>
     </nav>
+    <div class="mb-6 flex justify-end">
+        <form method="get" action="{% url 'journal:show_journal_list' %}" class="max-w-full" data-sort-form>
+            {% for name, value in sort_query_params %}
+                <input type="hidden" name="{{ name }}" value="{{ value }}">
+            {% endfor %}
+            {% include 'components/dropdown.html' with dropdown_id="journal-sort" label="Urutkan" name="sort" options=sort_options selected_value=sort selected_label=sort_label compact_inline=True %}
+        </form>
+    </div>
     <div id="journal-list" class="journal-list grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6">
         {% for journal in journals %}
             {% include 'journal/partials/journal_card.html' with journal=journal %}

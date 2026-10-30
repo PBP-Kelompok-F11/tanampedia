@@ -22,6 +22,9 @@ def _profile_context(user):
 @ensure_csrf_cookie
 def show_journal_list(request):
     tab = request.GET.get('tab', 'my')
+    sort = request.GET.get('sort', 'newest')
+    if sort not in ('newest', 'most_liked'):
+        sort = 'newest'
     journals = PlantJournal.objects.select_related(
         'user',
         'user__profile',
@@ -50,7 +53,10 @@ def show_journal_list(request):
         tab = 'my'
         journals = journals.filter(user=request.user)
 
-    journals = list(journals)
+    ordering = ('-start_date', '-pk')
+    if sort == 'most_liked':
+        ordering = ('-likes_count', *ordering)
+    journals = list(journals.order_by(*ordering))
     for journal in journals:
         journal.entry_count = len(journal.latest_entries)
         journal.cover_image = journal.thumbnail
@@ -59,6 +65,18 @@ def show_journal_list(request):
     context = {
         'journals': journals,
         'active_tab': tab,
+        'sort': sort,
+        'sort_options': [
+            {'value': 'newest', 'label': 'Terbaru'},
+            {'value': 'most_liked', 'label': 'Paling Disukai'},
+        ],
+        'sort_label': 'Paling Disukai' if sort == 'most_liked' else 'Terbaru',
+        'sort_query_params': [
+            (key, value)
+            for key, values in request.GET.lists()
+            if key not in ('sort', 'page')
+            for value in values
+        ],
         **_profile_context(request.user),
     }
     return render(request, 'journal/list.html', context)
