@@ -64,7 +64,6 @@ INSTALLED_APPS = [
     'forum',
     'journal',
     'quiz',
-    'rest_framework',
 ]
 
 TAILWIND_APP_NAME = 'theme'
