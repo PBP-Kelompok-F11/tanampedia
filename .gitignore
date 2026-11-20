@@ -12,6 +12,10 @@ __pycache__/
 *.pyc
 staticfiles/
 
+# Coverage reports
+.coverage
+htmlcov/
+
 # OS & IDE Files
 .DS_Store
 .vscode/*

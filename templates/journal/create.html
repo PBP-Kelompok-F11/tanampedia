@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{% if journal %}Edit Jurnal{% else %}Buat Jurnal{% endif %} | Tanampedia{% endblock %}
+
+{% block content %}
+<section class="mx-auto max-w-5xl px-4 py-10 sm:px-6 lg:px-8">
+    <a href="{% url 'journal:show_journal_list' %}" class="text-sm font-semibold text-green-800 hover:underline">← Kembali ke jurnal</a>
+    <header class="mt-6">
+        <p class="text-sm font-semibold uppercase tracking-wide text-green-700">Jurnal Tanaman</p>
+        <h1 class="mt-2 text-3xl font-bold text-slate-900">{% if journal %}Edit jurnal{% else %}Buat jurnal baru{% endif %}</h1>
+        <p class="mt-2 text-slate-600">Level {{ level_title }} · {{ pedia_points }} Pedia Points</p>
+    </header>
+
+    <form id="journal-form" action="{% if journal %}{% url 'journal:edit_journal' journal.pk %}{% else %}{% url 'journal:create_journal' %}{% endif %}" method="post" class="mt-8 space-y-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8" novalidate>
+        {% csrf_token %}
+        <div>
+            {% include 'components/input.html' with label="Nama tanaman" id="id_plant_name" name="plant_name" type="text" placeholder="Contoh: Cabai rawit" class_name="input" required=True maxlength=200 value=journal_form.plant_name.value %}
+            <p class="field-error mt-1 text-sm text-red-700" data-error-for="plant_name" aria-live="polite"></p>
+        </div>
+        <div>
+            {% include 'components/input.html' with label="Deskripsi jurnal (opsional)" id="id_description" name="description" type="textarea" placeholder="Ceritakan tentang jurnal tanaman ini..." class_name="input" rows=3 value=journal_form.description.value %}
+            <p class="field-error mt-1 text-sm text-red-700" data-error-for="description" aria-live="polite"></p>
+        </div>
+        <div>
+            {% include 'components/input.html' with label="URL thumbnail (opsional)" id="id_thumbnail" name="thumbnail" type="url" placeholder="https://example.com/thumbnail.jpg" class_name="input" maxlength=200 value=journal_form.thumbnail.value %}
+            <p class="field-error mt-1 text-sm text-red-700" data-error-for="thumbnail" aria-live="polite"></p>
+        </div>
+        <div>
+            {% include 'components/input.html' with label="Media tanam (opsional)" id="id_growing_medium" name="growing_medium" type="text" placeholder="Contoh: Tanah, cocopeat, atau hidroponik" class_name="input" maxlength=200 value=journal_form.growing_medium.value %}
+            <p class="field-error mt-1 text-sm text-red-700" data-error-for="growing_medium" aria-live="polite"></p>
+        </div>
+        <div>
+            {% include 'components/input.html' with label="Lokasi (opsional)" id="id_location" name="location" type="text" placeholder="Contoh: Balkon rumah" class_name="input" maxlength=200 value=journal_form.location.value %}
+            <p class="field-error mt-1 text-sm text-red-700" data-error-for="location" aria-live="polite"></p>
+        </div>
+        <div>
+            {% include 'components/dropdown.html' with dropdown_id="journal-status" label="Status tanaman" name="status" placeholder="Pilih status" options=status_options selected_value=status_default_value selected_label=status_default_label %}
+            <p class="field-error mt-1 text-sm text-red-700" data-error-for="status" aria-live="polite"></p>
+        </div>
+        <label for="id_is_public" class="flex items-center gap-3 text-sm text-slate-700">
+            <input id="id_is_public" name="is_public" type="checkbox" class="h-4 w-4 rounded border-slate-300 text-green-700 focus:ring-green-600"{% if journal_form.is_public.value %} checked{% endif %}>
+            <span>Bagikan jurnal ini secara publik</span>
+        </label>
+        <p id="journal-form-message" class="text-sm text-red-700" role="status" aria-live="polite"></p>
+        {% if journal %}
+            {% include 'components/button.html' with text="Simpan perubahan" type="submit" variant="filled" intent="primary" %}
+        {% else %}
+            {% include 'components/button.html' with text="Buat jurnal" type="submit" variant="filled" intent="primary" %}
+        {% endif %}
+    </form>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+{% load static %}
+<script src="{% static 'js/journal.js' %}" defer></script>
+{% endblock %}

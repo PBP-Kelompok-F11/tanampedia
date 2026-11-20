@@ -18,9 +18,14 @@ from django.contrib import admin
 from django.urls import include, path
 
 urlpatterns = [
+    path('api/v1/journals/', include('api.journal.urls')),
     path('admin/', admin.site.urls),
     path('kuis/', include('quiz.urls')),
-    path('', include('allauth.urls')),
+    path('', include('allauth.socialaccount.providers.google.urls')),
     path('', include('accounts.urls')),
     path('', include('main.urls')),
+    path('forum/', include('forum.urls')),
+    path('journal/', include('journal.urls')),
+    path('api/catalog/', include('api.catalog.urls')),
+    path('api/auth/', include('accounts.api_urls')),
 ]

@@ -136,43 +136,33 @@
         <h2>Cerita dari Komunitas</h2>
     </div>
 
+    {% if community_journals %}
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
-        <div class="lp-post-card lp-reveal rounded-2xl overflow-hidden">
-            <div class="lp-post-card__image" style="background-image: url('{% static 'img/hero/landing-1.jpg' %}');"></div>
+        {% for journal in community_journals %}
+        <a href="{% url 'journal:show_journal_detail' journal.pk %}" class="lp-post-card lp-reveal rounded-2xl overflow-hidden">
+            {% if journal.cover_image %}
+            <div class="lp-post-card__image" style="background-image: url('{{ journal.cover_image }}');"></div>
+            {% else %}
+            <div class="lp-post-card__image lp-post-card__image--empty">{% include "icons/image-icon.svg" %}</div>
+            {% endif %}
             <div class="p-5">
                 <div class="flex items-center gap-2 mb-3">
+                    {% if journal.user.profile.profile_picture_url %}
+                    <img src="{{ journal.user.profile.profile_picture_url }}" alt="" class="lp-post-card__avatar w-8 h-8 rounded-full object-cover">
+                    {% else %}
                     <span class="lp-post-card__avatar inline-flex items-center justify-center w-8 h-8 rounded-full">{% include "icons/user-icon.svg" %}</span>
-                    <span class="lp-post-card__author">Ervhino A.</span>
+                    {% endif %}
+                    <span class="lp-post-card__author">{{ journal.user.profile.display_name_or_username }}</span>
                 </div>
-                <p class="lp-post-card__caption">Panen cabai pertama musim ini, seneng banget! 🌶️</p>
-                <span class="lp-post-card__likes inline-flex items-center gap-1 mt-3">{% include "icons/points-icon.svg" %} 24 likes</span>
+                <p class="lp-post-card__caption">{{ journal.description|default:journal.plant_name|truncatechars:80 }}</p>
+                <span class="lp-post-card__likes inline-flex items-center gap-1 mt-3">{% include "icons/points-icon.svg" %} {{ journal.likes_count }} likes</span>
             </div>
-        </div>
-
-        <div class="lp-post-card lp-reveal rounded-2xl overflow-hidden">
-            <div class="lp-post-card__image" style="background-image: url('{% static 'img/hero/landing-2.jpg' %}');"></div>
-            <div class="p-5">
-                <div class="flex items-center gap-2 mb-3">
-                    <span class="lp-post-card__avatar inline-flex items-center justify-center w-8 h-8 rounded-full">{% include "icons/user-icon.svg" %}</span>
-                    <span class="lp-post-card__author">Fairuz A.</span>
-                </div>
-                <p class="lp-post-card__caption">Akhirnya selada hidroponik saya siap panen minggu ini.</p>
-                <span class="lp-post-card__likes inline-flex items-center gap-1 mt-3">{% include "icons/points-icon.svg" %} 18 likes</span>
-            </div>
-        </div>
-
-        <div class="lp-post-card lp-reveal rounded-2xl overflow-hidden">
-            <div class="lp-post-card__image" style="background-image: url('{% static 'img/hero/landing-3.jpg' %}');"></div>
-            <div class="p-5">
-                <div class="flex items-center gap-2 mb-3">
-                    <span class="lp-post-card__avatar inline-flex items-center justify-center w-8 h-8 rounded-full">{% include "icons/user-icon.svg" %}</span>
-                    <span class="lp-post-card__author">Naufal</span>
-                </div>
-                <p class="lp-post-card__caption">Tips dari forum beneran ngebantu, sawi saya auto subur!</p>
-                <span class="lp-post-card__likes inline-flex items-center gap-1 mt-3">{% include "icons/points-icon.svg" %} 31 likes</span>
-            </div>
-        </div>
+        </a>
+        {% endfor %}
     </div>
+    {% else %}
+    <p class="lp-reveal text-center text-[var(--color-text-muted)]">Belum ada jurnal publik. Jadilah yang pertama membagikan progres kebunmu!</p>
+    {% endif %}
 </section>
 
 <section class="lp-cta lp-reveal mt-16 px-8 py-20 rounded-[2rem] text-center" style="background-image: url('{% static 'img/card/landing-bottom.jpg' %}');">
@@ -191,7 +181,7 @@
         <p>Gabung dengan Tanampedia dan jadi bagian dari gaya hidup berkelanjutan, satu tanaman pada satu waktu.</p>
 
         <div class="mt-8">
-            {% url 'account_signup' as signup_url %}
+            {% url 'accounts:register' as signup_url %}
             {% include 'components/button.html' with text="Daftar Sekarang" href=signup_url variant="filled" intent="primary" icon_right="icons/arrow-right-icon.svg" %}
         </div>
     </div>

@@ -52,12 +52,17 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
+    'rest_framework',
     'allauth',
     'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
     'tailwind',
     'theme',
     'main',
     'accounts',
+    'forum',
+    'journal',
     'quiz',
 ]
 
@@ -66,7 +71,11 @@ TAILWIND_APP_NAME = 'theme'
 SITE_ID = 1
 
 AUTHENTICATION_BACKENDS = [
+    # Handles our own username/password login (AuthenticationForm).
     'django.contrib.auth.backends.ModelBackend',
+    # Required internally by allauth.socialaccount to finish logging a user
+    # in after a successful Google OAuth callback - not used by our own
+    # login view.
     'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
@@ -82,17 +91,36 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-# django-allauth
-ACCOUNT_LOGIN_METHODS = {'email'}
-ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
-ACCOUNT_SIGNUP_FORM_CLASS = 'accounts.forms.CustomSignupForm'
-ACCOUNT_EMAIL_VERIFICATION = 'none'
-ACCOUNT_LOGOUT_ON_GET = True
-ACCOUNT_SESSION_REMEMBER = True
-
-LOGIN_URL = 'account_login'
+# Manual login/register/logout are our own views (accounts/views.py), not
+# allauth's. allauth.account/allauth.socialaccount stay installed only to
+# power the Google OAuth button - only allauth.socialaccount.providers.google
+# .urls is mounted (see tanampedia/urls.py), not allauth.urls.
+LOGIN_URL = 'accounts:login'
 LOGIN_REDIRECT_URL = 'accounts:profile'
-LOGOUT_REDIRECT_URL = 'main:home'
+
+GOOGLE_CLIENT_ID = os.getenv('GOOGLE_CLIENT_ID', '')
+GOOGLE_CLIENT_SECRET = os.getenv('GOOGLE_CLIENT_SECRET', '')
+
+# Katalog Tanaman module — Trefle API (https://trefle.io). Optional: if
+# unset, the catalog page still renders with an honest "not configured"
+# message instead of fabricating data. Never log or render this value.
+TREFLE_API_TOKEN = os.getenv('TREFLE_API_TOKEN', '')
+
+SOCIALACCOUNT_LOGIN_ON_GET = True
+
+SOCIALACCOUNT_EMAIL_AUTHENTICATION = True
+SOCIALACCOUNT_EMAIL_AUTHENTICATION_AUTO_CONNECT = True
+
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'APP': {
+            'client_id': GOOGLE_CLIENT_ID,
+            'secret': GOOGLE_CLIENT_SECRET,
+            'key': '',
+        },
+        'SCOPE': ['profile', 'email'],
+    },
+}
 
 ROOT_URLCONF = 'tanampedia.urls'
 
@@ -106,6 +134,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'accounts.context_processors.google_oauth_enabled',
             ],
         },
     },

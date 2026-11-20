@@ -1,0 +1,13 @@
+<div class="inline-flex items-center">
+    <button type="button"
+        class="inline-flex cursor-pointer items-center gap-2 p-0 leading-none text-sm text-primary-700 hover:text-primary-600 focus-visible:outline-2 focus-visible:outline-primary-600 disabled:cursor-wait disabled:opacity-50 [&_svg]:fill-none aria-pressed:[&_svg]:fill-current"
+        data-journal-like
+        data-like-url="{% url 'journal:toggle_journal_like' journal.pk %}"
+        aria-pressed="{{ journal.is_liked|yesno:'true,false' }}"
+        aria-label="{% if journal.is_liked %}Batalkan suka{% else %}Sukai jurnal{% endif %}">
+        
+        {% include 'icons/points-icon.svg' %}
+        <span data-like-count class="leading-none">{{ journal.likes_count|default:0 }} likes</span>
+    </button>
+    <span class="journal-like__message" data-like-message role="status" aria-live="polite"></span>
+</div>

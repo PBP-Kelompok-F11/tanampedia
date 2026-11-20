@@ -5,6 +5,8 @@
    border-red-600, etc.) instead of only via var(--color-*) in custom CSS.
    Keep this in sync with tokens.css if the palette changes. */
 @theme {
+    --font-body: "Plus Jakarta Sans", sans-serif;
+
     --color-primary-900: #0b2b1c;
     --color-primary-800: #123d27;
     --color-primary-700: #1c5632;

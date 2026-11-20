@@ -1,6 +1,6 @@
 {% with current_value=selected_value|default:"" %}
 <div
-    class="dropdown{% if state == 'hover' %} dropdown--hover{% endif %}{% if disabled %} dropdown--disabled{% endif %}"
+    class="dropdown{% if compact_inline %} dropdown--compact-inline{% endif %}{% if state == 'hover' %} dropdown--hover{% endif %}{% if disabled %} dropdown--disabled{% endif %}"
     data-dropdown
 >
     <span id="{{ dropdown_id }}-label" class="dropdown__label">

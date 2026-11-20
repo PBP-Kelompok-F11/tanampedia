@@ -1,0 +1,231 @@
+.leaderboard-page {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 1rem 0 4rem;
+}
+
+.leaderboard-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.leaderboard-header h1 {
+    font-size: clamp(2rem, 5vw, 3rem);
+    margin-bottom: 0.5rem;
+}
+
+.leaderboard-header p {
+    color: var(--color-text-muted);
+    margin: 0;
+}
+
+.lp-gradient-text {
+    background: linear-gradient(90deg, var(--color-primary-700), var(--color-primary-500) 45%, var(--color-blue-600));
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+}
+
+.leaderboard-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.leaderboard-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.875rem 1.25rem;
+    background-color: var(--color-raised);
+    border: 1px solid var(--color-border);
+    border-radius: 1rem;
+}
+
+.leaderboard-row--top {
+    border-color: var(--color-primary-300);
+    background-color: var(--color-primary-50);
+}
+
+.leaderboard-rank {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    background-color: var(--color-grey-100);
+    color: var(--color-grey-600);
+    font-weight: 700;
+    font-size: 0.875rem;
+}
+
+.leaderboard-rank--1 {
+    background-color: #f5c84c;
+    color: var(--color-primary-900);
+}
+
+.leaderboard-rank--2 {
+    background-color: #d3d9e0;
+    color: var(--color-grey-800);
+}
+
+.leaderboard-rank--3 {
+    background-color: #e3b082;
+    color: var(--color-primary-900);
+}
+
+.leaderboard-avatar {
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.leaderboard-avatar--placeholder {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--color-primary-100);
+    color: var(--color-primary-700);
+}
+
+.leaderboard-identity {
+    flex: 1;
+    min-width: 0;
+}
+
+.leaderboard-name {
+    margin: 0;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.leaderboard-level {
+    margin: 0.125rem 0 0;
+    font-size: 0.8125rem;
+    color: var(--color-text-muted);
+}
+
+.leaderboard-points {
+    flex-shrink: 0;
+    text-align: right;
+    font-weight: 700;
+    color: var(--color-primary-700);
+}
+
+.leaderboard-points-label {
+    display: block;
+    font-weight: 400;
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+}
+
+.leaderboard-empty {
+    text-align: center;
+    color: var(--color-text-muted);
+}
+
+@media (max-width: 480px) {
+    .leaderboard-row {
+        padding: 0.75rem 1rem;
+        gap: 0.75rem;
+    }
+
+    .leaderboard-level {
+        display: none;
+    }
+}
+
+
+/* "PediaPoints flow" section, reused from the landing page */
+
+.lp-bleed {
+    width: 100vw;
+    position: relative;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+}
+
+.lp-reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+.lp-reveal.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.lp-section-heading h2 {
+    font-size: clamp(1.75rem, 4vw, 2.5rem);
+}
+
+.lp-section-heading p {
+    color: var(--color-text-muted);
+}
+
+.lp-flow {
+    background-color: var(--color-sunken);
+}
+
+.lp-flow__step-icon {
+    background-color: var(--color-raised);
+    border: 2px solid var(--color-primary-200);
+    color: var(--color-primary-600);
+
+    animation: lp-pulse 3s ease-in-out infinite;
+}
+
+.lp-flow__step:nth-child(3) .lp-flow__step-icon { animation-delay: 0.5s; }
+.lp-flow__step:nth-child(5) .lp-flow__step-icon { animation-delay: 1s; }
+
+.lp-flow__step-icon .icon {
+    width: 1.75rem;
+    height: 1.75rem;
+}
+
+@keyframes lp-pulse {
+    0%, 100% { box-shadow: 0 0 0 0 var(--color-primary-100); }
+    50% { box-shadow: 0 0 0 10px transparent; }
+}
+
+.lp-flow__step strong {
+    font-size: 0.875rem;
+}
+
+.lp-flow__step-note {
+    font-size: 0.8125rem;
+    color: var(--color-text-muted);
+}
+
+.lp-flow__arrow {
+    color: var(--color-primary-300);
+}
+
+.lp-flow__arrow .icon {
+    width: 1.5rem;
+    height: 1.5rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .lp-reveal {
+        opacity: 1 !important;
+        transform: none !important;
+        transition: none !important;
+    }
+
+    .lp-flow__step-icon {
+        animation: none !important;
+    }
+}

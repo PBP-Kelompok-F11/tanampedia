@@ -1,0 +1,51 @@
+{% extends "base_auth.html" %}
+{% load static %}
+
+{% block title %}Daftar - Tanampedia{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/pages/_auth.css' %}">
+{% endblock %}
+
+{% block content %}
+<section class="auth-page">
+    <div class="auth-page__bg" aria-hidden="true"></div>
+
+    <div class="auth-card">
+        <h1 class="mb-6 text-2xl">Daftar</h1>
+
+        {% if form.non_field_errors %}
+        <div class="mb-4 px-4 py-3 rounded-lg bg-red-50 text-red-700 text-sm">{{ form.non_field_errors.0 }}</div>
+        {% endif %}
+
+        <form method="post" action="{% url 'accounts:register' %}" class="flex flex-col gap-4 mb-4">
+            {% csrf_token %}
+
+            {% include 'components/input.html' with label="Display Name" id="id_display_name" name="display_name" type="text" placeholder="Misal: Samuel Example" class_name="input" required=True autocomplete="nickname" value=form.display_name.value %}
+            {% if form.display_name.errors %}<p class="-mt-2 text-[0.8125rem] text-red-600">{{ form.display_name.errors.0 }}</p>{% endif %}
+
+            {% include 'components/input.html' with label="Username" id="id_username" name="username" type="text" placeholder="Misal: samuelex" class_name="input" required=True autocomplete="username" value=form.username.value %}
+            {% if form.username.errors %}<p class="-mt-2 text-[0.8125rem] text-red-600">{{ form.username.errors.0 }}</p>{% endif %}
+
+            {% include 'components/input.html' with label="Kata sandi" id="id_password1" name="password1" type="password" placeholder="" class_name="input" required=True autocomplete="new-password" %}
+            {% if form.password1.errors %}<p class="-mt-2 text-[0.8125rem] text-red-600">{{ form.password1.errors.0 }}</p>{% endif %}
+
+            {% include 'components/input.html' with label="Ulangi kata sandi" id="id_password2" name="password2" type="password" placeholder="" class_name="input" required=True autocomplete="new-password" %}
+            {% if form.password2.errors %}<p class="-mt-2 text-[0.8125rem] text-red-600">{{ form.password2.errors.0 }}</p>{% endif %}
+
+            {% include 'components/button.html' with text="Daftar" type="submit" variant="filled" intent="primary" class_name="w-full mt-1" %}
+        </form>
+
+        {% if google_oauth_enabled %}
+        {% load socialaccount %}
+        <div class="auth-divider flex items-center gap-3 my-6 text-[0.8125rem] text-[var(--color-text-muted)]"><span>atau</span></div>
+        <a href="{% provider_login_url 'google' %}" class="btn btn--outline btn--neutral w-full mb-4">
+            {% include "icons/google-icon.svg" %}
+            <span>Lanjutkan dengan Google</span>
+        </a>
+        {% endif %}
+
+        <p class="mt-6 text-center text-sm text-[var(--color-text-muted)]">Sudah punya akun? <a href="{% url 'accounts:login' %}">Masuk</a></p>
+    </div>
+</section>
+{% endblock %}
