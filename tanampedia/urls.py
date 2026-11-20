@@ -25,4 +25,5 @@ urlpatterns = [
     path('', include('main.urls')),
     path('forum/', include('forum.urls')),
     path('journal/', include('journal.urls')),
+    path('api/catalog/', include('api.catalog.urls')),
 ]
