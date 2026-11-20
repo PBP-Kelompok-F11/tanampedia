@@ -12,7 +12,7 @@ class QuestionForms(forms.ModelForm):
         widgets = {
             'title': forms.TextInput(attrs={
                 'placeholder': 'Contoh: Mengapa daun selada hidroponik saya menguning?',
-                'maxlength': 255,
+                'maxlength': 100,
             }),
             'content': forms.Textarea(attrs={
                 'rows': 5,

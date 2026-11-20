@@ -313,7 +313,6 @@ class QuestionManagementTests(TestCase):
 
     def test_only_superusers_see_management_links(self):
         url = reverse('quiz:today')
-        self.assertNotContains(self.client.get(url), 'Tambah Soal Kuis')
         self.client.force_login(self.user)
         self.assertNotContains(self.client.get(url), 'Tambah Soal Kuis')
         self.client.force_login(self.admin)
@@ -401,6 +400,10 @@ class QuestionManagementTests(TestCase):
 
 
 class RandomQuizPageTests(TestCase):
+    def setUp(self):
+        user = get_user_model().objects.create_user(username='random-quiz-user')
+        self.client.force_login(user)
+
     def test_empty_bank_shows_empty_state(self):
         response = self.client.get(reverse('quiz:today'))
         self.assertContains(response, 'Belum ada soal kuis yang ditambahkan.')
@@ -417,11 +420,12 @@ class RandomQuizPageTests(TestCase):
 
     def test_one_question_can_reappear_on_refresh(self):
         question = create_bank_question()
+        initial_session = dict(self.client.session)
         for _ in range(3):
             response = self.client.get(reverse('quiz:today'))
             self.assertEqual(response.context['question'].pk, question.pk)
             self.assertContains(response, question.prompt)
-        self.assertEqual(dict(self.client.session), {})
+        self.assertEqual(dict(self.client.session), initial_session)
 
     def test_selected_question_is_from_valid_active_bank(self):
         choices = [create_bank_question(prompt=f'Valid {index}') for index in range(3)]
@@ -434,8 +438,8 @@ class RandomQuizPageTests(TestCase):
         question = create_bank_question()
         response = self.client.get(reverse('quiz:today'))
         self.assertNotContains(response, question.explanation)
-        self.assertNotContains(response, 'Jawaban benar')
-        self.assertContains(response, ' disabled class=', count=4)
+        self.assertNotContains(response, 'data-quiz-result')
+        self.assertContains(response, '<button type="submit" name="option"', count=4)
         self.assertEqual(QuizAttempt.objects.count(), 0)
 
     def test_random_page_is_not_cached_and_escapes_question_content(self):

@@ -30,6 +30,7 @@ def superuser_required(view):
 
 
 @never_cache
+@login_required
 @require_GET
 def today(request):
     day = quiz_date()
