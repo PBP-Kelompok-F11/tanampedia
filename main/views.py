@@ -58,8 +58,8 @@ def _parse_page(raw_page):
 # Menampilkan daftar tanaman dengan fitur pencarian, sorting, dan pagination
 def katalog_list(request):
     query = request.GET.get('q', '').strip()
-    sort = request.GET.get('sort', 'name_asc')
-    if sort not in {'name_asc', 'name_desc'}:
+    sort = request.GET.get('sort', 'name_asc',)
+    if sort not in {'name_asc', 'name_desc', 'family_asc'}:
         sort = 'name_asc'
     page = _parse_page(request.GET.get('page', '1'))
 
@@ -73,11 +73,18 @@ def katalog_list(request):
         error_message = exc.message
 
     # Sorting hanya diterapkan pada data di halaman yang sedang ditampilkan
-    plants = sorted(
-        plants,
-        key=lambda plant: (plant.get('scientific_name') or plant.get('common_name') or '').casefold(),
-        reverse=sort == 'name_desc',
-    )
+    if sort == 'family_asc':
+        sortkey= lambda plant: (
+            not plant.get('family'),
+            (plant.get('family') or '').casefold(),
+        )
+
+    else:
+        sortkey = lambda plant: (
+            (plant.get('scientific_name') or plant.get('common_name') or '').casefold(),
+        )
+    plants = sorted(plants, key=sortkey, reverse=sort == 'name_desc')
+    
     per_page = (meta or {}).get('per_page') or 20
     total = (meta or {}).get('total')
     current_count = len(plants)
@@ -116,6 +123,7 @@ def katalog_detail(request, slug):
             'slug': slug,
             'plant': None,
             'care': [],
+            'ph_range': None, 
             'error_message': exc.message,
         })
 
@@ -126,6 +134,7 @@ def katalog_detail(request, slug):
         'plant': plant,
         'care': trefle.extract_care_info(plant),
         'care_cards': trefle.extract_care_cards(plant),
+        'ph_range': trefle.extract_ph_care(plant),
         'error_message': None,
     }
     return render(request, 'katalog/detail.html', context)

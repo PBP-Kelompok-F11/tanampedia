@@ -55,6 +55,8 @@
                 {% if plant.family %}<dt>Famili</dt><dd>{{ plant.family }}</dd>{% endif %}
                 {% if plant.year %}<dt>Tahun deskripsi</dt><dd>{{ plant.year }}</dd>{% endif %}
                 {% if plant.bibliography %}<dt>Bibliografi</dt><dd>{{ plant.bibliography }}</dd>{% endif %}
+                {% if plant.ph_range %}<dt>PH Range</dt><dd>{{ plant.ph_range }}</dd>{% endif %}
+                {% if ph_range %}<dt>pH tanah</dt><dd>{{ ph_range }}</dd>{% endif %}
             </dl>
         </section>
 
@@ -68,8 +70,18 @@
                     {% if item.categorical %}
                     <p class="kt-care-card__detail">Data musiman dari Trefle</p>
                     {% else %}
-                    <div class="kt-progress" role="progressbar" aria-label="{{ item.label }}" aria-valuemin="0" aria-valuemax="10" aria-valuenow="{{ item.value }}"><span style="width: {{ item.progress }}%"></span></div>
-                    <p class="kt-care-card__detail">Skala {{ item.scale }}</p>
+                        <div
+                            class="kt-progress"
+                            role="progressbar"
+                            aria-label="{{ item.label }}"
+                            aria-valuemin="0"
+                            aria-valuemax="10"
+                            aria-valuenow="{{ item.value }}"
+                            style="--progress-width: {{ item.progress }}%;"
+                        >
+                            <span></span>
+                        </div>                    
+                        <p class="kt-care-card__detail">Skala {{ item.scale }}</p>
                     {% endif %}
                 </article>
                 {% endfor %}

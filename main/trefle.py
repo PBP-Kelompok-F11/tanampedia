@@ -259,3 +259,10 @@ def extract_care_cards(plant: dict) -> list[dict]:
     if months is not None:
         cards.append({"label": "Bulan berbunga", "value": months, "categorical": True})
     return cards
+
+def extract_ph_care(plant: dict) -> None:
+    growth = _find_growth_dict(plant)
+    return _format_care_value({
+        "min": growth.get("ph_minimun"),
+        "max": growth.get("ph_maximum"),
+    })
