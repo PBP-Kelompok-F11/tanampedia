@@ -27,4 +27,5 @@ urlpatterns = [
     path('forum/', include('forum.urls')),
     path('journal/', include('journal.urls')),
     path('api/catalog/', include('api.catalog.urls')),
+    path('api/auth/', include('accounts.api_urls')),
 ]
