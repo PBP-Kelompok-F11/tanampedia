@@ -18,6 +18,7 @@ from django.contrib import admin
 from django.urls import include, path
 
 urlpatterns = [
+    path('api/v1/journals/', include('api.journal.urls')),
     path('admin/', admin.site.urls),
     path('kuis/', include('quiz.urls')),
     path('', include('allauth.socialaccount.providers.google.urls')),
